@@ -165,6 +165,8 @@ themeToggle.addEventListener('click', () => {
 getWeatherBtn.addEventListener('click', () => {
     const city = cityInput.value.trim();
     fetchWeather(city);
-    // Показать поле ввода и кнопку "Узнать погоду" снова
-    document.querySelector('.input-container').classList.remove('hidden');
+    // Скрыть поле ввода и кнопку "Узнать погоду" после нажатия
+    cityInput.classList.add('hidden');
+    getWeatherBtn.classList.add('hidden');
 });
+
