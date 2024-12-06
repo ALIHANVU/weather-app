@@ -73,7 +73,7 @@ const displayWeather = (data) => {
 
     // Скрытие поля ввода и кнопки "Узнать погоду" после нажатия и появление кнопки возврата
     document.querySelector('.input-container').style.display = 'none';
-    returnBtn.classList.remove('hidden');
+    returnBtn.classList.remove('hidden'); // Исправлено: удаление класса hidden
 
     updateFarmerTips(temp, condition, main.humidity, main.pressure, weather[0].main);
 };
