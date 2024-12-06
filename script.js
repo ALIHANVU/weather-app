@@ -71,7 +71,7 @@ const displayWeather = (data) => {
     currentConditionElement.textContent = condition.charAt(0).toUpperCase() + condition.slice(1);
 
     // Скрытие поля ввода и кнопки "Узнать погоду" после нажатия
-    document.querySelector('.input-container').classList.add('hidden');
+    document.querySelector('.input-container').style.display = 'none';
 
     updateFarmerTips(temp, condition, main.humidity, main.pressure, weather[0].main);
 };
@@ -166,7 +166,6 @@ getWeatherBtn.addEventListener('click', () => {
     const city = cityInput.value.trim();
     fetchWeather(city);
     // Скрыть поле ввода и кнопку "Узнать погоду" после нажатия
-    cityInput.classList.add('hidden');
-    getWeatherBtn.classList.add('hidden');
+    document.querySelector('.input-container').style.display = 'none';
 });
 
