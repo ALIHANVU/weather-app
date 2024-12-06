@@ -163,4 +163,3 @@ getWeatherBtn.addEventListener('click', () => {
     const city = cityInput.value.trim();
     fetchWeather(city);
 });
-
