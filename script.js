@@ -72,6 +72,7 @@ const displayWeather = (data) => {
 
     // Скрытие поля ввода и кнопки "Узнать погоду" после нажатия и появление кнопки возврата
     document.querySelector('.input-container').style.display = 'none';
+    locationElement.textContent = cityInput.value;  // Отображение введенного названия города
     returnBtn.classList.remove('hidden');
 
     updateFarmerTips(temp, condition, main.humidity, main.pressure, weather[0].main);
@@ -168,7 +169,8 @@ getWeatherBtn.addEventListener('click', () => {
     fetchWeather(city);
     // Скрыть поле ввода и кнопку "Узнать погоду" после нажатия
     document.querySelector('.input-container').style.display = 'none';
-    // Показать кнопку возврата
+    // Показать название города и кнопку возврата
+    locationElement.textContent = city;
     returnBtn.classList.remove('hidden');
 });
 
@@ -184,9 +186,3 @@ returnBtn.addEventListener('click', () => {
     farmerTipsContainer.innerHTML = '';
     cityInput.value = '';
 });
-
-
-
-
-
-
