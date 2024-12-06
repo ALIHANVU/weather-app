@@ -2,147 +2,90 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
 }
 
 body {
-    background-color: #f4f4f4;
+    background-color: #f0f0f0;
     color: #333;
-    transition: background-color 0.4s, color 0.4s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 .app-container {
-    max-width: 360px;
-    margin: 40px auto;
+    max-width: 400px;
+    margin: auto;
     padding: 20px;
     text-align: center;
-    background-color: #ffffff;
+    background-color: #fff;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #ddd;
 }
 
 h1 {
-    font-size: 1.8em;
-    font-weight: 600;
-    color: #0056b3;
-}
-
-.theme-toggle {
-    background: none;
-    border: none;
-    font-size: 1.5em;
-    cursor: pointer;
-    transition: transform 0.3s;
-}
-
-.theme-toggle:hover {
-    transform: scale(1.2);
-}
-
-.input-container {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-#cityInput {
-    flex: 1;
-    padding: 12px;
-    border-radius: 20px;
-    border: 1px solid #ccc;
-    transition: border-color 0.3s;
-}
-
-#cityInput:focus {
-    border-color: #0056b3;
-    outline: none;
-}
-
-#getWeatherBtn {
-    padding: 12px 20px;
-    border-radius: 20px;
-    border: none;
-    background-color: #0056b3;
-    color: #fff;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.3s;
-}
-
-#getWeatherBtn:hover {
-    background-color: #004494;
-    transform: scale(1.05);
-}
-
-.weather-card {
-    padding: 20px;
-    border-radius: 20px;
-    background-color: #f9f9f9;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s, opacity 0.3s;
-}
-
-.weather-card:hover {
-    transform: translateY(-5px);
-    opacity: 0.95;
-}
-
-.weather-info {
-    margin-bottom: 20px;
-    font-size: 1.2em;
+    font-size: 2em;
     font-weight: 500;
+    color: #007aff;
 }
 
-.farmer-tips {
-    padding: 10px;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    color: #333;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+#current-temp {
+    font-size: 3em;
+    font-weight: 700;
+}
+
+#current-condition {
+    font-size: 1.2em;
+    color: #666;
+}
+
+.current-weather,
+.hourly-forecast,
+.daily-forecast {
+    margin: 20px 0;
+}
+
+h2 {
+    font-size: 1.4em;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.temp-range {
+    font-size: 1.2em;
+    font-weight: 700;
+}
+
+.condition {
     font-size: 1em;
-    transition: transform 0.3s, opacity 0.3s;
+    color: #666;
 }
 
-.farmer-tips:hover {
-    transform: translateY(-5px);
-    opacity: 0.95;
-}
-
-.forecast {
+.hourly,
+.daily {
     display: flex;
     justify-content: space-around;
-    margin-top: 20px;
     flex-wrap: wrap;
 }
 
-.forecast-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.hourly .hour,
+.daily .day {
+    flex: 1 1 30%;
+    margin: 10px;
     padding: 10px;
     border-radius: 10px;
-    background-color: #f9f9f9;
+    background-color: #f0f0f0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 10px;
-    flex: 0 1 calc(33.333% - 20px);
-    box-sizing: border-box;
-    transition: transform 0.3s, opacity 0.3s;
+    text-align: center;
 }
 
-.forecast-item:hover {
-    transform: translateY(-5px);
-    opacity: 0.95;
-}
-
-.forecast-item p {
+.hour p,
+.day p {
     margin: 5px 0;
 }
 
@@ -153,56 +96,21 @@ h1 {
 
 .dark-theme .app-container {
     background-color: #3c3c3e;
-    color: #f0f0f0;
-}
-
-.dark-theme #getWeatherBtn {
-    background-color: #5856d6;
-}
-
-.dark-theme #getWeatherBtn:hover {
-    background-color: #4b4ac0;
-}
-
-.dark-theme .weather-card {
-    background-color: #3c3c3e;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
 }
 
-.dark-theme .farmer-tips {
-    background-color: #444;
+.dark-theme h1,
+.dark-theme h2,
+.dark-theme .temp-range,
+.dark-theme #current-temp,
+.dark-theme #current-condition {
     color: #f0f0f0;
 }
 
-.dark-theme .forecast-item {
+.dark-theme .condition,
+.dark-theme .hourly .hour,
+.dark-theme .daily .day {
     background-color: #444;
     color: #f0f0f0;
-}
-
-/* Медиазапросы для улучшения адаптивности */
-@media (max-width: 600px) {
-    .app-container {
-        padding: 10px;
-        margin: 20px auto;
-    }
-
-    h1 {
-        font-size: 1.6em;
-    }
-
-    .input-container {
-        flex-direction: column;
-        gap: 5px;
-    }
-
-    #cityInput, #getWeatherBtn {
-        width: 100%;
-        flex: none;
-    }
-
-    .forecast-item {
-        flex: 0 1 100%;
-        margin: 5px 0;
-    }
 }
 
