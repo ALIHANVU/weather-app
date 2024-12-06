@@ -67,6 +67,7 @@ const displayWeather = (data) => {
     const icon = weather[0].icon;
     const weatherEmoji = weatherEmojiMap[icon] || "❓";
 
+    // Показать введенное название города
     cityNameElement.textContent = name;
     currentTempElement.textContent = `${Math.round(temp)}°C ${weatherEmoji}`;
     currentFeelsLikeElement.textContent = `Ощущается как ${Math.round(feelsLike)}°C`;
@@ -79,7 +80,6 @@ const displayWeather = (data) => {
 
     updateFarmerTips(temp, condition, main.humidity, main.pressure, weather[0].main);
 };
-
 const displayForecast = (data) => {
     const days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
     const uniqueDays = {};
@@ -172,6 +172,7 @@ getWeatherBtn.addEventListener('click', () => {
     // Скрыть поле ввода и кнопку "Узнать погоду" после нажатия
     document.querySelector('.input-container').style.display = 'none';
     // Показать название города и кнопку возврата
+    cityNameElement.textContent = city;
     cityNameElement.classList.remove('hidden');
     returnBtn.classList.remove('hidden');
 });
