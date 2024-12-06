@@ -5,28 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WeatherNow</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="app-container">
         <header>
-            <h1>🌤️ WeatherNow</h1>
-            <button id="themeToggle" class="theme-toggle">🌙</button>
+            <h1 id="location">Cupertino</h1>
+            <p id="current-temp">22°C</p>
+            <p id="current-condition">Солнечно</p>
         </header>
         <main>
-            <div class="input-container">
-                <input type="text" id="cityInput" placeholder="Введите название города">
-                <button id="getWeatherBtn">Узнать погоду</button>
-            </div>
-            <div id="weather-card" class="weather-card">
-                <div id="weather-info" class="weather-info"></div>
-                <div id="farmer-tips" class="farmer-tips"></div>
-            </div>
-            <div class="forecast"></div>
+            <section class="current-weather">
+                <h2>Сегодня</h2>
+                <p class="temp-range">16°C - 31°C</p>
+                <p class="condition">Солнечно весь день с порывами ветра до 12 км/ч</p>
+            </section>
+            <section class="hourly-forecast">
+                <h2>Прогноз на часы</h2>
+                <div class="hourly">
+                    <!-- Hourly forecast items will be inserted here by JS -->
+                </div>
+            </section>
+            <section class="daily-forecast">
+                <h2>Прогноз на неделю</h2>
+                <div class="daily">
+                    <!-- Daily forecast items will be inserted here by JS -->
+                </div>
+            </section>
         </main>
-        <footer>
-            <p>© 2024 WeatherNow</p>
-        </footer>
     </div>
     <script src="script.js"></script>
 </body>
