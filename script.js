@@ -82,12 +82,17 @@ const displayWeather = (data) => {
 
 // Отображение прогноза на странице
 const displayForecast = (data) => {
+    const days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
+    const now = new Date();
+    const today = now.getDay();
+    
     const forecastList = data.list.filter((item, index) => index % 8 === 0); // Берем прогноз каждые 24 часа
     forecastContainer.innerHTML = '';
 
     forecastList.forEach((item, index) => {
         const date = new Date(item.dt * 1000);
-        const day = index === 0 ? 'Сегодня' : (index === 1 ? 'Завтра' : 'Послезавтра');
+        const dayIndex = (today + index) % 7;
+        const day = index === 0 ? 'Сегодня' : (index === 1 ? 'Завтра' : days[dayIndex]);
         const tempMin = item.main.temp_min;
         const tempMax = item.main.temp_max;
         const condition = item.weather[0].description;
