@@ -10,12 +10,14 @@
 <body>
     <div class="app-container">
         <header>
-            <h1 id="location">WeatherNow</h1>
-            <input type="text" id="cityInput" placeholder="Введите название города">
-            <button id="getWeatherBtn">Узнать погоду</button>
             <button id="themeToggle" class="theme-toggle">🌙</button>
+            <h1 id="location">WeatherNow</h1>
         </header>
         <main>
+            <div class="input-container">
+                <input type="text" id="cityInput" placeholder="Введите название города">
+                <button id="getWeatherBtn">Узнать погоду</button>
+            </div>
             <section class="current-weather">
                 <p id="current-temp">--°C</p>
                 <p id="current-feels-like">Ощущается как --°C</p>
