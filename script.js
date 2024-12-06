@@ -179,6 +179,8 @@ returnBtn.addEventListener('click', () => {
     currentConditionElement.textContent = 'Погодные условия';
     dailyForecastContainer.innerHTML = '';
     farmerTipsContainer.innerHTML = '';
+    cityInput.value = '';
 });
+
 
 
