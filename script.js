@@ -70,6 +70,9 @@ const displayWeather = (data) => {
     currentFeelsLikeElement.textContent = `Ощущается как ${Math.round(feelsLike)}°C`;
     currentConditionElement.textContent = condition.charAt(0).toUpperCase() + condition.slice(1);
 
+    // Скрытие поля ввода и кнопки "Узнать погоду" после нажатия
+    document.querySelector('.input-container').classList.add('hidden');
+
     updateFarmerTips(temp, condition, main.humidity, main.pressure, weather[0].main);
 };
 
@@ -162,4 +165,6 @@ themeToggle.addEventListener('click', () => {
 getWeatherBtn.addEventListener('click', () => {
     const city = cityInput.value.trim();
     fetchWeather(city);
+    // Показать поле ввода и кнопку "Узнать погоду" снова
+    document.querySelector('.input-container').classList.remove('hidden');
 });
