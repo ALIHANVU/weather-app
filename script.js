@@ -51,14 +51,14 @@ const fetchWeather = async (city) => {
 
         const weatherData = await weatherResponse.json();
         const forecastData = await forecastResponse.json();
-        displayWeather(weatherData);
+        displayWeather(weatherData, city);
         displayForecast(forecastData);
     } catch (error) {
         console.error('Ошибка загрузки данных:', error);
     }
 };
 
-const displayWeather = (data) => {
+const displayWeather = (data, city) => {
     const { main, weather } = data;
     const temp = main.temp;
     const feelsLike = main.feels_like;
@@ -72,7 +72,7 @@ const displayWeather = (data) => {
 
     // Скрытие поля ввода и кнопки "Узнать погоду" после нажатия и появление кнопки возврата
     document.querySelector('.input-container').style.display = 'none';
-    locationElement.textContent = cityInput.value;  // Отображение введенного названия города
+    locationElement.textContent = city;  // Отображение введенного названия города
     returnBtn.classList.remove('hidden');
 
     updateFarmerTips(temp, condition, main.humidity, main.pressure, weather[0].main);
@@ -167,11 +167,6 @@ themeToggle.addEventListener('click', () => {
 getWeatherBtn.addEventListener('click', () => {
     const city = cityInput.value.trim();
     fetchWeather(city);
-    // Скрыть поле ввода и кнопку "Узнать погоду" после нажатия
-    document.querySelector('.input-container').style.display = 'none';
-    // Показать кнопку возврата и обновить текст "WeatherNow"
-    locationElement.textContent = city;  // Отображение введенного названия города
-    returnBtn.classList.remove('hidden');
 });
 
 // Обработчик для кнопки возврата
@@ -186,4 +181,5 @@ returnBtn.addEventListener('click', () => {
     farmerTipsContainer.innerHTML = '';
     cityInput.value = '';
 });
+
 
