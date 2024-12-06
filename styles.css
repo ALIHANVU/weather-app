@@ -37,6 +37,7 @@ h1 {
     font-size: 1.8em;
     font-weight: 500;
     color: #007aff;
+    margin: 20px 0;
 }
 
 button#themeToggle {
@@ -91,16 +92,11 @@ button.hidden {
 }
 
 button.return-btn {
-    background-color: #007aff;
-    color: #fff;
+    background: none;
     border: none;
-    border-radius: 50%;
-    padding: 10px;
+    font-size: 1.5em;
     cursor: pointer;
     transition: transform 0.3s;
-    position: absolute;
-    right: 10px;
-    top: 5px;
 }
 
 button.return-btn:hover {
@@ -109,13 +105,6 @@ button.return-btn:hover {
 
 .current-weather {
     margin-bottom: 20px;
-}
-
-.city-name {
-    font-size: 1.6em;
-    font-weight: 600;
-    color: #007aff;
-    margin-bottom: 10px;
 }
 
 #current-temp {
@@ -169,8 +158,7 @@ button.return-btn:hover {
 .dark-theme h2,
 .dark-theme #current-temp,
 .dark-theme #current-feels-like,
-.dark-theme #current-condition,
-.dark-theme .city-name {
+.dark-theme #current-condition {
     color: #f0f0f0;
 }
 
@@ -179,6 +167,7 @@ button.return-btn:hover {
     background-color: #444;
     color: #f0f0f0;
 }
+
 
 
 
