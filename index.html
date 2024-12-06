@@ -10,25 +10,29 @@
 <body>
     <div class="app-container">
         <header>
-            <h1>🌤️ WeatherNow</h1>
+            <h1 id="location">WeatherNow</h1>
+            <input type="text" id="cityInput" placeholder="Введите название города">
+            <button id="getWeatherBtn">Узнать погоду</button>
             <button id="themeToggle" class="theme-toggle">🌙</button>
         </header>
         <main>
-            <div class="input-container">
-                <input type="text" id="cityInput" placeholder="Введите название города">
-                <button id="getWeatherBtn">Узнать погоду</button>
-            </div>
-            <div id="weather-card" class="weather-card">
-                <div id="weather-info" class="weather-info">
-                    <!-- Данные о погоде будут добавлены здесь -->
+            <section class="current-weather">
+                <p id="current-temp">--°C</p>
+                <p id="current-feels-like">Ощущается как --°C</p>
+                <p id="current-condition">Погодные условия</p>
+            </section>
+            <section class="daily-forecast">
+                <h2>Прогноз на неделю</h2>
+                <div class="daily">
+                    <!-- Daily forecast items will be inserted here by JS -->
                 </div>
-                <div id="farmer-tips" class="farmer-tips">
-                    <!-- Подсказки для фермеров будут добавлены здесь -->
+            </section>
+            <section class="farmer-tips">
+                <h2>Подсказки фермерам</h2>
+                <div id="farmer-tips-content">
+                    <!-- Farmer tips will be inserted here by JS -->
                 </div>
-            </div>
-            <div class="forecast">
-                <!-- Ежедневный прогноз будет добавлен здесь -->
-            </div>
+            </section>
         </main>
         <footer>
             <p>© 2024 WeatherNow</p>
