@@ -85,9 +85,9 @@ const displayForecast = (data) => {
     const forecastList = data.list.filter((item, index) => index % 8 === 0); // Берем прогноз каждые 24 часа
     forecastContainer.innerHTML = '';
 
-    const days = ['Сегодня', 'Завтра', 'Послезавтра', 'Через два дня'];
-
-    forecastList.slice(0, 3).forEach((item, index) => {
+    forecastList.forEach((item, index) => {
+        const date = new Date(item.dt * 1000);
+        const day = index === 0 ? 'Сегодня' : (index === 1 ? 'Завтра' : 'Послезавтра');
         const tempMin = item.main.temp_min;
         const tempMax = item.main.temp_max;
         const condition = item.weather[0].description;
@@ -96,7 +96,7 @@ const displayForecast = (data) => {
 
         forecastContainer.innerHTML += `
             <div class="forecast-item">
-                <p>${days[index]}</p>
+                <p>${day}</p>
                 <p>${Math.round(tempMax)}°C / ${Math.round(tempMin)}°C</p>
                 <p>${weatherEmoji}</p>
                 <p>${condition}</p>
