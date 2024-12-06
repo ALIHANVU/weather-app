@@ -6,7 +6,7 @@
 }
 
 body {
-    background-color: #f4f4f4; /* Светло-серый фон */
+    background-color: #f4f4f4;
     color: #333;
     transition: background-color 0.4s, color 0.4s;
 }
@@ -16,7 +16,7 @@ body {
     margin: 40px auto;
     padding: 20px;
     text-align: center;
-    background-color: #ffffff; /* Белый фон для контейнера */
+    background-color: #ffffff;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
@@ -33,7 +33,7 @@ header {
 h1 {
     font-size: 1.8em;
     font-weight: 600;
-    color: #0056b3; /* Темно-синий цвет текста */
+    color: #0056b3;
 }
 
 .theme-toggle {
@@ -63,7 +63,7 @@ h1 {
 }
 
 #cityInput:focus {
-    border-color: #0056b3; /* Темно-синий цвет бордюра */
+    border-color: #0056b3;
     outline: none;
 }
 
@@ -71,21 +71,21 @@ h1 {
     padding: 12px 20px;
     border-radius: 20px;
     border: none;
-    background-color: #0056b3; /* Темно-синий фон кнопки */
+    background-color: #0056b3;
     color: #fff;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.3s;
 }
 
 #getWeatherBtn:hover {
-    background-color: #004494; /* Более темный синий фон при наведении */
+    background-color: #004494;
     transform: scale(1.05);
 }
 
 .weather-card {
     padding: 20px;
     border-radius: 20px;
-    background-color: #f9f9f9; /* Светло-серый фон для карточки */
+    background-color: #f9f9f9;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s, opacity 0.3s;
 }
@@ -103,7 +103,7 @@ h1 {
 
 .farmer-tips {
     padding: 10px;
-    background-color: #f9f9f9; /* Светло-серый фон для подсказок */
+    background-color: #f9f9f9;
     border-radius: 10px;
     color: #333;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -129,7 +129,7 @@ h1 {
     align-items: center;
     padding: 10px;
     border-radius: 10px;
-    background-color: #f9f9f9; /* Светло-серый фон для прогноза */
+    background-color: #f9f9f9;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     margin-bottom: 10px;
     flex: 0 1 calc(33.333% - 20px);
@@ -157,11 +157,11 @@ h1 {
 }
 
 .dark-theme #getWeatherBtn {
-    background-color: #5856d6; /* Темный пурпурный фон кнопки */
+    background-color: #5856d6;
 }
 
 .dark-theme #getWeatherBtn:hover {
-    background-color: #4b4ac0; /* Более темный пурпурный фон при наведении */
+    background-color: #4b4ac0;
 }
 
 .dark-theme .weather-card {
@@ -177,5 +177,32 @@ h1 {
 .dark-theme .forecast-item {
     background-color: #444;
     color: #f0f0f0;
+}
+
+/* Медиазапросы для улучшения адаптивности */
+@media (max-width: 600px) {
+    .app-container {
+        padding: 10px;
+        margin: 20px auto;
+    }
+
+    h1 {
+        font-size: 1.6em;
+    }
+
+    .input-container {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    #cityInput, #getWeatherBtn {
+        width: 100%;
+        flex: none;
+    }
+
+    .forecast-item {
+        flex: 0 1 100%;
+        margin: 5px 0;
+    }
 }
 
