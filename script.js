@@ -169,8 +169,8 @@ getWeatherBtn.addEventListener('click', () => {
     fetchWeather(city);
     // Скрыть поле ввода и кнопку "Узнать погоду" после нажатия
     document.querySelector('.input-container').style.display = 'none';
-    // Показать название города и кнопку возврата
-    locationElement.textContent = city;
+    // Показать кнопку возврата и обновить текст "WeatherNow"
+    locationElement.textContent = city;  // Отображение введенного названия города
     returnBtn.classList.remove('hidden');
 });
 
@@ -186,3 +186,4 @@ returnBtn.addEventListener('click', () => {
     farmerTipsContainer.innerHTML = '';
     cityInput.value = '';
 });
+
