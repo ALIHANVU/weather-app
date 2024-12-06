@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeatherNow</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>🌤️ WeatherNow</h1>
+            <button id="themeToggle" class="theme-toggle">🌙</button>
+        </header>
+        <main>
+            <div class="input-container">
+                <input type="text" id="cityInput" placeholder="Введите название города">
+                <button id="getWeatherBtn">Узнать погоду</button>
+            </div>
+            <div id="weather-card" class="weather-card">
+                <div id="weather-info" class="weather-info"></div>
+                <div id="farmer-tips" class="farmer-tips"></div>
+            </div>
+            <div class="forecast" id="forecast">
+                <!-- Здесь будет прогноз на несколько дней -->
+            </div>
+        </main>
+        <footer>
+            <p>© 2024 WeatherNow</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
