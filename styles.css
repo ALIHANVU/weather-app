@@ -25,22 +25,40 @@ body {
 }
 
 header {
-    margin-bottom: 20px;
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
+    margin-bottom: 20px;
 }
 
 h1 {
     font-size: 1.8em;
     font-weight: 500;
     color: #007aff;
-    margin-bottom: 10px;
+}
+
+button#themeToggle {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+button#themeToggle:hover {
+    transform: scale(1.2);
+}
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
 }
 
 input#cityInput {
     padding: 8px;
-    margin-bottom: 10px;
     border-radius: 20px;
     border: 1px solid #ccc;
     width: 100%;
@@ -64,19 +82,6 @@ button#getWeatherBtn {
 
 button#getWeatherBtn:hover {
     background-color: #005bb5;
-}
-
-button#themeToggle {
-    margin-top: 10px;
-    background: none;
-    border: none;
-    font-size: 1.5em;
-    cursor: pointer;
-    transition: transform 0.3s;
-}
-
-button#themeToggle:hover {
-    transform: scale(1.2);
 }
 
 .current-weather {
