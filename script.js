@@ -5,6 +5,7 @@ const currentTempElement = document.getElementById('current-temp');
 const currentFeelsLikeElement = document.getElementById('current-feels-like');
 const currentConditionElement = document.getElementById('current-condition');
 const themeToggle = document.getElementById('themeToggle');
+const returnBtn = document.getElementById('returnBtn');
 const dailyForecastContainer = document.querySelector('.daily');
 const farmerTipsContainer = document.querySelector('#farmer-tips-content');
 let isDarkTheme = false;
@@ -70,8 +71,9 @@ const displayWeather = (data) => {
     currentFeelsLikeElement.textContent = `Ощущается как ${Math.round(feelsLike)}°C`;
     currentConditionElement.textContent = condition.charAt(0).toUpperCase() + condition.slice(1);
 
-    // Скрытие поля ввода и кнопки "Узнать погоду" после нажатия
+    // Скрытие поля ввода и кнопки "Узнать погоду" после нажатия и появление кнопки возврата
     document.querySelector('.input-container').style.display = 'none';
+    returnBtn.classList.remove('hidden');
 
     updateFarmerTips(temp, condition, main.humidity, main.pressure, weather[0].main);
 };
@@ -165,7 +167,18 @@ themeToggle.addEventListener('click', () => {
 getWeatherBtn.addEventListener('click', () => {
     const city = cityInput.value.trim();
     fetchWeather(city);
-    // Скрыть поле ввода и кнопку "Узнать погоду" после нажатия
-    document.querySelector('.input-container').style.display = 'none';
 });
+
+// Обработчик для кнопки возврата
+returnBtn.addEventListener('click', () => {
+    document.querySelector('.input-container').style.display = 'flex';
+    returnBtn.classList.add('hidden');
+    locationElement.textContent = 'WeatherNow';
+    currentTempElement.textContent = '--°C';
+    currentFeelsLikeElement.textContent = 'Ощущается как --°C';
+    currentConditionElement.textContent = 'Погодные условия';
+    dailyForecastContainer.innerHTML = '';
+    farmerTipsContainer.innerHTML = '';
+});
+
 
