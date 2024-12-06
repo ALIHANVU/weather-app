@@ -1,7 +1,6 @@
 const cityInput = document.getElementById('cityInput');
 const getWeatherBtn = document.getElementById('getWeatherBtn');
 const locationElement = document.getElementById('location');
-const cityNameElement = document.getElementById('cityName');
 const currentTempElement = document.getElementById('current-temp');
 const currentFeelsLikeElement = document.getElementById('current-feels-like');
 const currentConditionElement = document.getElementById('current-condition');
@@ -60,26 +59,24 @@ const fetchWeather = async (city) => {
 };
 
 const displayWeather = (data) => {
-    const { main, weather, name } = data;
+    const { main, weather } = data;
     const temp = main.temp;
     const feelsLike = main.feels_like;
     const condition = weather[0].description;
     const icon = weather[0].icon;
     const weatherEmoji = weatherEmojiMap[icon] || "❓";
 
-    // Показать введенное название города
-    cityNameElement.textContent = name;
     currentTempElement.textContent = `${Math.round(temp)}°C ${weatherEmoji}`;
     currentFeelsLikeElement.textContent = `Ощущается как ${Math.round(feelsLike)}°C`;
     currentConditionElement.textContent = condition.charAt(0).toUpperCase() + condition.slice(1);
 
-    // Скрытие поля ввода и кнопки "Узнать погоду" после нажатия и появление кнопки возврата и названия города
+    // Скрытие поля ввода и кнопки "Узнать погоду" после нажатия и появление кнопки возврата
     document.querySelector('.input-container').style.display = 'none';
-    cityNameElement.classList.remove('hidden');
     returnBtn.classList.remove('hidden');
 
     updateFarmerTips(temp, condition, main.humidity, main.pressure, weather[0].main);
 };
+
 const displayForecast = (data) => {
     const days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
     const uniqueDays = {};
@@ -171,9 +168,7 @@ getWeatherBtn.addEventListener('click', () => {
     fetchWeather(city);
     // Скрыть поле ввода и кнопку "Узнать погоду" после нажатия
     document.querySelector('.input-container').style.display = 'none';
-    // Показать название города и кнопку возврата
-    cityNameElement.textContent = city;
-    cityNameElement.classList.remove('hidden');
+    // Показать кнопку возврата
     returnBtn.classList.remove('hidden');
 });
 
@@ -182,7 +177,6 @@ returnBtn.addEventListener('click', () => {
     document.querySelector('.input-container').style.display = 'flex';
     returnBtn.classList.add('hidden');
     locationElement.textContent = 'WeatherNow';
-    cityNameElement.classList.add('hidden');
     currentTempElement.textContent = '--°C';
     currentFeelsLikeElement.textContent = 'Ощущается как --°C';
     currentConditionElement.textContent = 'Погодные условия';
@@ -190,6 +184,7 @@ returnBtn.addEventListener('click', () => {
     farmerTipsContainer.innerHTML = '';
     cityInput.value = '';
 });
+
 
 
 
