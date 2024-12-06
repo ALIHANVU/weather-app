@@ -2,11 +2,11 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Roboto', sans-serif; /* Новый шрифт */
+    font-family: 'Roboto', sans-serif;
 }
 
 body {
-    background: linear-gradient(to right, #ff7e5f, #feb47b); /* Градиентный фон */
+    background: linear-gradient(to right, #ff7e5f, #feb47b);
     color: #333;
     transition: background-color 0.4s, color 0.4s;
 }
@@ -16,10 +16,10 @@ body {
     margin: 0 auto;
     padding: 20px;
     text-align: center;
-    background-color: rgba(255, 255, 255, 0.8); /* Полупрозрачный фон */
-    border-radius: 20px; /* Закругленные углы */
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 20px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px); /* Эффект размытия */
+    backdrop-filter: blur(10px);
 }
 
 header {
@@ -131,6 +131,7 @@ h1 {
     display: flex;
     justify-content: space-around;
     margin-top: 20px;
+    flex-wrap: wrap; /* Позволяет оборачивать элементы */
 }
 
 .forecast-item {
@@ -142,6 +143,9 @@ h1 {
     background-color: #f1f1f1;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s, opacity 0.3s;
+    margin-bottom: 10px; /* Отступ между строками */
+    flex: 0 1 calc(33.333% - 20px); /* Устанавливает ширину и отступы для адаптивности */
+    box-sizing: border-box;
 }
 
 .forecast-item:hover {
