@@ -84,6 +84,10 @@ button#getWeatherBtn:hover {
     background-color: #005bb5;
 }
 
+button.hidden {
+    display: none;
+}
+
 .current-weather {
     margin-bottom: 20px;
 }
