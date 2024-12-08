@@ -1,0 +1,21 @@
+body {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+h1 {
+    color: #007aff;
+}
+
+input#cityInput:focus {
+    border-color: #007aff;
+}
+
+button#getWeatherBtn {
+    background-color: #007aff;
+    color: #fff;
+}
+
+button#getWeatherBtn:hover {
+    background-color: #005bb5;
+}
