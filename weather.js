@@ -26,8 +26,8 @@ const fetchWeather = async (city) => {
 
     try {
         const [weatherResponse, forecastResponse] = await Promise.all([
-            fetch(getWeatherUrl(city)),
-            fetch(getForecastUrl(city))
+            fetchWithTimeout(getWeatherUrl(city)),
+            fetchWithTimeout(getForecastUrl(city))
         ]);
 
         if (!weatherResponse.ok || !forecastResponse.ok) {
@@ -41,6 +41,7 @@ const fetchWeather = async (city) => {
         removePlaceholders(); // Удаление placeholders после загрузки данных
     } catch (error) {
         console.error('Ошибка загрузки данных:', error);
+        alert('Произошла ошибка при загрузке данных. Попробуйте снова позже.');
     } finally {
         loadingSpinner.style.display = 'none'; // Скрытие индикатора загрузки
     }
@@ -52,6 +53,14 @@ const getWeatherUrl = (city) => {
 
 const getForecastUrl = (city) => {
     return `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&lang=ru&appid=${apiKey}`;
+};
+
+// Функция для запроса с тайм-аутом
+const fetchWithTimeout = (url, options = {}, timeout = 10000) => {
+    return Promise.race([
+        fetch(url, options),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Request timeout')), timeout))
+    ]);
 };
 
 const displayWeather = (data, city) => {
