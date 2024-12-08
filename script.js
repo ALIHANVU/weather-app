@@ -63,6 +63,9 @@ const fetchWeather = async (city) => {
     } catch (error) {
         console.error('Ошибка загрузки данных:', error);
         displayErrorMessage('Не удалось загрузить данные. Пожалуйста, проверьте название города и попробуйте снова.');
+        if (error.message.includes('Failed to fetch')) {
+            displayErrorMessage('Ошибка сети. Проверьте соединение с интернетом и попробуйте снова.');
+        }
     } finally {
         spinner.classList.add('hidden'); // Скрыть спиннер
     }
@@ -230,6 +233,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }, 1000); // Задержка в 1 секунду перед скрытием логотипа
     });
 });
+
 
 
 
