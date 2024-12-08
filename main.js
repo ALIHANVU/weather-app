@@ -106,3 +106,12 @@ const startWeatherUpdate = (city, interval) => {
 const stopWeatherUpdate = () => {
     clearInterval(weatherUpdateInterval);
 };
+
+const toggleTheme = () => {
+    isDarkTheme = !isDarkTheme;
+    document.body.classList.toggle('dark-theme', isDarkTheme);
+    appContainer.classList.toggle('dark-theme', isDarkTheme);
+    const themeIcon = themeToggle.querySelector('i');
+    themeIcon.classList.toggle('fa-sun', !isDarkTheme);
+    themeIcon.classList.toggle('fa-moon', isDarkTheme);
+};
