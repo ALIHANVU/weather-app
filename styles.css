@@ -16,18 +16,24 @@ body {
     transition: background-color 0.3s, color 0.3s;
 }
 
-button {
-    transition: background-color 0.3s, transform 0.3s;
+.logo-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 1;
+    animation: logoFadeOut 1s ease-in-out 3s forwards;
 }
 
-input {
-    transition: border-color 0.3s;
+@keyframes logoFadeOut {
+    to {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
 }
 
-#current-temp,
-#current-feels-like,
-#current-condition {
-    transition: color 0.3s;
+.hidden {
+    display: none;
 }
 
 .app-container {
@@ -38,7 +44,19 @@ input {
     background-color: #fff;
     border-radius: 20px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    animation: fadeIn 0.5s ease-in-out;
+    opacity: 0;
+    animation: fadeIn 1s ease-in-out 4s forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 header {
@@ -48,7 +66,7 @@ header {
     margin-bottom: 20px;
     position: relative;
     opacity: 0;
-    animation: slideIn 0.5s ease-in-out 0.1s forwards;
+    animation: slideIn 0.5s ease-in-out 4.1s forwards;
 }
 
 h1 {
@@ -57,7 +75,7 @@ h1 {
     color: #007aff;
     margin: 20px 0;
     opacity: 0;
-    animation: slideIn 0.5s ease-in-out 0.2s forwards;
+    animation: slideIn 0.5s ease-in-out 4.2s forwards;
 }
 
 button#themeToggle {
@@ -83,7 +101,7 @@ button#themeToggle:active {
     gap: 10px;
     margin-bottom: 20px;
     opacity: 0;
-    animation: slideIn 0.5s ease-in-out 0.3s forwards;
+    animation: slideIn 0.5s ease-in-out 4.3s forwards;
 }
 
 input#cityInput {
@@ -108,7 +126,7 @@ button#getWeatherBtn {
     cursor: pointer;
     transition: background-color 0.3s;
     opacity: 0;
-    animation: slideIn 0.5s ease-in-out 0.4s forwards;
+    animation: slideIn 0.5s ease-in-out 4.4s forwards;
 }
 
 button#getWeatherBtn:hover {
@@ -134,14 +152,14 @@ button.return-btn:hover {
 .current-weather {
     margin-bottom: 20px;
     opacity: 0;
-    animation: slideIn 0.5s ease-in-out 0.5s forwards;
+    animation: slideIn 0.5s ease-in-out 4.5s forwards;
 }
 
 #current-temp {
     font-size: 2.5em;
     font-weight: 700;
     opacity: 0;
-    animation: slideIn 0.5s ease-in-out 0.6s forwards;
+    animation: slideIn 0.5s ease-in-out 4.6s forwards;
 }
 
 #current-feels-like {
@@ -149,37 +167,26 @@ button.return-btn:hover {
     color: #666;
     margin-bottom: 10px;
     opacity: 0;
-    animation: slideIn 0.5s ease-in-out 0.7s forwards;
+    animation: slideIn 0.5s ease-in-out 4.7s forwards;
 }
 
 #current-condition {
     font-size: 1.2em;
     color: #666;
     opacity: 0;
-    animation: slideIn 0.5s ease-in-out 0.8s forwards;
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    animation: slideIn 0.5s ease-in-out 4.8s forwards;
 }
 
 .daily-forecast {
     margin: 20px 0;
     opacity: 0;
-    animation: slideIn 0.5s ease-in-out 0.9s forwards;
+    animation: slideIn 0.5s ease-in-out 4.9s forwards;
 }
 
 .farmer-tips {
     margin: 20px 0;
     opacity: 0;
-    animation: slideIn 0.5s ease-in-out 0.9s forwards;
+    animation: slideIn 0.5s ease-in-out 4.9s forwards;
 }
 
 .daily,
