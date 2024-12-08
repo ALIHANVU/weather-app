@@ -8,6 +8,8 @@ const themeToggle = document.getElementById('themeToggle');
 const returnBtn = document.getElementById('returnBtn');
 const dailyForecastContainer = document.querySelector('.daily');
 const farmerTipsContainer = document.querySelector('#farmer-tips-content');
+const errorMessage = document.createElement('p'); // Создаем элемент для сообщений об ошибках
+errorMessage.classList.add('error-message');
 let isDarkTheme = false;
 
 const apiKey = 'c708426913319b328c4ff4719583d1c6';
@@ -35,7 +37,7 @@ const weatherEmojiMap = {
 
 const fetchWeather = async (city) => {
     if (!city) {
-        alert('Введите название города.');
+        displayErrorMessage('Пожалуйста, введите название города.');
         return;
     }
 
@@ -51,10 +53,12 @@ const fetchWeather = async (city) => {
 
         const weatherData = await weatherResponse.json();
         const forecastData = await forecastResponse.json();
+        clearErrorMessage();
         displayWeather(weatherData, city);
         displayForecast(forecastData);
     } catch (error) {
         console.error('Ошибка загрузки данных:', error);
+        displayErrorMessage('Не удалось загрузить данные. Пожалуйста, проверьте название города и попробуйте снова.');
     }
 };
 
@@ -69,7 +73,6 @@ const displayWeather = (data, city) => {
     currentTempElement.textContent = `${Math.round(temp)}°C ${weatherEmoji}`;
     currentFeelsLikeElement.textContent = `Ощущается как ${Math.round(feelsLike)}°C`;
     currentConditionElement.textContent = condition.charAt(0).toUpperCase() + condition.slice(1);
-
     // Скрытие поля ввода и кнопки "Узнать погоду" после нажатия и появление кнопки возврата
     document.querySelector('.input-container').style.display = 'none';
     locationElement.textContent = city;  // Отображение введенного названия города
@@ -159,6 +162,20 @@ const updateFarmerTips = async (temp, condition, humidity, pressure, weatherMain
         }, 300);
     } catch (error) {
         console.error('Ошибка загрузки подсказок для фермеров:', error);
+        displayErrorMessage('Не удалось загрузить подсказки для фермеров.');
+    }
+};
+
+// Отображение сообщений об ошибках
+const displayErrorMessage = (message) => {
+    errorMessage.textContent = message;
+    cityInput.parentNode.appendChild(errorMessage);
+};
+
+// Очистка сообщений об ошибках
+const clearErrorMessage = () => {
+    if (errorMessage.parentNode) {
+        errorMessage.parentNode.removeChild(errorMessage);
     }
 };
 
@@ -186,6 +203,7 @@ returnBtn.addEventListener('click', () => {
     dailyForecastContainer.innerHTML = '';
     farmerTipsContainer.innerHTML = '';
     cityInput.value = '';
+    clearErrorMessage();
 });
 
 // Отладка начальной анимации
@@ -201,6 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
         appContainer.style.opacity = 1; // Обеспечение видимости контейнера
     });
 });
+
 
 
 
