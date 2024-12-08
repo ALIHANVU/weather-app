@@ -1,3 +1,55 @@
+const apiKey = 'c708426913319b328c4ff4719583d1c6';
+
+const weatherEmojiMap = {
+    "01d": "☀️", 
+    "01n": "🌕", 
+    "02d": "⛅", 
+    "02n": "🌥️", 
+    "03d": "☁️", 
+    "03n": "☁️", 
+    "04d": "☁️", 
+    "04n": "☁️", 
+    "09d": "🌦️", 
+    "09n": "🌦️", 
+    "10d": "🌧️", 
+    "10n": "🌧️", 
+    "11d": "⛈️", 
+    "11n": "⛈️", 
+    "13d": "❄️", 
+    "13n": "❄️", 
+    "50d": "🌫️", 
+    "50n": "🌫️"
+};
+
+const fetchWeather = async (city) => {
+    loadingSpinner.style.display = 'block'; // Показ индикатора загрузки
+
+    try {
+        const [weatherResponse, forecastResponse] = await Promise.all([
+            fetch(getWeatherUrl(city)),
+            fetch(getForecastUrl(city))
+        ]);
+
+        if (!weatherResponse.ok || !forecastResponse.ok) {
+            throw new Error('Ошибка загрузки данных');
+        }
+
+        const weatherData = await weatherResponse.json();
+        const forecastData = await forecastResponse.json();
+        displayWeather(weatherData, city);
+        displayForecast(forecastData);
+        removePlaceholders(); // Удаление placeholders после загрузки данных
+    } catch (error) {
+        console.error('Ошибка загрузки данных:', error);
+    } finally {
+        loadingSpinner.style.display = 'none'; // Скрытие индикатора загрузки
+    }
+};
+
+const getWeatherUrl = (city) => {
+    return `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=ru&appid=${apiKey}`;
+};
+
 const getForecastUrl = (city) => {
     return `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&lang=ru&appid=${apiKey}`;
 };
