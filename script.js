@@ -188,5 +188,15 @@ returnBtn.addEventListener('click', () => {
     cityInput.value = '';
 });
 
+// Отладка начальной анимации
+document.addEventListener('DOMContentLoaded', () => {
+    const logoContainer = document.getElementById('logo-container');
+    const appContainer = document.querySelector('.app-container');
 
-
+    console.log('Старт анимации логотипа');
+    logoContainer.addEventListener('animationend', () => {
+        console.log('Анимация логотипа завершена');
+        logoContainer.classList.add('hidden');
+        appContainer.classList.remove('hidden');
+    });
+});
