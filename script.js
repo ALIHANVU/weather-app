@@ -30,7 +30,7 @@ const weatherEmojiMap = {
     "13d": "❄️", 
     "13n": "❄️", 
     "50d": "🌫️", 
-    "50n": "🌫️"  
+    "50n": "🌫️"
 };
 
 const fetchWeather = async (city) => {
@@ -115,45 +115,51 @@ const displayForecast = (data) => {
     });
 };
 
-// Обновление подсказок для фермеров
-const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
-    let tip = '';
+// Обновление подсказок для фермеров из JSON
+const updateFarmerTips = async (temp, condition, humidity, pressure, weatherMain) => {
+    try {
+        const response = await fetch('farmer-tips.json');
+        const tipsData = await response.json();
+        let tip = '';
 
-    if (weatherMain === 'Rain' || weatherMain === 'Drizzle') {
-        tip = `Дождливо (${temp}°C). Проверьте состояние полей и убедитесь, что дренаж работает правильно.`;
-    } else if (weatherMain === 'Clear') {
-        if (temp > 30) {
-            tip = `Солнечно и жарко (${temp}°C). Обеспечьте достаточный полив растений, чтобы избежать пересыхания.`;
-        } else if (temp < 10) {
-            tip = `Солнечно, но холодно (${temp}°C). Защитите молодые растения от возможных заморозков.`;
+        if (weatherMain === 'Rain' || weatherMain === 'Drizzle') {
+            tip = tipsData.rain;
+        } else if (weatherMain === 'Clear') {
+            if (temp > 30) {
+                tip = tipsData.clear_hot;
+            } else if (temp < 10) {
+                tip = tipsData.clear_cold;
+            } else {
+                tip = tipsData.clear_mild;
+            }
+        } else if (weatherMain === 'Clouds') {
+            tip = tipsData.clouds;
+        } else if (weatherMain === 'Snow') {
+            tip = tipsData.snow;
+        } else if (weatherMain === 'Thunderstorm') {
+            tip = tipsData.thunderstorm;
+        } else if (weatherMain === 'Mist' || weatherMain === 'Fog') {
+            tip = tipsData.mist_fog;
         } else {
-            tip = `Солнечно (${temp}°C). Отличное время для всех видов полевых работ.`;
+            tip = tipsData.stable;
         }
-    } else if (weatherMain === 'Clouds') {
-        tip = `Облачно (${temp}°C). Отличное время для посадки и пересадки растений.`;
-    } else if (weatherMain === 'Snow') {
-        tip = `Снегопад (${temp}°C). Проверьте теплицы и укрытия для растений.`;
-    } else if (weatherMain === 'Thunderstorm') {
-        tip = `Гроза (${temp}°C). Опасно проводить работы на открытых полях.`;
-    } else if (weatherMain === 'Mist' || weatherMain === 'Fog') {
-        tip = `Туман (${temp}°C). Следите за влажностью почвы и воздуха.`;
-    } else {
-        tip = `Погодные условия стабильные (${temp}°C). Работы на полях могут продолжаться в обычном режиме.`;
-    }
 
-    if (humidity > 80) {
-        tip += ' Высокая влажность может способствовать развитию грибковых заболеваний.';
-    }
+        if (humidity > 80) {
+            tip += ' ' + tipsData.high_humidity;
+        }
 
-    if (pressure < 1000) {
-        tip += ' Низкое давление. Возможны затруднения в опылении.';
-    }
+        if (pressure < 1000) {
+            tip += ' ' + tipsData.low_pressure;
+        }
 
-    farmerTipsContainer.style.opacity = 0; // Начальная прозрачность
-    setTimeout(() => {
-        farmerTipsContainer.innerHTML = `<p class="tip">${tip}</p>`;
-        farmerTipsContainer.style.opacity = 1; // Плавное появление
-    }, 300);
+        farmerTipsContainer.style.opacity = 0; // Начальная прозрачность
+        setTimeout(() => {
+            farmerTipsContainer.innerHTML = `<p class="tip">${tip}</p>`;
+            farmerTipsContainer.style.opacity = 1; // Плавное появление
+        }, 300);
+    } catch (error) {
+        console.error('Ошибка загрузки подсказок для фермеров:', error);
+    }
 };
 
 // Переключение темной и светлой темы
@@ -181,5 +187,6 @@ returnBtn.addEventListener('click', () => {
     farmerTipsContainer.innerHTML = '';
     cityInput.value = '';
 });
+
 
 
