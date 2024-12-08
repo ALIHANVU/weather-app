@@ -96,7 +96,7 @@ const displayForecast = (data) => {
         const weatherEmoji = weatherEmojiMap[icon] || "❓";
 
         dailyForecastContainer.innerHTML += `
-            <div class="day">
+            <div class="day fade-in">
                 <p>${day}</p>
                 <p>${Math.round(tempMax)}°C / ${Math.round(tempMin)}°C</p>
                 <p>${weatherEmoji}</p>
@@ -144,7 +144,7 @@ const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
 
             farmerTipsContainer.style.opacity = 0;
             setTimeout(() => {
-                farmerTipsContainer.innerHTML = `<p class="tip">${tip}</p>`;
+                farmerTipsContainer.innerHTML = `<p class="tip fade-in">${tip}</p>`;
                 farmerTipsContainer.style.opacity = 1;
             }, 300);
         })
