@@ -1,4 +1,3 @@
-/* Сброс стандартных стилей */
 * {
     margin: 0;
     padding: 0;
@@ -6,7 +5,6 @@
     font-family: 'Roboto', sans-serif;
 }
 
-/* Основной стиль для body */
 body {
     background-color: #f0f0f0;
     color: #333;
@@ -14,11 +12,10 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    overflow: hidden;
+    position: relative;
     transition: background-color 0.3s, color 0.3s;
 }
 
-/* Стили для контейнера логотипа */
 .logo-container {
     position: absolute;
     top: 50%;
@@ -28,40 +25,28 @@ body {
     animation: logoFadeIn 1s ease-in-out, logoFadeOut 1s ease-in-out 3s forwards;
 }
 
-.logo-container img {
-    width: 100px;
-    height: auto;
-}
-
-/* Анимации для логотипа */
 @keyframes logoFadeIn {
     from {
         opacity: 0;
-        transform: translate(-50%, -50%) scale(0.9);
+        transform: translate(-50%, -50%);
     }
     to {
         opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
+        transform: translate(-50%, -50%);
     }
 }
 
 @keyframes logoFadeOut {
-    from {
-        opacity: 1;
-        transform: translate(-50%, -50%);
-    }
     to {
         opacity: 0;
         transform: translate(-50%, -60%);
     }
 }
 
-/* Скрытие элемента */
 .hidden {
     display: none;
 }
 
-/* Стили для основного контейнера приложения */
 .app-container {
     max-width: 360px;
     margin: auto;
@@ -74,7 +59,6 @@ body {
     animation: fadeIn 1s ease-in-out 4s forwards;
 }
 
-/* Анимация появления приложения */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -86,12 +70,25 @@ body {
     }
 }
 
-/* Стили для заголовка */
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    position: relative;
+    opacity: 0;
+    animation: slideIn 0.5s ease-in-out 4.1s forwards;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 h1 {
@@ -99,9 +96,10 @@ h1 {
     font-weight: 500;
     color: #007aff;
     margin: 20px 0;
+    opacity: 0;
+    animation: slideIn 0.5s ease-in-out 4.2s forwards;
 }
 
-/* Кнопка переключения темы */
 button#themeToggle {
     background: none;
     border: none;
@@ -118,13 +116,14 @@ button#themeToggle:active {
     transform: rotate(360deg);
 }
 
-/* Контейнер для ввода города */
 .input-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
     margin-bottom: 20px;
+    opacity: 0;
+    animation: slideIn 0.5s ease-in-out 4.3s forwards;
 }
 
 input#cityInput {
@@ -148,13 +147,18 @@ button#getWeatherBtn {
     color: #fff;
     cursor: pointer;
     transition: background-color 0.3s;
+    opacity: 0;
+    animation: slideIn 0.5s ease-in-out 4.4s forwards;
 }
 
 button#getWeatherBtn:hover {
     background-color: #005bb5;
 }
 
-/* Возвратная кнопка */
+button.hidden {
+    display: none;
+}
+
 button.return-btn {
     background: none;
     border: none;
@@ -167,40 +171,56 @@ button.return-btn:hover {
     transform: scale(1.2);
 }
 
-/* Текущая погода */
 .current-weather {
     margin-bottom: 20px;
+    opacity: 0;
+    animation: slideIn 0.5s ease-in-out 4.5s forwards;
 }
 
 #current-temp {
     font-size: 2.5em;
     font-weight: 700;
+    opacity: 0;
+    animation: slideIn 0.5s ease-in-out 4.6s forwards;
 }
 
 #current-feels-like {
     font-size: 1.2em;
     color: #666;
     margin-bottom: 10px;
+    opacity: 0;
+    animation: slideIn 0.5s ease-in-out 4.7s forwards;
 }
 
 #current-condition {
     font-size: 1.2em;
     color: #666;
+    opacity: 0;
+    animation: slideIn 0.5s ease-in-out 4.8s forwards;
 }
 
-/* Прогноз на несколько дней */
 .daily-forecast {
     margin: 20px 0;
+    opacity: 0;
+    animation: slideIn 0.5s ease-in-out 4.9s forwards;
 }
 
-.daily {
+.farmer-tips {
+    margin: 20px 0;
+    opacity: 0;
+    animation: slideIn 0.5s ease-in-out 4.9s forwards;
+}
+
+.daily,
+.farmer-tips-content {
     display: flex;
     flex-direction: column;
     gap: 10px;
     text-align: left;
 }
 
-.daily .day {
+.daily .day,
+.farmer-tips-content .tip {
     padding: 10px;
     border-radius: 10px;
     background-color: #f0f0f0;
@@ -208,12 +228,12 @@ button.return-btn:hover {
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.daily .day:hover {
+.daily .day:hover,
+.farmer-tips-content .tip:hover {
     transform: translateY(-5px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Стили для тёмной темы */
 .dark-theme {
     background-color: #2c2c2e;
     color: #f0f0f0;
@@ -225,40 +245,37 @@ button.return-btn:hover {
 }
 
 .dark-theme h1,
+.dark-theme h2,
 .dark-theme #current-temp,
 .dark-theme #current-feels-like,
 .dark-theme #current-condition {
     color: #f0f0f0;
 }
 
-.dark-theme .daily .day {
+.dark-theme .daily .day,
+.dark-theme .farmer-tips-content .tip {
     background-color: #444;
     color: #f0f0f0;
 }
 
 /* Медиазапрос для мобильных устройств */
 @media (max-width: 768px) {
-    .app-container {
-        padding: 15px;
-    }
-
-    h1 {
-        font-size: 1.5em;
-    }
-
-    button#getWeatherBtn {
-        padding: 10px;
-        font-size: 1em;
-    }
-
-    input#cityInput {
-        padding: 10px;
-    }
-
-    #current-temp {
-        font-size: 2em;
+    .app-container,
+    header,
+    h1,
+    .input-container,
+    button#getWeatherBtn,
+    .current-weather,
+    #current-temp,
+    #current-feels-like,
+    #current-condition,
+    .daily-forecast,
+    .farmer-tips {
+        animation-duration: 0.5s;
+        animation-fill-mode: forwards;
     }
 }
+
 
 
 
