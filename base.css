@@ -49,8 +49,9 @@ header {
 }
 
 h1 {
-    font-size: 1.8em;
-    font-weight: 500;
+    font-size: 2em;
+    font-weight: 700;
+    color: #333;
     margin: 20px 0;
 }
 
@@ -79,21 +80,32 @@ button#themeToggle:active {
 }
 
 input#cityInput {
-    padding: 8px;
+    padding: 10px;
     border-radius: 20px;
     border: 1px solid #ccc;
     width: 100%;
+    font-size: 1.1em;
 }
 
 input#cityInput:focus {
     outline: none;
+    border-color: #007aff;
 }
 
 button#getWeatherBtn {
-    padding: 8px 16px;
+    padding: 10px 20px;
     border-radius: 20px;
     border: none;
     cursor: pointer;
+    background-color: #007aff;
+    color: white;
+    font-size: 1.1em;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+button#getWeatherBtn:hover {
+    background-color: #005bb5;
+    transform: scale(1.05);
 }
 
 button.hidden {
@@ -113,6 +125,9 @@ button.return-btn:hover {
 
 .current-weather {
     margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 #current-temp {
@@ -129,10 +144,45 @@ button.return-btn:hover {
     font-size: 1.2em;
 }
 
-.daily-forecast, .farmer-tips {
-    min-height: 200px; /* Минимальная высота для предотвращения подергивания */
-    overflow: hidden;
-    transition: min-height 0.5s ease-in-out;
+.daily-forecast {
+    display: flex;
+    gap: 10px;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.daily-forecast .day {
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    padding: 10px;
+    width: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.daily-forecast .day:hover {
+    background-color: #e0e0e0;
+    transform: scale(1.05);
+}
+
+.daily-forecast .day p {
+    margin: 5px 0;
+    font-size: 1em;
+}
+
+.farmer-tips {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #e6f7ff;
+    border-radius: 10px;
+    text-align: left;
+}
+
+.farmer-tips p {
+    margin: 10px 0;
 }
 
 .placeholder {
@@ -222,6 +272,10 @@ button.return-btn:hover {
     h1 {
         font-size: 1.5em;
     }
+
+    .daily-forecast .day {
+        width: 80px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -240,6 +294,10 @@ button.return-btn:hover {
     button {
         font-size: 0.9em;
         padding: 10px;
+    }
+
+    .daily-forecast .day {
+        width: 70px;
     }
 }
 
