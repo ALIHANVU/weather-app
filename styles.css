@@ -13,6 +13,21 @@ body {
     align-items: center;
     height: 100vh;
     position: relative;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+button {
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+input {
+    transition: border-color 0.3s;
+}
+
+#current-temp,
+#current-feels-like,
+#current-condition {
+    transition: color 0.3s;
 }
 
 .app-container {
@@ -38,6 +53,18 @@ h1 {
     font-weight: 500;
     color: #007aff;
     margin: 20px 0;
+    animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 button#themeToggle {
@@ -45,11 +72,15 @@ button#themeToggle {
     border: none;
     font-size: 1.5em;
     cursor: pointer;
-    transition: transform 0.3s;
+    transition: transform 0.3s, color 0.3s;
 }
 
 button#themeToggle:hover {
     transform: scale(1.2);
+}
+
+button#themeToggle:active {
+    transform: rotate(360deg);
 }
 
 .input-container {
@@ -142,6 +173,13 @@ button.return-btn:hover {
     border-radius: 10px;
     background-color: #f0f0f0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.daily .day:hover,
+.farmer-tips-content .tip:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .dark-theme {
@@ -167,6 +205,4 @@ button.return-btn:hover {
     background-color: #444;
     color: #f0f0f0;
 }
-
-
 
