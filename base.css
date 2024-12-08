@@ -168,6 +168,30 @@ button.return-btn:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+/* Анимация индикатора загрузки */
+.loading-spinner {
+    display: none;
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #007aff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
 /* Медиазапрос для мобильных устройств */
 @media (max-width: 768px) {
     .app-container, header, h1, .input-container, button#getWeatherBtn, .current-weather, #current-temp, #current-feels-like, #current-condition, .daily-forecast, .farmer-tips {
