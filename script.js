@@ -1,4 +1,4 @@
-cconst cityInput = document.getElementById('cityInput');
+const cityInput = document.getElementById('cityInput');
 const getWeatherBtn = document.getElementById('getWeatherBtn');
 const locationElement = document.getElementById('location');
 const currentTempElement = document.getElementById('current-temp');
@@ -70,9 +70,8 @@ const displayWeather = (data, city) => {
     currentFeelsLikeElement.textContent = `Ощущается как ${Math.round(feelsLike)}°C`;
     currentConditionElement.textContent = condition.charAt(0).toUpperCase() + condition.slice(1);
 
-    // Скрытие поля ввода и кнопки "Узнать погоду" после нажатия и появление кнопки возврата
     document.querySelector('.input-container').style.display = 'none';
-    locationElement.textContent = city;  // Отображение введенного названия города
+    locationElement.textContent = city;
     returnBtn.classList.remove('hidden');
 
     updateFarmerTips(temp, condition, main.humidity, main.pressure, weather[0].main);
@@ -115,7 +114,6 @@ const displayForecast = (data) => {
     });
 };
 
-// Обновление подсказок для фермеров из JSON
 const updateFarmerTips = async (temp, condition, humidity, pressure, weatherMain) => {
     try {
         const response = await fetch('farmer-tips.json');
@@ -152,30 +150,27 @@ const updateFarmerTips = async (temp, condition, humidity, pressure, weatherMain
             tip += ' ' + tipsData.low_pressure;
         }
 
-        farmerTipsContainer.style.opacity = 0; // Начальная прозрачность
+        farmerTipsContainer.style.opacity = 0;
         setTimeout(() => {
             farmerTipsContainer.innerHTML = `<p class="tip">${tip}</p>`;
-            farmerTipsContainer.style.opacity = 1; // Плавное появление
+            farmerTipsContainer.style.opacity = 1;
         }, 300);
     } catch (error) {
         console.error('Ошибка загрузки подсказок для фермеров:', error);
     }
 };
 
-// Переключение темной и светлой темы
 themeToggle.addEventListener('click', () => {
     isDarkTheme = !isDarkTheme;
     document.body.classList.toggle('dark-theme', isDarkTheme);
     themeToggle.textContent = isDarkTheme ? '☀️' : '🌙';
 });
 
-// Обработчик для кнопки "Узнать погоду"
 getWeatherBtn.addEventListener('click', () => {
     const city = cityInput.value.trim();
     fetchWeather(city);
 });
 
-// Обработчик для кнопки возврата
 returnBtn.addEventListener('click', () => {
     document.querySelector('.input-container').style.display = 'flex';
     returnBtn.classList.add('hidden');
@@ -188,17 +183,15 @@ returnBtn.addEventListener('click', () => {
     cityInput.value = '';
 });
 
-// Отладка начальной анимации
+// Исправленная логика анимации логотипа
 document.addEventListener('DOMContentLoaded', () => {
     const logoContainer = document.getElementById('logo-container');
     const appContainer = document.querySelector('.app-container');
 
-    console.log('Старт анимации логотипа');
     logoContainer.addEventListener('animationend', () => {
-        console.log('Анимация логотипа завершена');
         logoContainer.classList.add('hidden');
         appContainer.classList.remove('hidden');
-        appContainer.style.opacity = 1; // Обеспечение видимости контейнера
+        appContainer.style.opacity = 1;
     });
 });
 
