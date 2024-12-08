@@ -47,6 +47,7 @@ const addPlaceholders = () => {
     farmerTipsContainer.innerHTML = '<div class="placeholder"></div>'.repeat(3);
 };
 
+// Убедимся, что функция `removePlaceholders` объявлена только один раз
 const removePlaceholders = () => {
     dailyForecastContainer.innerHTML = '';
     farmerTipsContainer.innerHTML = '';
