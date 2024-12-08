@@ -22,12 +22,13 @@ const weatherEmojiMap = {
 };
 
 const fetchWeather = async (city) => {
+    console.log("Fetching weather for city:", city);
     loadingSpinner.style.display = 'block'; // Показ индикатора загрузки
 
     try {
         const [weatherResponse, forecastResponse] = await Promise.all([
-            fetchWithTimeout(getWeatherUrl(city)),
-            fetchWithTimeout(getForecastUrl(city))
+            fetch(getWeatherUrl(city)),
+            fetch(getForecastUrl(city))
         ]);
 
         if (!weatherResponse.ok || !forecastResponse.ok) {
@@ -36,6 +37,8 @@ const fetchWeather = async (city) => {
 
         const weatherData = await weatherResponse.json();
         const forecastData = await forecastResponse.json();
+        console.log("Weather data:", weatherData);
+        console.log("Forecast data:", forecastData);
         displayWeather(weatherData, city);
         displayForecast(forecastData);
         removePlaceholders(); // Удаление placeholders после загрузки данных
@@ -53,14 +56,6 @@ const getWeatherUrl = (city) => {
 
 const getForecastUrl = (city) => {
     return `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&lang=ru&appid=${apiKey}`;
-};
-
-// Функция для запроса с тайм-аутом
-const fetchWithTimeout = (url, options = {}, timeout = 10000) => {
-    return Promise.race([
-        fetch(url, options),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Request timeout')), timeout))
-    ]);
 };
 
 const displayWeather = (data, city) => {
