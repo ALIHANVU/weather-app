@@ -12,27 +12,27 @@
 <body>
     <div class="app-container">
         <header>
-            <button id="themeToggle" class="theme-toggle">🌙</button>
-            <button id="returnBtn" class="return-btn hidden">⮌</button>
+            <button id="themeToggle" class="theme-toggle fade-in">🌙</button>
+            <button id="returnBtn" class="return-btn hidden fade-in">⮌</button>
         </header>
         <main>
-            <div class="input-container">
+            <div class="input-container fade-in">
                 <input type="text" id="cityInput" placeholder="Введите название города">
-                <button id="getWeatherBtn">Узнать погоду</button>
+                <button id="getWeatherBtn" class="fade-in">Узнать погоду</button>
             </div>
-            <h1 id="location">WeatherNow</h1>
-            <section class="current-weather">
+            <h1 id="location" class="fade-in">WeatherNow</h1>
+            <section class="current-weather fade-in">
                 <p id="current-temp">--°C</p>
                 <p id="current-feels-like">Ощущается как --°C</p>
                 <p id="current-condition">Погодные условия</p>
             </section>
-            <section class="farmer-tips">
+            <section class="farmer-tips fade-in">
                 <h2>Подсказки фермерам</h2>
                 <div id="farmer-tips-content">
                     <!-- Подсказки для фермеров будут вставлены с помощью JS -->
                 </div>
             </section>
-            <section class="daily-forecast">
+            <section class="daily-forecast fade-in">
                 <h2>Прогноз на неделю</h2>
                 <div class="daily">
                     <!-- Прогноз на неделю будет вставлен с помощью JS -->
