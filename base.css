@@ -178,19 +178,28 @@ button.return-btn:hover {
 
 /* Медиазапрос для мобильных устройств */
 @media (max-width: 768px) {
-    .app-container, header, h1, .input-container, button#getWeatherBtn, .current-weather, #current-temp, #current-feels-like, #current-condition, .daily-forecast, .farmer-tips {
-        animation-duration: 0.5s;
-        animation-fill-mode: forwards;
+    .app-container {
+        max-width: 90%;
+        padding: 15px;
+    }
+    
+    .app-container.expanded {
+        max-width: 100%;
+        padding: 30px;
     }
 
-    .app-container {
-        max-width: 100%;
+    h1 {
+        font-size: 1.5em;
     }
 }
 
 @media (max-width: 480px) {
     .app-container {
         padding: 10px;
+    }
+
+    .app-container.expanded {
+        padding: 20px;
     }
 
     h1 {
