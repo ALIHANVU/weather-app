@@ -11,6 +11,7 @@ const farmerTipsContainer = document.querySelector('#farmer-tips-content');
 const errorMessage = document.createElement('p'); // Создаем элемент для сообщений об ошибках
 errorMessage.classList.add('error-message');
 let isDarkTheme = false;
+let farmerTips = {}; // Переменная для хранения кэшированных подсказок
 
 const apiKey = 'c708426913319b328c4ff4719583d1c6';
 
@@ -118,52 +119,45 @@ const displayForecast = (data) => {
     });
 };
 
-// Обновление подсказок для фермеров из JSON
-const updateFarmerTips = async (temp, condition, humidity, pressure, weatherMain) => {
-    try {
-        const response = await fetch('farmer-tips.json');
-        const tipsData = await response.json();
-        let tip = '';
+// Обновление подсказок для фермеров из кэшированной переменной
+const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
+    let tip = '';
 
-        if (weatherMain === 'Rain' || weatherMain === 'Drizzle') {
-            tip = tipsData.rain;
-        } else if (weatherMain === 'Clear') {
-            if (temp > 30) {
-                tip = tipsData.clear_hot;
-            } else if (temp < 10) {
-                tip = tipsData.clear_cold;
-            } else {
-                tip = tipsData.clear_mild;
-            }
-        } else if (weatherMain === 'Clouds') {
-            tip = tipsData.clouds;
-        } else if (weatherMain === 'Snow') {
-            tip = tipsData.snow;
-        } else if (weatherMain === 'Thunderstorm') {
-            tip = tipsData.thunderstorm;
-        } else if (weatherMain === 'Mist' || weatherMain === 'Fog') {
-            tip = tipsData.mist_fog;
+    if (weatherMain === 'Rain' || weatherMain === 'Drizzle') {
+        tip = farmerTips.rain;
+    } else if (weatherMain === 'Clear') {
+        if (temp > 30) {
+            tip = farmerTips.clear_hot;
+        } else if (temp < 10) {
+            tip = farmerTips.clear_cold;
         } else {
-            tip = tipsData.stable;
+            tip = farmerTips.clear_mild;
         }
-
-        if (humidity > 80) {
-            tip += ' ' + tipsData.high_humidity;
-        }
-
-        if (pressure < 1000) {
-            tip += ' ' + tipsData.low_pressure;
-        }
-
-        farmerTipsContainer.style.opacity = 0; // Начальная прозрачность
-        setTimeout(() => {
-            farmerTipsContainer.innerHTML = `<p class="tip">${tip}</p>`;
-            farmerTipsContainer.style.opacity = 1; // Плавное появление
-        }, 300);
-    } catch (error) {
-        console.error('Ошибка загрузки подсказок для фермеров:', error);
-        displayErrorMessage('Не удалось загрузить подсказки для фермеров.');
+    } else if (weatherMain === 'Clouds') {
+        tip = farmerTips.clouds;
+    } else if (weatherMain === 'Snow') {
+        tip = farmerTips.snow;
+    } else if (weatherMain === 'Thunderstorm') {
+        tip = farmerTips.thunderstorm;
+    } else if (weatherMain === 'Mist' || weatherMain === 'Fog') {
+        tip = farmerTips.mist_fog;
+    } else {
+        tip = farmerTips.stable;
     }
+
+    if (humidity > 80) {
+        tip += ' ' + farmerTips.high_humidity;
+    }
+
+    if (pressure < 1000) {
+        tip += ' ' + farmerTips.low_pressure;
+    }
+
+    farmerTipsContainer.style.opacity = 0; // Начальная прозрачность
+    setTimeout(() => {
+        farmerTipsContainer.innerHTML = `<p class="tip">${tip}</p>`;
+        farmerTipsContainer.style.opacity = 1; // Плавное появление
+    }, 300);
 };
 
 // Отображение сообщений об ошибках
@@ -191,7 +185,6 @@ getWeatherBtn.addEventListener('click', () => {
     const city = cityInput.value.trim();
     fetchWeather(city);
 });
-
 // Обработчик для кнопки возврата
 returnBtn.addEventListener('click', () => {
     document.querySelector('.input-container').style.display = 'flex';
@@ -206,10 +199,22 @@ returnBtn.addEventListener('click', () => {
     clearErrorMessage();
 });
 
-// Отладка начальной анимации
-document.addEventListener('DOMContentLoaded', () => {
+// Инициализация страницы и загрузка кэшированных подсказок
+document.addEventListener('DOMContentLoaded', async () => {
     const logoContainer = document.getElementById('logo-container');
     const appContainer = document.querySelector('.app-container');
+
+    try {
+        const response = await fetch('farmer-tips.json');
+        if (!response.ok) {
+            throw new Error(`Ошибка загрузки: ${response.status} ${response.statusText}`);
+        }
+        farmerTips = await response.json(); // Сохраняем подсказки в переменной для кэширования
+        console.log('Подсказки для фермеров загружены', farmerTips);
+    } catch (error) {
+        console.error('Ошибка загрузки подсказок для фермеров:', error);
+        displayErrorMessage('Не удалось загрузить подсказки для фермеров.');
+    }
 
     console.log('Старт анимации логотипа');
     logoContainer.addEventListener('animationend', () => {
@@ -219,7 +224,6 @@ document.addEventListener('DOMContentLoaded', () => {
         appContainer.style.opacity = 1; // Обеспечение видимости контейнера
     });
 });
-
 
 
 
