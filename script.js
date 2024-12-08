@@ -218,11 +218,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log('Старт анимации логотипа');
     logoContainer.addEventListener('animationend', () => {
         console.log('Анимация логотипа завершена');
-        logoContainer.classList.add('hidden');
-        appContainer.classList.remove('hidden');
-        appContainer.style.opacity = 1; // Обеспечение видимости контейнера
+        setTimeout(() => {
+            logoContainer.classList.add('hidden');
+            appContainer.classList.remove('hidden');
+            appContainer.style.opacity = 1; // Обеспечение видимости контейнера
+        }, 1000); // Задержка в 1 секунду перед скрытием логотипа
     });
 });
+
 
 
 
