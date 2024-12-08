@@ -17,24 +17,24 @@ let farmerTips = {}; // Переменная для хранения кэшир�
 const apiKey = 'c708426913319b328c4ff4719583d1c6';
 
 const weatherEmojiMap = {
-    "01d": "☀️", 
+    "01d": "☀", 
     "01n": "🌕", 
     "02d": "⛅", 
-    "02n": "🌥️", 
-    "03d": "☁️", 
-    "03n": "☁️", 
-    "04d": "☁️", 
-    "04n": "☁️", 
-    "09d": "🌦️", 
-    "09n": "🌦️", 
-    "10d": "🌧️", 
-    "10n": "🌧️", 
-    "11d": "⛈️", 
-    "11n": "⛈️", 
-    "13d": "❄️", 
-    "13n": "❄️", 
-    "50d": "🌫️", 
-    "50n": "🌫️"
+    "02n": "🌥", 
+    "03d": "☁", 
+    "03n": "☁", 
+    "04d": "☁", 
+    "04n": "☁", 
+    "09d": "🌦", 
+    "09n": "🌦", 
+    "10d": "🌧", 
+    "10n": "🌧", 
+    "11d": "⛈", 
+    "11n": "⛈", 
+    "13d": "❄", 
+    "13n": "❄", 
+    "50d": "🌫", 
+    "50n": "🌫"
 };
 
 const fetchWeather = async (city) => {
@@ -46,13 +46,13 @@ const fetchWeather = async (city) => {
     spinner.classList.remove('hidden'); // Показать спиннер
 
     try {
-        const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=ru&appid=${apiKey}`;
-        const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&lang=ru&appid=${apiKey}`;
+        const weatherUrl = https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=ru&appid=${apiKey};
+        const forecastUrl = https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&lang=ru&appid=${apiKey};
         const weatherResponse = await fetch(weatherUrl);
         const forecastResponse = await fetch(forecastUrl);
 
         if (!weatherResponse.ok || !forecastResponse.ok) {
-            throw new Error(`Ошибка: ${weatherResponse.status} ${weatherResponse.statusText}`);
+            throw new Error(Ошибка: ${weatherResponse.status} ${weatherResponse.statusText});
         }
 
         const weatherData = await weatherResponse.json();
@@ -79,9 +79,63 @@ const displayWeather = (data, city) => {
     const icon = weather[0].icon;
     const weatherEmoji = weatherEmojiMap[icon] || "❓";
 
-    currentTempElement.textContent = `${Math.round(temp)}°C ${weatherEmoji}`;
-    currentFeelsLikeElement.textContent = `Ощущается как ${Math.round(feelsLike)}°C`;
+    currentTempElement.textContent = ${Math.round(temp)}°C ${weatherEmoji};
+    currentFeelsLikeElement.textContent = Ощущается как ${Math.round(feelsLike)}°C;
     currentConditionElement.textContent = condition.charAt(0).toUpperCase() + condition.slice(1);
+
+
+// Скрытие поля ввода и кнопки "Узнать погоду" после нажатия и появление кнопки возврата
+    document.querySelector('.input-container').style.display = 'none';
+    locationElement.textContent = city;  // Отображение введенного названия города
+    returnBtn.classList.remove('hidden');
+
+    updateFarmerTips(temp, condition, main.humidity, main.pressure, weather[0].main);
+};
+
+const displayForecast = (data) => {
+    const days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
+    const uniqueDays = {};
+
+    const forecastList = data.list.filter((item) => {
+        const date = new Date(item.dt * 1000);
+        const dayIndex = date.getDay();
+        if (!uniqueDays[dayIndex]) {
+            uniqueDays[dayIndex] = true;
+            return true;
+        }
+        return false;
+    });
+
+    dailyForecastContainer.innerHTML = '';
+
+    forecastList.forEach((item, index) => {
+        const date = new Date(item.dt * 1000);
+        const dayIndex = date.getDay();
+        const day = index === 0 ? 'Сегодня' : (index === 1 ? 'Завтра' : days[dayIndex]);
+        const tempMin = item.main.temp_min;
+        const tempMax = item.main.temp_max;
+        const condition = item.weather[0].description;
+        const icon = item.weather[0].icon;
+        const weatherEmoji = weatherEmojiMap[icon] || "❓";
+
+        dailyForecastContainer.innerHTML += `
+            <div class="day">
+                <p>${day}</p>
+                <p>${Math.round(tempMax)}°C / ${Math.round(tempMin)}°C</p>
+                <p>${weatherEmoji}</p>
+                <p>${condition}</p>
+            </div>
+        `;
+    });
+};
+
+// Обновление подсказок для фермеров из кэшированной переменной
+const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
+    let tip = '';
+
+    if (weatherMain === 'Rain' || weatherMain === 'Drizzle') {
+        tip = farmerTips.rain;
+    } else if (weatherMain === 'Clear') {
         if (temp > 30) {
             tip = farmerTips.clear_hot;
         } else if (temp < 10) {
@@ -111,7 +165,7 @@ const displayWeather = (data, city) => {
 
     farmerTipsContainer.style.opacity = 0; // Начальная прозрачность
     setTimeout(() => {
-        farmerTipsContainer.innerHTML = `<p class="tip">${tip}</p>`;
+        farmerTipsContainer.innerHTML = <p class="tip">${tip}</p>;
         farmerTipsContainer.style.opacity = 1; // Плавное появление
     }, 300);
 };
@@ -121,6 +175,7 @@ const displayErrorMessage = (message) => {
     errorMessage.textContent = message;
     cityInput.parentNode.appendChild(errorMessage);
 };
+
 // Очистка сообщений об ошибках
 const clearErrorMessage = () => {
     if (errorMessage.parentNode) {
@@ -132,7 +187,7 @@ const clearErrorMessage = () => {
 themeToggle.addEventListener('click', () => {
     isDarkTheme = !isDarkTheme;
     document.body.classList.toggle('dark-theme', isDarkTheme);
-    themeToggle.textContent = isDarkTheme ? '☀️' : '🌙';
+    themeToggle.textContent = isDarkTheme ? '☀' : '🌙';
 });
 
 // Обработчик для кнопки "Узнать погоду"
@@ -154,6 +209,7 @@ returnBtn.addEventListener('click', () => {
     cityInput.value = '';
     clearErrorMessage();
 });
+
 // Инициализация страницы и загрузка кэшированных подсказок
 document.addEventListener('DOMContentLoaded', async () => {
     const logoContainer = document.getElementById('logo-container');
@@ -162,7 +218,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const response = await fetch('farmer-tips.json');
         if (!response.ok) {
-            throw new Error(`Ошибка загрузки: ${response.status} ${response.statusText}`);
+            throw new Error(Ошибка загрузки: ${response.status} ${response.statusText});
         }
         farmerTips = await response.json(); // Сохраняем подсказки в переменной для кэширования
         console.log('Подсказки для фермеров загружены', farmerTips);
@@ -181,12 +237,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }, 1000); // Задержка в 1 секунду перед скрытием логотипа
     });
 });
-
-
-
-
-
-
 
 
 
