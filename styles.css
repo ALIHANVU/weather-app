@@ -22,25 +22,6 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     opacity: 1;
-    animation: logoFadeIn 1s ease-in-out, logoFadeOut 1s ease-in-out 3s forwards;
-}
-
-@keyframes logoFadeIn {
-    from {
-        opacity: 0;
-        transform: translate(-50%, -50%);
-    }
-    to {
-        opacity: 1;
-        transform: translate(-50%, -50%);
-    }
-}
-
-@keyframes logoFadeOut {
-    to {
-        opacity: 0;
-        transform: translate(-50%, -60%);
-    }
 }
 
 .spinner {
@@ -89,6 +70,7 @@ body {
 }
 
 /* Остальной CSS остается без изменений */
+
 
 
 header {
