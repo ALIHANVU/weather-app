@@ -22,7 +22,7 @@ button, input {
 .app-container {
     max-width: 360px;
     width: 100%;
-    transition: max-width 0.5s ease-in-out;
+    transition: max-width 0.5s ease-in-out, padding 0.5s ease-in-out;
     margin: auto;
     padding: 20px;
     text-align: center;
@@ -33,6 +33,7 @@ button, input {
 
 .app-container.expanded {
     max-width: 800px;
+    padding: 40px;
 }
 
 header {
