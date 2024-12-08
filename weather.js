@@ -38,6 +38,7 @@ const fetchWeather = async (city) => {
         const forecastData = await forecastResponse.json();
         displayWeather(weatherData, city);
         displayForecast(forecastData);
+        removePlaceholders(); // Удаление placeholders после загрузки данных
     } catch (error) {
         console.error('Ошибка загрузки данных:', error);
     } finally {
@@ -152,4 +153,10 @@ const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
             }, 300);
         })
         .catch(error => console.error('Ошибка загрузки подсказок:', error));
+};
+
+// Не забудьте удалить placeholders после загрузки данных
+const removePlaceholders = () => {
+    dailyForecastContainer.innerHTML = '';
+    farmerTipsContainer.innerHTML = '';
 };
