@@ -1,26 +1,69 @@
-.dark-theme {
-    background-color: #2c2c2e;
-    color: #f0f0f0;
-    transition: background-color 0.3s, color 0.3s;
+/* Темная тема */
+body.dark-theme {
+    background-color: #121212;
+    color: #e0e0e0;
 }
 
-.dark-theme .app-container {
-    background-color: #3c3c3e;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-    transition: background-color 0.3s, box-shadow 0.3s;
+.app-container.dark-theme {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
 }
 
-.dark-theme h1,
-.dark-theme h2,
-.dark-theme #current-temp,
-.dark-theme #current-feels-like,
-.dark-theme #current-condition {
-    color: #f0f0f0;
-    transition: color 0.3s;
+button.dark-theme {
+    background-color: #bb86fc;
+    color: #121212;
 }
 
-.dark-theme .daily .day,
-.dark-theme .farmer-tips-content .tip {
-    background-color: #444;
-    color: #f0f0f0;
+button.dark-theme:hover {
+    background-color: #a45ce6;
+}
+
+button.dark-theme:active {
+    background-color: #8c44c2;
+}
+
+input.dark-theme {
+    background-color: #2e2e2e;
+    color: #e0e0e0;
+    border-color: #bb86fc;
+}
+
+input.dark-theme:focus {
+    border-color: #a45ce6;
+}
+
+.current-weather.dark-theme {
+    background-color: #2e2e2e;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.daily-forecast .day.dark-theme {
+    background-color: #2e2e2e;
+    color: #e0e0e0;
+    border-radius: 10px;
+    padding: 20px;
+    width: 100%;
+    max-width: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.daily-forecast .day.dark-theme:hover {
+    background-color: #3e3e3e;
+}
+
+.farmer-tips.dark-theme {
+    background-color: #2e2e2e;
+    color: #e0e0e0;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.loading-spinner.dark-theme {
+    border-color: #e0e0e0;
+    border-top-color: #bb86fc;
 }
