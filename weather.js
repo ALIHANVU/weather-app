@@ -91,6 +91,7 @@ const displayForecast = (data) => {
     const uniqueDays = {};
 
     console.log('Processing forecast data...');  // Добавленное отладочное сообщение
+    console.log('Forecast list:', data.list);  // Печать полного списка прогноза
 
     const forecastList = data.list.filter((item) => {
         const date = new Date(item.dt * 1000);
@@ -101,6 +102,8 @@ const displayForecast = (data) => {
         }
         return false;
     });
+
+    console.log('Filtered forecast list:', forecastList);  // Печать отфильтрованного списка прогноза
 
     dailyForecastContainer.innerHTML = '';
 
@@ -183,3 +186,4 @@ const removePlaceholders = () => {
     dailyForecastContainer.innerHTML = '';
     farmerTipsContainer.innerHTML = '';
 };
+
