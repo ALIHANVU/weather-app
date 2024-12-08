@@ -1,16 +1,20 @@
-const cityInput = document.getElementById('cityInput');
-const getWeatherBtn = document.getElementById('getWeatherBtn');
-const locationElement = document.getElementById('location');
-const currentTempElement = document.getElementById('current-temp');
-const currentFeelsLikeElement = document.getElementById('current-feels-like');
-const currentConditionElement = document.getElementById('current-condition');
-const themeToggle = document.getElementById('themeToggle');
-const returnBtn = document.getElementById('returnBtn');
-const dailyForecastContainer = document.querySelector('.daily-forecast');
-const farmerTipsContainer = document.querySelector('#farmer-tips-content');
-const loadingSpinner = document.getElementById('loadingSpinner');
-const appContainer = document.querySelector('.app-container');
-let isDarkTheme = false;
+document.addEventListener('DOMContentLoaded', () => {
+    const cityInput = document.getElementById('cityInput');
+    const getWeatherBtn = document.getElementById('getWeatherBtn');
+    const locationElement = document.getElementById('location');
+    const currentTempElement = document.getElementById('current-temp');
+    const currentFeelsLikeElement = document.getElementById('current-feels-like');
+    const currentConditionElement = document.getElementById('current-condition');
+    const themeToggle = document.getElementById('themeToggle');
+    const returnBtn = document.getElementById('returnBtn');
+    const dailyForecastContainer = document.querySelector('.daily-forecast');
+    const farmerTipsContainer = document.querySelector('#farmer-tips-content');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const appContainer = document.querySelector('.app-container');
+    let isDarkTheme = false;
+
+});
+
 
 document.addEventListener('DOMContentLoaded', () => {
     themeToggle.addEventListener('click', toggleTheme);
