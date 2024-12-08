@@ -1,4 +1,4 @@
-const cityInput = document.getElementById('cityInput');
+cconst cityInput = document.getElementById('cityInput');
 const getWeatherBtn = document.getElementById('getWeatherBtn');
 const locationElement = document.getElementById('location');
 const currentTempElement = document.getElementById('current-temp');
@@ -201,5 +201,6 @@ document.addEventListener('DOMContentLoaded', () => {
         appContainer.style.opacity = 1; // Обеспечение видимости контейнера
     });
 });
+
 
 
