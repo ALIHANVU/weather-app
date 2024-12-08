@@ -20,18 +20,37 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     returnBtn.addEventListener('click', () => {
-        document.querySelector('.input-container').style.display = 'flex';
-        returnBtn.classList.add('hidden');
-        locationElement.textContent = 'WeatherNow';
-        currentTempElement.textContent = '--°C';
-        currentFeelsLikeElement.textContent = 'Ощущается как --°C';
-        currentConditionElement.textContent = 'Погодные условия';
-        dailyForecastContainer.innerHTML = '';
-        farmerTipsContainer.innerHTML = '';
-        cityInput.value = '';
-        stopWeatherUpdate(); // Остановка периодического обновления
+        fadeOutElements([
+            '.input-container', '#location', '.current-weather', '.daily-forecast', '.farmer-tips'
+        ], () => {
+            document.querySelector('.input-container').style.display = 'flex';
+            returnBtn.classList.add('hidden');
+            locationElement.textContent = 'WeatherNow';
+            currentTempElement.textContent = '--°C';
+            currentFeelsLikeElement.textContent = 'Ощущается как --°C';
+            currentConditionElement.textContent = 'Погодные условия';
+            dailyForecastContainer.innerHTML = '';
+            farmerTipsContainer.innerHTML = '';
+            cityInput.value = '';
+            stopWeatherUpdate(); // Остановка периодического обновления
+        });
     });
 });
+
+// Функция для плавного исчезновения элементов
+const fadeOutElements = (selectors, callback) => {
+    selectors.forEach(selector => {
+        document.querySelector(selector).classList.add('fade-out');
+    });
+
+    setTimeout(() => {
+        selectors.forEach(selector => {
+            document.querySelector(selector).style.display = 'none';
+            document.querySelector(selector).classList.remove('fade-out');
+        });
+        callback();
+    }, 500); // Длительность анимации 0.5s
+};
 
 // Функция для периодического обновления данных о погоде
 let weatherUpdateInterval;
