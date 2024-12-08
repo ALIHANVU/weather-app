@@ -46,16 +46,16 @@
         </footer>
     </div>
     <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function () {
-                navigator.serviceWorker.register('/service-worker.js').then(function (registration) {
-                    console.log('Service Worker зарегистрирован с областью:', registration.scope);
-                }, function (err) {
-                    console.log('Ошибка регистрации Service Worker:', err);
-                });
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+            navigator.serviceWorker.register('/weather-app/service-worker.js').then(function (registration) {
+                console.log('Service Worker зарегистрирован с областью:', registration.scope);
+            }, function (err) {
+                console.log('Ошибка регистрации Service Worker:', err);
             });
-        }
-    </script>
+        });
+    }
+</script>
     <script src="theme.js"></script>
     <script src="weather.js"></script>
     <script src="main.js"></script>
