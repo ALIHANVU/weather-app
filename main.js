@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
     getWeatherBtn.addEventListener('click', () => {
         const city = cityInput.value.trim();
         fetchWeather(city);
+        showElementsWithFadeIn([
+            '.current-weather', '.daily-forecast', '.farmer-tips'
+        ]);
         startWeatherUpdate(city, 60000); // Начало периодического обновления каждые 60 секунд
     });
 
@@ -36,6 +39,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+// Функция для плавного появления элементов
+const showElementsWithFadeIn = (selectors) => {
+    selectors.forEach(selector => {
+        const element = document.querySelector(selector);
+        element.classList.remove('hidden');
+        element.classList.add('fade-in');
+    });
+};
 
 // Функция для плавного исчезновения элементов
 const fadeOutElements = (selectors, callback) => {
