@@ -38,18 +38,7 @@ input {
     background-color: #fff;
     border-radius: 20px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    animation: scaleUp 1s ease-in-out;
-}
-
-@keyframes scaleUp {
-    from {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+    animation: fadeIn 1s ease-in-out;
 }
 
 header {
@@ -58,6 +47,7 @@ header {
     align-items: center;
     margin-bottom: 20px;
     position: relative;
+    animation: fadeIn 0.5s ease-in-out 0.2s forwards;
 }
 
 h1 {
@@ -65,7 +55,7 @@ h1 {
     font-weight: 500;
     color: #007aff;
     margin: 20px 0;
-    animation: fadeIn 1s ease-in-out 3s forwards;
+    animation: fadeIn 0.5s ease-in-out 0.4s forwards;
 }
 
 button#themeToggle {
@@ -90,7 +80,7 @@ button#themeToggle:active {
     align-items: center;
     gap: 10px;
     margin-bottom: 20px;
-    animation: fadeIn 1s ease-in-out 0.5s forwards;
+    animation: fadeIn 0.5s ease-in-out 0.6s forwards;
 }
 
 input#cityInput {
@@ -99,8 +89,6 @@ input#cityInput {
     border: 1px solid #ccc;
     width: 100%;
     transition: border-color 0.3s;
-    opacity: 0;
-    animation: fadeIn 1s ease-in-out 0.5s forwards;
 }
 
 input#cityInput:focus {
@@ -116,8 +104,7 @@ button#getWeatherBtn {
     color: #fff;
     cursor: pointer;
     transition: background-color 0.3s;
-    opacity: 0;
-    animation: fadeIn 1s ease-in-out 1s forwards;
+    animation: fadeIn 0.5s ease-in-out 0.8s forwards;
 }
 
 button#getWeatherBtn:hover {
@@ -142,14 +129,14 @@ button.return-btn:hover {
 
 .current-weather {
     margin-bottom: 20px;
-    animation: fadeIn 1s ease-in-out 4s forwards;
+    animation: fadeIn 0.5s ease-in-out 1s forwards;
 }
 
 #current-temp {
     font-size: 2.5em;
     font-weight: 700;
     opacity: 0;
-    animation: fadeIn 1s ease-in-out 4.5s forwards;
+    animation: fadeIn 0.5s ease-in-out 1.2s forwards;
 }
 
 #current-feels-like {
@@ -157,14 +144,14 @@ button.return-btn:hover {
     color: #666;
     margin-bottom: 10px;
     opacity: 0;
-    animation: fadeIn 1s ease-in-out 5s forwards;
+    animation: fadeIn 0.5s ease-in-out 1.4s forwards;
 }
 
 #current-condition {
     font-size: 1.2em;
     color: #666;
     opacity: 0;
-    animation: fadeIn 1s ease-in-out 5.5s forwards;
+    animation: fadeIn 0.5s ease-in-out 1.6s forwards;
 }
 
 @keyframes fadeIn {
@@ -180,12 +167,12 @@ button.return-btn:hover {
 
 .daily-forecast {
     margin: 20px 0;
-    animation: fadeIn 1s ease-in-out 6s forwards;
+    animation: fadeIn 0.5s ease-in-out 1.8s forwards;
 }
 
 .farmer-tips {
     margin: 20px 0;
-    animation: fadeIn 1s ease-in-out 5.5s forwards;
+    animation: fadeIn 0.5s ease-in-out 1.6s forwards;
 }
 
 .daily,
@@ -237,27 +224,19 @@ button.return-btn:hover {
 
 /* Медиазапрос для мобильных устройств */
 @media (max-width: 768px) {
-    h1 {
-        animation: scaleUp 1s ease-in-out;
-    }
-
-    button#themeToggle {
-        transition: transform 0.3s, color 0.3s;
-    }
-
-    button#themeToggle:active {
-        transform: rotate(360deg);
-    }
-
-    .daily .day,
-    .farmer-tips-content .tip {
-        transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-    .daily .day:hover,
-    .farmer-tips-content .tip:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    .app-container,
+    header,
+    h1,
+    .input-container,
+    button#getWeatherBtn,
+    .current-weather,
+    #current-temp,
+    #current-feels-like,
+    #current-condition,
+    .daily-forecast,
+    .farmer-tips {
+        animation-duration: 1s;
+        animation-fill-mode: forwards;
     }
 }
 
