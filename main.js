@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     getWeatherBtn.addEventListener('click', () => {
         const city = cityInput.value.trim();
         fetchWeather(city);
+        startWeatherUpdate(city, 60000); // Начало периодического обновления каждые 60 секунд
     });
 
     returnBtn.addEventListener('click', () => {
@@ -28,5 +29,19 @@ document.addEventListener('DOMContentLoaded', () => {
         dailyForecastContainer.innerHTML = '';
         farmerTipsContainer.innerHTML = '';
         cityInput.value = '';
+        stopWeatherUpdate(); // Остановка периодического обновления
     });
 });
+
+// Функция для периодического обновления данных о погоде
+let weatherUpdateInterval;
+
+const startWeatherUpdate = (city, interval) => {
+    weatherUpdateInterval = setInterval(() => {
+        fetchWeather(city);
+    }, interval);
+};
+
+const stopWeatherUpdate = () => {
+    clearInterval(weatherUpdateInterval);
+};
