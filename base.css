@@ -1,3 +1,4 @@
+/* Основные стили */
 * {
     margin: 0;
     padding: 0;
@@ -6,8 +7,6 @@
 }
 
 body {
-    background-color: #f0f0f0;
-    color: #333;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -16,18 +15,8 @@ body {
     transition: background-color 0.3s, color 0.3s;
 }
 
-button {
-    transition: background-color 0.3s, transform 0.3s;
-}
-
-input {
-    transition: border-color 0.3s;
-}
-
-#current-temp,
-#current-feels-like,
-#current-condition {
-    transition: color 0.3s;
+button, input {
+    transition: background-color 0.3s, transform 0.3s, border-color 0.3s;
 }
 
 .app-container {
@@ -35,7 +24,6 @@ input {
     margin: auto;
     padding: 20px;
     text-align: center;
-    background-color: #fff;
     border-radius: 20px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     animation: fadeIn 0.5s ease-in-out;
@@ -54,7 +42,6 @@ header {
 h1 {
     font-size: 1.8em;
     font-weight: 500;
-    color: #007aff;
     margin: 20px 0;
     opacity: 0;
     animation: slideIn 0.5s ease-in-out 0.2s forwards;
@@ -91,11 +78,9 @@ input#cityInput {
     border-radius: 20px;
     border: 1px solid #ccc;
     width: 100%;
-    transition: border-color 0.3s;
 }
 
 input#cityInput:focus {
-    border-color: #007aff;
     outline: none;
 }
 
@@ -103,16 +88,7 @@ button#getWeatherBtn {
     padding: 8px 16px;
     border-radius: 20px;
     border: none;
-    background-color: #007aff;
-    color: #fff;
     cursor: pointer;
-    transition: background-color 0.3s;
-    opacity: 0;
-    animation: slideIn 0.5s ease-in-out 0.4s forwards;
-}
-
-button#getWeatherBtn:hover {
-    background-color: #005bb5;
 }
 
 button.hidden {
@@ -124,7 +100,6 @@ button.return-btn {
     border: none;
     font-size: 1.5em;
     cursor: pointer;
-    transition: transform 0.3s;
 }
 
 button.return-btn:hover {
@@ -146,7 +121,6 @@ button.return-btn:hover {
 
 #current-feels-like {
     font-size: 1.2em;
-    color: #666;
     margin-bottom: 10px;
     opacity: 0;
     animation: slideIn 0.5s ease-in-out 0.7s forwards;
@@ -154,7 +128,6 @@ button.return-btn:hover {
 
 #current-condition {
     font-size: 1.2em;
-    color: #666;
     opacity: 0;
     animation: slideIn 0.5s ease-in-out 0.8s forwards;
 }
@@ -170,85 +143,35 @@ button.return-btn:hover {
     }
 }
 
-.daily-forecast {
+.daily-forecast, .farmer-tips {
     margin: 20px 0;
     opacity: 0;
     animation: slideIn 0.5s ease-in-out 0.9s forwards;
 }
 
-.farmer-tips {
-    margin: 20px 0;
-    opacity: 0;
-    animation: slideIn 0.5s ease-in-out 0.9s forwards;
-}
-
-.daily,
-.farmer-tips-content {
+.daily, .farmer-tips-content {
     display: flex;
     flex-direction: column;
     gap: 10px;
     text-align: left;
 }
 
-.daily .day,
-.farmer-tips-content .tip {
+.daily .day, .farmer-tips-content .tip {
     padding: 10px;
     border-radius: 10px;
-    background-color: #f0f0f0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.daily .day:hover,
-.farmer-tips-content .tip:hover {
+.daily .day:hover, .farmer-tips-content .tip:hover {
     transform: translateY(-5px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.dark-theme {
-    background-color: #2c2c2e;
-    color: #f0f0f0;
-}
-
-.dark-theme .app-container {
-    background-color: #3c3c3e;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-}
-
-.dark-theme h1,
-.dark-theme h2,
-.dark-theme #current-temp,
-.dark-theme #current-feels-like,
-.dark-theme #current-condition {
-    color: #f0f0f0;
-}
-
-.dark-theme .daily .day,
-.dark-theme .farmer-tips-content .tip {
-    background-color: #444;
-    color: #f0f0f0;
-}
-
 /* Медиазапрос для мобильных устройств */
 @media (max-width: 768px) {
-    .app-container,
-    header,
-    h1,
-    .input-container,
-    button#getWeatherBtn,
-    .current-weather,
-    #current-temp,
-    #current-feels-like,
-    #current-condition,
-    .daily-forecast,
-    .farmer-tips {
+    .app-container, header, h1, .input-container, button#getWeatherBtn, .current-weather, #current-temp, #current-feels-like, #current-condition, .daily-forecast, .farmer-tips {
         animation-duration: 0.5s;
         animation-fill-mode: forwards;
     }
 }
-
-
-
-
-
-
