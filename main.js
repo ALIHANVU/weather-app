@@ -27,6 +27,9 @@ document.addEventListener('DOMContentLoaded', () => {
             '.input-container', '#location', '.current-weather', '.daily-forecast', '.farmer-tips'
         ], () => {
             document.querySelector('.input-container').style.display = 'flex';
+            document.querySelector('.current-weather').classList.add('hidden');
+            document.querySelector('.daily-forecast').classList.add('hidden');
+            document.querySelector('.farmer-tips').classList.add('hidden');
             returnBtn.classList.add('hidden');
             locationElement.textContent = 'WeatherNow';
             currentTempElement.textContent = '--°C';
@@ -57,7 +60,6 @@ const fadeOutElements = (selectors, callback) => {
 
     setTimeout(() => {
         selectors.forEach(selector => {
-            document.querySelector(selector).style.display = 'none';
             document.querySelector(selector).classList.remove('fade-out');
         });
         callback();
