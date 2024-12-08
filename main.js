@@ -8,48 +8,17 @@ const themeToggle = document.getElementById('themeToggle');
 const returnBtn = document.getElementById('returnBtn');
 const dailyForecastContainer = document.querySelector('.daily');
 const farmerTipsContainer = document.querySelector('#farmer-tips-content');
-const errorMessage = document.createElement('p'); // Создаем элемент для сообщений об ошибках
-errorMessage.classList.add('error-message');
 const spinner = document.getElementById('spinner'); // Элемент спиннера
 let isDarkTheme = false;
 let farmerTips = {}; // Переменная для хранения кэшированных подсказок
 
-const apiKey = 'c708426913319b328c4ff4719583d1c6';
-
-const weatherEmojiMap = {
-    "01d": "☀", 
-    "01n": "🌕", 
-    "02d": "⛅", 
-    "02n": "🌥", 
-    "03d": "☁", 
-    "03n": "☁", 
-    "04d": "☁", 
-    "04n": "☁", 
-    "09d": "🌦", 
-    "09n": "🌦", 
-    "10d": "🌧", 
-    "10n": "🌧", 
-    "11d": "⛈", 
-    "11n": "⛈", 
-    "13d": "❄", 
-    "13n": "❄", 
-    "50d": "🌫", 
-    "50n": "🌫"
-};
-
-// Функции для переключения темы
-themeToggle.addEventListener('click', () => {
-    isDarkTheme = !isDarkTheme;
-    document.body.classList.toggle('dark-theme', isDarkTheme);
-    themeToggle.textContent = isDarkTheme ? '☀' : '🌙';
-});
-
-// Обработчики событий
+// Обработчик для кнопки "Узнать погоду"
 getWeatherBtn.addEventListener('click', () => {
     const city = cityInput.value.trim();
-    fetchWeather(city);
+    fetchWeather(city); // функция из weather.js
 });
 
+// Обработчик для кнопки возврата
 returnBtn.addEventListener('click', () => {
     document.querySelector('.input-container').style.display = 'flex';
     returnBtn.classList.add('hidden');
@@ -60,15 +29,8 @@ returnBtn.addEventListener('click', () => {
     dailyForecastContainer.innerHTML = '';
     farmerTipsContainer.innerHTML = '';
     cityInput.value = '';
-    clearErrorMessage();
+    clearErrorMessage(); // функция из utils.js
 });
-
-// Очистка сообщений об ошибках
-const clearErrorMessage = () => {
-    if (errorMessage.parentNode) {
-        errorMessage.parentNode.removeChild(errorMessage);
-    }
-};
 
 // Инициализация страницы и загрузка кэшированных подсказок
 document.addEventListener('DOMContentLoaded', async () => {
@@ -84,7 +46,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log('Подсказки для фермеров загружены', farmerTips);
     } catch (error) {
         console.error('Ошибка загрузки подсказок для фермеров:', error);
-        displayErrorMessage('Не удалось загрузить подсказки для фермеров.');
+        displayErrorMessage('Не удалось загрузить подсказки для фермеров.'); // функция из utils.js
     }
 
     console.log('Старт анимации логотипа');
@@ -98,5 +60,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 });
 
+// Переключение темной и светлой темы
+themeToggle.addEventListener('click', () => {
+    isDarkTheme = !isDarkTheme;
+    document.body.classList.toggle('dark-theme', isDarkTheme);
+    themeToggle.textContent = isDarkTheme ? '☀' : '🌙';
+});
 
 
