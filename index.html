@@ -1,45 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather App</title>
+    <title>WeatherNow</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="logo-container" class="logo-container">
-        <img src="logo.png" alt="Логотип" />
+        <h1>WeatherNow</h1>
     </div>
-
     <div class="app-container hidden">
         <header>
-            <h1>WeatherNow</h1>
-            <button id="themeToggle">🌙</button>
+            <button id="themeToggle" class="theme-toggle">🌙</button>
+            <button id="returnBtn" class="return-btn hidden">⮌</button>
         </header>
-
-        <div class="input-container">
-            <input type="text" id="cityInput" placeholder="Введите город" />
-            <button id="getWeatherBtn">Узнать погоду</button>
-        </div>
-
-        <div class="current-weather">
-            <p id="location">WeatherNow</p>
-            <p id="current-temp">--°C</p>
-            <p id="current-feels-like">Ощущается как --°C</p>
-            <p id="current-condition">Погодные условия</p>
-        </div>
-
-        <div class="daily-forecast daily"></div>
-        <div class="farmer-tips">
-            <div id="farmer-tips-content"></div>
-        </div>
-
-        <button id="returnBtn" class="hidden return-btn">🔙</button>
+        <main>
+            <div class="input-container">
+                <input type="text" id="cityInput" placeholder="Введите название города">
+                <button id="getWeatherBtn">Узнать погоду</button>
+            </div>
+            <h1 id="location">WeatherNow</h1>
+            <section class="current-weather">
+                <p id="current-temp">--°C</p>
+                <p id="current-feels-like">Ощущается как --°C</p>
+                <p id="current-condition">Погодные условия</p>
+            </section>
+            <section class="farmer-tips">
+                <h2>Подсказки фермерам</h2>
+                <div id="farmer-tips-content">
+                    <!-- Farmer tips will be inserted here by JS -->
+                </div>
+            </section>
+            <section class="daily-forecast">
+                <h2>Прогноз на неделю</h2>
+                <div class="daily">
+                    <!-- Daily forecast items will be inserted here by JS -->
+                </div>
+            </section>
+        </main>
+        <footer>
+            <p>© 2024 WeatherNow</p>
+        </footer>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
