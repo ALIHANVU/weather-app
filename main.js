@@ -22,7 +22,9 @@ const handleWeatherRequest = () => {
     const city = cityInput.value.trim();
     if (city) {
         fetchWeather(city);
-        appContainer.classList.add('expanded');
+        requestAnimationFrame(() => {
+            appContainer.classList.add('expanded');
+        });
         showElementsWithFadeIn(['.current-weather', '.daily-forecast', '.farmer-tips']);
         startWeatherUpdate(city, 60000);
     } else {
@@ -32,8 +34,10 @@ const handleWeatherRequest = () => {
 
 const handleReturn = () => {
     fadeOutElements(['.current-weather', '.daily-forecast', '.farmer-tips'], () => {
-        appContainer.classList.remove('expanded');
-        resetInterface();
+        requestAnimationFrame(() => {
+            appContainer.classList.remove('expanded');
+            resetInterface();
+        });
     });
 };
 
