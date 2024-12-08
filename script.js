@@ -10,6 +10,7 @@ const dailyForecastContainer = document.querySelector('.daily');
 const farmerTipsContainer = document.querySelector('#farmer-tips-content');
 const errorMessage = document.createElement('p'); // Создаем элемент для сообщений об ошибках
 errorMessage.classList.add('error-message');
+const spinner = document.getElementById('spinner'); // Элемент спиннера
 let isDarkTheme = false;
 let farmerTips = {}; // Переменная для хранения кэшированных подсказок
 
@@ -42,6 +43,8 @@ const fetchWeather = async (city) => {
         return;
     }
 
+    spinner.classList.remove('hidden'); // Показать спиннер
+
     try {
         const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=ru&appid=${apiKey}`;
         const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&lang=ru&appid=${apiKey}`;
@@ -60,6 +63,8 @@ const fetchWeather = async (city) => {
     } catch (error) {
         console.error('Ошибка загрузки данных:', error);
         displayErrorMessage('Не удалось загрузить данные. Пожалуйста, проверьте название города и попробуйте снова.');
+    } finally {
+        spinner.classList.add('hidden'); // Скрыть спиннер
     }
 };
 
@@ -225,6 +230,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }, 1000); // Задержка в 1 секунду перед скрытием логотипа
     });
 });
+
 
 
 
