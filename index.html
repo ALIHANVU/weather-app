@@ -29,13 +29,13 @@
             <section class="farmer-tips">
                 <h2>Подсказки фермерам</h2>
                 <div id="farmer-tips-content">
-                    <!-- Farmer tips will be inserted here by JS -->
+                    <!-- Подсказки для фермеров будут вставлены с помощью JS -->
                 </div>
             </section>
             <section class="daily-forecast">
                 <h2>Прогноз на неделю</h2>
                 <div class="daily">
-                    <!-- Daily forecast items will be inserted here by JS -->
+                    <!-- Прогноз на неделю будет вставлен с помощью JS -->
                 </div>
             </section>
             <div class="loading-spinner" id="loadingSpinner"></div> <!-- Индикатор загрузки -->
@@ -44,14 +44,19 @@
             <p>© 2024 WeatherNow</p>
         </footer>
     </div>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('/service-worker.js').then(function (registration) {
+                    console.log('Service Worker зарегистрирован с областью:', registration.scope);
+                }, function (err) {
+                    console.log('Ошибка регистрации Service Worker:', err);
+                });
+            });
+        }
+    </script>
     <script src="theme.js"></script>
     <script src="weather.js"></script>
     <script src="main.js"></script>
 </body>
 </html>
-
-
-
-
-
-
