@@ -165,7 +165,6 @@ const displayErrorMessage = (message) => {
     errorMessage.textContent = message;
     cityInput.parentNode.appendChild(errorMessage);
 };
-
 // Очистка сообщений об ошибках
 const clearErrorMessage = () => {
     if (errorMessage.parentNode) {
@@ -185,6 +184,7 @@ getWeatherBtn.addEventListener('click', () => {
     const city = cityInput.value.trim();
     fetchWeather(city);
 });
+
 // Обработчик для кнопки возврата
 returnBtn.addEventListener('click', () => {
     document.querySelector('.input-container').style.display = 'flex';
@@ -198,7 +198,6 @@ returnBtn.addEventListener('click', () => {
     cityInput.value = '';
     clearErrorMessage();
 });
-
 // Инициализация страницы и загрузка кэшированных подсказок
 document.addEventListener('DOMContentLoaded', async () => {
     const logoContainer = document.getElementById('logo-container');
@@ -224,6 +223,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         appContainer.style.opacity = 1; // Обеспечение видимости контейнера
     });
 });
+
 
 
 
