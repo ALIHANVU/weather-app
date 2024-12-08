@@ -27,6 +27,8 @@ const fetchWeather = async (city) => {
         return;
     }
 
+    loadingSpinner.style.display = 'block'; // Показ индикатора загрузки
+
     try {
         const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=ru&appid=${apiKey}`;
         const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&lang=ru&appid=${apiKey}`;
@@ -43,6 +45,8 @@ const fetchWeather = async (city) => {
         displayForecast(forecastData);
     } catch (error) {
         console.error('Ошибка загрузки данных:', error);
+    } finally {
+        loadingSpinner.style.display = 'none'; // Скрытие индикатора загрузки
     }
 };
 
