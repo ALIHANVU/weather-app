@@ -143,31 +143,6 @@ button.return-btn:hover {
     }
 }
 
-.daily-forecast, .farmer-tips {
-    margin: 20px 0;
-    opacity: 0;
-    animation: slideIn 0.5s ease-in-out 0.9s forwards;
-}
-
-.daily, .farmer-tips-content {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    text-align: left;
-}
-
-.daily .day, .farmer-tips-content .tip {
-    padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.daily .day:hover, .farmer-tips-content .tip:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
 /* Анимация индикатора загрузки */
 .loading-spinner {
     display: none;
@@ -208,7 +183,6 @@ button.return-btn:hover {
     animation: fadeOut 0.5s ease-in-out forwards;
 }
 
-
 /* Медиазапрос для мобильных устройств */
 @media (max-width: 768px) {
     .app-container, header, h1, .input-container, button#getWeatherBtn, .current-weather, #current-temp, #current-feels-like, #current-condition, .daily-forecast, .farmer-tips {
@@ -230,4 +204,9 @@ button.return-btn:hover {
         font-size: 0.9em;
         padding: 10px;
     }
+}
+
+/* Скрытый класс для начального состояния */
+.hidden {
+    display: none;
 }
