@@ -18,25 +18,20 @@ const weatherEmojiMap = {
     "13d": "❄️", 
     "13n": "❄️", 
     "50d": "🌫️", 
-    "50n": "🌫️"  
+    "50n": "🌫️"
 };
 
 const fetchWeather = async (city) => {
-    if (!city) {
-        alert('Введите название города.');
-        return;
-    }
-
     loadingSpinner.style.display = 'block'; // Показ индикатора загрузки
 
     try {
-        const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=ru&appid=${apiKey}`;
-        const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&lang=ru&appid=${apiKey}`;
-        const weatherResponse = await fetch(weatherUrl);
-        const forecastResponse = await fetch(forecastUrl);
+        const [weatherResponse, forecastResponse] = await Promise.all([
+            fetch(getWeatherUrl(city)),
+            fetch(getForecastUrl(city))
+        ]);
 
         if (!weatherResponse.ok || !forecastResponse.ok) {
-            throw new Error(`Ошибка: ${weatherResponse.status} ${weatherResponse.statusText}`);
+            throw new Error('Ошибка загрузки данных');
         }
 
         const weatherData = await weatherResponse.json();
@@ -50,13 +45,21 @@ const fetchWeather = async (city) => {
     }
 };
 
+const getWeatherUrl = (city) => {
+    return `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=ru&appid=${apiKey}`;
+};
+
+const getForecastUrl = (city) => {
+    return `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&lang=ru&appid=${apiKey}`;
+};
+
 const displayWeather = (data, city) => {
     const { main, weather } = data;
     const temp = main.temp;
     const feelsLike = main.feels_like;
     const condition = weather[0].description;
     const icon = weather[0].icon;
-    const weatherEmoji = weatherEmojiMap[icon] || "❓";
+    const weatherEmoji = weatherEmojiMap[icon] || '❓';
 
     currentTempElement.textContent = `${Math.round(temp)}°C ${weatherEmoji}`;
     currentFeelsLikeElement.textContent = `Ощущается как ${Math.round(feelsLike)}°C`;
@@ -93,7 +96,7 @@ const displayForecast = (data) => {
         const tempMax = item.main.temp_max;
         const condition = item.weather[0].description;
         const icon = item.weather[0].icon;
-        const weatherEmoji = weatherEmojiMap[icon] || "❓";
+        const weatherEmoji = weatherEmojiMap[icon] || '❓';
 
         dailyForecastContainer.innerHTML += `
             <div class="day fade-in">
