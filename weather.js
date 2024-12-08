@@ -21,7 +21,6 @@ const weatherEmojiMap = {
     "50n": "🌫️"
 };
 
-// Добавляем недостающие элементы
 const currentTempElement = document.getElementById('current-temp');
 const currentFeelsLikeElement = document.getElementById('current-feels-like');
 const currentConditionElement = document.getElementById('current-condition');
@@ -125,8 +124,14 @@ const displayForecast = (data) => {
 };
 
 const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
+    console.log('Fetching farmer tips...');
     fetch('farmer_tips.json')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Ошибка загрузки файла farmer_tips.json');
+            }
+            return response.json();
+        })
         .then(tips => {
             let tip = '';
 
