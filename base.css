@@ -21,12 +21,18 @@ button, input {
 
 .app-container {
     max-width: 360px;
+    width: 100%;
+    transition: max-width 0.5s ease-in-out;
     margin: auto;
     padding: 20px;
     text-align: center;
     border-radius: 20px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     animation: fadeIn 0.5s ease-in-out;
+}
+
+.app-container.expanded {
+    max-width: 800px;
 }
 
 header {
@@ -188,6 +194,10 @@ button.return-btn:hover {
     .app-container, header, h1, .input-container, button#getWeatherBtn, .current-weather, #current-temp, #current-feels-like, #current-condition, .daily-forecast, .farmer-tips {
         animation-duration: 0.5s;
         animation-fill-mode: forwards;
+    }
+
+    .app-container {
+        max-width: 100%;
     }
 }
 
