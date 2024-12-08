@@ -6,7 +6,7 @@ const currentFeelsLikeElement = document.getElementById('current-feels-like');
 const currentConditionElement = document.getElementById('current-condition');
 const themeToggle = document.getElementById('themeToggle');
 const returnBtn = document.getElementById('returnBtn');
-const dailyForecastContainer = document.querySelector('.daily');
+const dailyForecastContainer = document.querySelector('.daily-forecast');
 const farmerTipsContainer = document.querySelector('#farmer-tips-content');
 const loadingSpinner = document.getElementById('loadingSpinner');
 const appContainer = document.querySelector('.app-container');
@@ -47,7 +47,6 @@ const addPlaceholders = () => {
     farmerTipsContainer.innerHTML = '<div class="placeholder"></div>'.repeat(3);
 };
 
-// Убедимся, что функция `removePlaceholders` объявлена только один раз
 const removePlaceholders = () => {
     dailyForecastContainer.innerHTML = '';
     farmerTipsContainer.innerHTML = '';
