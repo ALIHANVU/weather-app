@@ -82,58 +82,6 @@ const displayWeather = (data, city) => {
     currentTempElement.textContent = `${Math.round(temp)}°C ${weatherEmoji}`;
     currentFeelsLikeElement.textContent = `Ощущается как ${Math.round(feelsLike)}°C`;
     currentConditionElement.textContent = condition.charAt(0).toUpperCase() + condition.slice(1);
-    // Скрытие поля ввода и кнопки "Узнать погоду" после нажатия и появление кнопки возврата
-    document.querySelector('.input-container').style.display = 'none';
-    locationElement.textContent = city;  // Отображение введенного названия города
-    returnBtn.classList.remove('hidden');
-
-    updateFarmerTips(temp, condition, main.humidity, main.pressure, weather[0].main);
-};
-
-const displayForecast = (data) => {
-    const days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
-    const uniqueDays = {};
-
-    const forecastList = data.list.filter((item) => {
-        const date = new Date(item.dt * 1000);
-        const dayIndex = date.getDay();
-        if (!uniqueDays[dayIndex]) {
-            uniqueDays[dayIndex] = true;
-            return true;
-        }
-        return false;
-    });
-
-    dailyForecastContainer.innerHTML = '';
-
-    forecastList.forEach((item, index) => {
-        const date = new Date(item.dt * 1000);
-        const dayIndex = date.getDay();
-        const day = index === 0 ? 'Сегодня' : (index === 1 ? 'Завтра' : days[dayIndex]);
-        const tempMin = item.main.temp_min;
-        const tempMax = item.main.temp_max;
-        const condition = item.weather[0].description;
-        const icon = item.weather[0].icon;
-        const weatherEmoji = weatherEmojiMap[icon] || "❓";
-
-        dailyForecastContainer.innerHTML += `
-            <div class="day">
-                <p>${day}</p>
-                <p>${Math.round(tempMax)}°C / ${Math.round(tempMin)}°C</p>
-                <p>${weatherEmoji}</p>
-                <p>${condition}</p>
-            </div>
-        `;
-    });
-};
-
-// Обновление подсказок для фермеров из кэшированной переменной
-const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
-    let tip = '';
-
-    if (weatherMain === 'Rain' || weatherMain === 'Drizzle') {
-        tip = farmerTips.rain;
-    } else if (weatherMain === 'Clear') {
         if (temp > 30) {
             tip = farmerTips.clear_hot;
         } else if (temp < 10) {
