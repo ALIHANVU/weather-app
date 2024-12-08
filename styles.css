@@ -80,6 +80,17 @@ header {
     animation: slideIn 0.5s ease-in-out 4.1s forwards;
 }
 
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 h1 {
     font-size: 1.8em;
     font-weight: 500;
@@ -264,6 +275,7 @@ button.return-btn:hover {
         animation-fill-mode: forwards;
     }
 }
+
 
 
 
