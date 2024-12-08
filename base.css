@@ -135,6 +135,27 @@ button.return-btn:hover {
     transition: min-height 0.5s ease-in-out;
 }
 
+.placeholder {
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    margin: 10px 0;
+    height: 20px;
+    width: 100%;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        background-color: #f0f0f0;
+    }
+    50% {
+        background-color: #e0e0e0;
+    }
+    100% {
+        background-color: #f0f0f0;
+    }
+}
+
 @keyframes slideIn {
     from {
         opacity: 0;
