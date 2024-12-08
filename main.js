@@ -8,6 +8,7 @@ const themeToggle = document.getElementById('themeToggle');
 const returnBtn = document.getElementById('returnBtn');
 const dailyForecastContainer = document.querySelector('.daily');
 const farmerTipsContainer = document.querySelector('#farmer-tips-content');
+const loadingSpinner = document.getElementById('loadingSpinner');
 let isDarkTheme = false;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -29,5 +30,3 @@ document.addEventListener('DOMContentLoaded', () => {
         cityInput.value = '';
     });
 });
-
-
