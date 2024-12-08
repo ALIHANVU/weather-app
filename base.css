@@ -129,6 +129,12 @@ button.return-btn:hover {
     font-size: 1.2em;
 }
 
+.daily-forecast, .farmer-tips {
+    min-height: 200px; /* Минимальная высота для предотвращения подергивания */
+    overflow: hidden;
+    transition: min-height 0.5s ease-in-out;
+}
+
 @keyframes slideIn {
     from {
         opacity: 0;
