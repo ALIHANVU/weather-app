@@ -21,6 +21,16 @@ const weatherEmojiMap = {
     "50n": "🌫️"
 };
 
+// Добавляем недостающие элементы
+const currentTempElement = document.getElementById('current-temp');
+const currentFeelsLikeElement = document.getElementById('current-feels-like');
+const currentConditionElement = document.getElementById('current-condition');
+const dailyForecastContainer = document.querySelector('.daily-forecast');
+const farmerTipsContainer = document.querySelector('#farmer-tips-content');
+const loadingSpinner = document.getElementById('loadingSpinner');
+const locationElement = document.getElementById('location');
+const returnBtn = document.getElementById('returnBtn');
+
 const fetchWeather = async (city) => {
     console.log("Fetching weather for city:", city);
     loadingSpinner.style.display = 'block'; // Показ индикатора загрузки
