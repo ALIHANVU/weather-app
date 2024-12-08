@@ -198,6 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Анимация логотипа завершена');
         logoContainer.classList.add('hidden');
         appContainer.classList.remove('hidden');
+        appContainer.style.opacity = 1; // Обеспечение видимости контейнера
     });
 });
 
