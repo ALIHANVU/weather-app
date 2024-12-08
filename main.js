@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             appContainer.style.opacity = 1; // Обеспечение видимости контейнера
         }, 1000); // Задержка в 1 секунду перед скрытием логотипа
     });
-});
+}); // Здесь закрывающая скобка для document.addEventListener
 
 // Переключение темной и светлой темы
 themeToggle.addEventListener('click', () => {
