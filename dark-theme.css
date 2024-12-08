@@ -1,18 +1,26 @@
 .dark-theme {
     background-color: #2c2c2e;
     color: #f0f0f0;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .dark-theme .app-container {
     background-color: #3c3c3e;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    transition: background-color 0.3s, box-shadow 0.3s;
 }
 
-.dark-theme h1, .dark-theme h2, .dark-theme #current-temp, .dark-theme #current-feels-like, .dark-theme #current-condition {
+.dark-theme h1,
+.dark-theme h2,
+.dark-theme #current-temp,
+.dark-theme #current-feels-like,
+.dark-theme #current-condition {
     color: #f0f0f0;
+    transition: color 0.3s;
 }
 
-.dark-theme .daily .day, .dark-theme .farmer-tips-content .tip {
+.dark-theme .daily .day,
+.dark-theme .farmer-tips-content .tip {
     background-color: #444;
     color: #f0f0f0;
 }
