@@ -35,9 +35,11 @@ document.addEventListener('DOMContentLoaded', () => {
 const showElementsWithFadeIn = (selectors) => {
     selectors.forEach(selector => {
         const element = document.querySelector(selector);
-        element.classList.remove('hidden');
-        element.classList.add('fade-in');
         element.style.display = 'block'; // Убедитесь, что элемент отображается
+        requestAnimationFrame(() => {
+            element.classList.remove('hidden');
+            element.classList.add('fade-in');
+        });
     });
 };
 
