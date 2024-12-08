@@ -88,8 +88,96 @@ body {
     }
 }
 
-/* Остальной CSS остается без изменений */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+}
 
+.theme-toggle {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.return-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    display: none;
+}
+
+.input-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+input[type="text"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #3498db;
+    color: #fff;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.current-weather {
+    margin: 20px 0;
+}
+
+.current-weather p {
+    font-size: 24px;
+    margin: 10px 0;
+}
+
+.farmer-tips, .daily-forecast {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.daily-forecast .day {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.daily-forecast .day p {
+    margin: 0;
+    font-size: 16px;
+}
+
+.error-message {
+    color: red;
+    margin-top: 10px;
+}
+
+.dark-theme {
+    background-color: #333;
+    color: #f0f0f0;
+}
+
+.dark-theme button {
+    background-color: #555;
+}
+
+.dark-theme input[type="text"] {
+    border: 1px solid #555;
+}
 
 
 
