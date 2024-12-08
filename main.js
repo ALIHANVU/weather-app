@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const response = await fetch('farmer-tips.json');
         if (!response.ok) {
-            throw new Error(Ошибка загрузки: ${response.status} ${response.statusText});
+           throw new Error(Ошибка загрузки: ${response.status} ${response.statusText});
         }
         farmerTips = await response.json(); // Сохраняем подсказки в переменной для кэширования
         console.log('Подсказки для фермеров загружены', farmerTips);
