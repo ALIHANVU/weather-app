@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
 const handleWeatherRequest = () => {
     const city = cityInput.value.trim();
     if (city) {
+        addPlaceholders();
         fetchWeather(city);
         requestAnimationFrame(() => {
             appContainer.classList.add('expanded');
@@ -39,6 +40,16 @@ const handleReturn = () => {
             resetInterface();
         });
     });
+};
+
+const addPlaceholders = () => {
+    dailyForecastContainer.innerHTML = '<div class="placeholder"></div>'.repeat(5);
+    farmerTipsContainer.innerHTML = '<div class="placeholder"></div>'.repeat(3);
+};
+
+const removePlaceholders = () => {
+    dailyForecastContainer.innerHTML = '';
+    farmerTipsContainer.innerHTML = '';
 };
 
 // Функция для плавного появления элементов
