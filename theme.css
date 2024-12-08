@@ -1,23 +1,52 @@
+/* Общие стили для темы */
 body {
-    background-color: #f0f0f0;
-    color: #333;
+    background-color: #f8f9fa;
+    color: #212529;
     transition: background-color 0.3s, color 0.3s;
 }
 
-h1 {
-    color: #007aff;
-    transition: color 0.3s;
+.app-container {
+    background-color: #ffffff;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, box-shadow 0.3s;
 }
 
-input#cityInput:focus {
-    border-color: #007aff;
+button {
+    background-color: #007bff;
+    color: #ffffff;
+    transition: background-color 0.3s, color 0.3s, transform 0.3s;
 }
 
-button#getWeatherBtn {
-    background-color: #007aff;
-    color: #fff;
+button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
 }
 
-button#getWeatherBtn:hover {
-    background-color: #005bb5;
+button:active {
+    background-color: #004085;
+    transform: scale(0.95);
+}
+
+/* Стили для темной темы */
+body.dark-theme {
+    background-color: #212529;
+    color: #f8f9fa;
+}
+
+.app-container.dark-theme {
+    background-color: #343a40;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+}
+
+button.dark-theme {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+button.dark-theme:hover {
+    background-color: #e0a800;
+}
+
+button.dark-theme:active {
+    background-color: #c69500;
 }
