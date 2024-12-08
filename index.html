@@ -45,7 +45,7 @@
             <p>© 2024 WeatherNow</p>
         </footer>
     </div>
-    <script>
+   <script>
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function () {
             navigator.serviceWorker.register('/weather-app/service-worker.js').then(function (registration) {
@@ -56,6 +56,7 @@
         });
     }
 </script>
+
     <script src="theme.js"></script>
     <script src="weather.js"></script>
     <script src="main.js"></script>
