@@ -55,7 +55,19 @@ h1 {
     font-weight: 500;
     color: #007aff;
     margin: 20px 0;
-    animation: fadeIn 0.5s ease-in-out 0.2s forwards;
+    opacity: 0;
+    animation: slideIn 0.5s ease-in-out 0.4s forwards;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 button#themeToggle {
