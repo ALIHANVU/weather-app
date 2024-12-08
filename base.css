@@ -175,3 +175,18 @@ button.return-btn:hover {
         animation-fill-mode: forwards;
     }
 }
+
+@media (max-width: 480px) {
+    .app-container {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 1.2em;
+    }
+
+    button {
+        font-size: 0.9em;
+        padding: 10px;
+    }
+}
