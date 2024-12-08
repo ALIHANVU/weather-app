@@ -90,6 +90,8 @@ const displayForecast = (data) => {
     const days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
     const uniqueDays = {};
 
+    console.log('Processing forecast data...');  // Добавленное отладочное сообщение
+
     const forecastList = data.list.filter((item) => {
         const date = new Date(item.dt * 1000);
         const dayIndex = date.getDay();
@@ -111,6 +113,8 @@ const displayForecast = (data) => {
         const condition = item.weather[0].description;
         const icon = item.weather[0].icon;
         const weatherEmoji = weatherEmojiMap[icon] || '❓';
+
+        console.log(`Day: ${day}, Max Temp: ${tempMax}, Min Temp: ${tempMin}, Condition: ${condition}, Icon: ${icon}`);  // Добавленное отладочное сообщение
 
         dailyForecastContainer.innerHTML += `
             <div class="day fade-in">
