@@ -200,3 +200,4 @@ document.addEventListener('DOMContentLoaded', () => {
         appContainer.classList.remove('hidden');
     });
 });
+
