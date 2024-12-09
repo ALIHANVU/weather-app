@@ -96,7 +96,7 @@ const displayForecast = (data) => {
     const days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
     const uniqueDays = {};
 
-    console.log('Full forecast list:', data.list);
+    console.log('Full forecast list:', data.list);  // Печать полного списка прогноза
 
     const forecastList = data.list.filter((item) => {
         const date = new Date(item.dt * 1000);
@@ -134,10 +134,14 @@ const displayForecast = (data) => {
                 <p>${condition}</p>
             </div>
         `;
+
+        // Проверка на успешное обновление содержимого контейнера
+        console.log('Updated dailyForecastContainer:', dailyForecastContainer.innerHTML);
     });
 
-    console.log('Finished processing forecast data.');  // Добавленное отладочное сообщение
+    console.log('Finished processing forecast data');  // Добавленное отладочное сообщение
 };
+
 
 const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
     console.log('Fetching farmer tips...');
