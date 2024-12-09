@@ -70,9 +70,8 @@ const displayWeather = (data, city) => {
     currentFeelsLikeElement.textContent = `Ощущается как ${Math.round(feelsLike)}°C`;
     currentConditionElement.textContent = condition.charAt(0).toUpperCase() + condition.slice(1);
 
-    // Скрытие поля ввода и кнопки "Узнать погоду" после нажатия и появление кнопки возврата
     document.querySelector('.input-container').style.display = 'none';
-    locationElement.textContent = city;  // Отображение введенного названия города
+    locationElement.textContent = city;
     returnBtn.classList.remove('hidden');
 
     updateFarmerTips(temp, condition, main.humidity, main.pressure, weather[0].main);
@@ -115,7 +114,6 @@ const displayForecast = (data) => {
     });
 };
 
-// Обновление подсказок для фермеров
 const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
     let tip = '';
 
@@ -149,27 +147,24 @@ const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
         tip += ' Низкое давление. Возможны затруднения в опылении.';
     }
 
-    farmerTipsContainer.style.opacity = 0; // Начальная прозрачность
+    farmerTipsContainer.style.opacity = 0;
     setTimeout(() => {
         farmerTipsContainer.innerHTML = `<p class="tip">${tip}</p>`;
-        farmerTipsContainer.style.opacity = 1; // Плавное появление
+        farmerTipsContainer.style.opacity = 1;
     }, 300);
 };
 
-// Переключение темной и светлой темы
 themeToggle.addEventListener('click', () => {
     isDarkTheme = !isDarkTheme;
     document.body.classList.toggle('dark-theme', isDarkTheme);
     themeToggle.textContent = isDarkTheme ? '☀️' : '🌙';
 });
 
-// Обработчик для кнопки "Узнать погоду"
 getWeatherBtn.addEventListener('click', () => {
     const city = cityInput.value.trim();
     fetchWeather(city);
 });
 
-// Обработчик для кнопки возврата
 returnBtn.addEventListener('click', () => {
     document.querySelector('.input-container').style.display = 'flex';
     returnBtn.classList.add('hidden');
@@ -181,5 +176,3 @@ returnBtn.addEventListener('click', () => {
     farmerTipsContainer.innerHTML = '';
     cityInput.value = '';
 });
-
-
