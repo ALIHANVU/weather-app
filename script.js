@@ -92,30 +92,35 @@ const displayWeather = (data, city) => {
 };
 const displayForecast = (data) => {
     const days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
-    const forecastList = data.list.filter((item, index) => index % 8 === 0); // Используем каждый 8-й элемент для ежедневного прогноза
+    const uniqueDays = {};
 
     dailyForecastContainer.innerHTML = '';
 
-    forecastList.forEach((item) => {
+    data.list.forEach((item) => {
         const date = new Date(item.dt * 1000);
         const dayIndex = date.getDay();
-        const day = days[dayIndex];
-        const tempMin = item.main.temp_min;
-        const tempMax = item.main.temp_max;
-        const condition = item.weather[0].description;
-        const icon = item.weather[0].icon;
-        const weatherEmoji = weatherEmojiMap[icon] || "❓";
 
-        dailyForecastContainer.innerHTML += `
-            <div class="day">
-                <p>${day}</p>
-                <p>${Math.round(tempMax)}°C / ${Math.round(tempMin)}°C</p>
-                <p>${weatherEmoji}</p>
-                <p>${capitalizeFirstLetter(condition)}</p>
-            </div>
-        `;
+        if (!uniqueDays[dayIndex]) {
+            uniqueDays[dayIndex] = true;
+            const day = days[dayIndex];
+            const tempMin = item.main.temp_min;
+            const tempMax = item.main.temp_max;
+            const condition = item.weather[0].description;
+            const icon = item.weather[0].icon;
+            const weatherEmoji = weatherEmojiMap[icon] || "❓";
+
+            dailyForecastContainer.innerHTML += `
+                <div class="day">
+                    <p>${day}</p>
+                    <p>${Math.round(tempMax)}°C / ${Math.round(tempMin)}°C</p>
+                    <p>${weatherEmoji}</p>
+                    <p>${capitalizeFirstLetter(condition)}</p>
+                </div>
+            `;
+        }
     });
 };
+
 
 
 const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
