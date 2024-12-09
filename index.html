@@ -4,45 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WeatherNow</title>
-    <meta name="description" content="WeatherNow - узнайте текущую погоду и прогноз на неделю.">
-    <meta name="keywords" content="погода, прогноз, WeatherNow, текущая погода, прогноз на неделю">
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="app-container">
         <header>
-            <button id="returnBtn" class="return-btn hidden" aria-label="Return">⮌</button>
             <h1 id="location">WeatherNow</h1>
-            <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+            <button id="themeToggle">🌙</button>
         </header>
-        <main>
-            <div class="input-container">
-                <input type="text" id="cityInput" placeholder="Введите название города" aria-label="City Input">
-                <button id="getWeatherBtn">Узнать погоду</button>
-            </div>
-            <section class="current-weather slide-fwd-center hidden">
-                <p id="current-temp">--°C</p>
-                <p id="current-feels-like">Ощущается как --°C</p>
-                <p id="current-condition">Погодные условия</p>
-            </section>
-            <section class="farmer-tips hidden">
-                <h2>Подсказки фермерам</h2>
-                <div id="farmer-tips-content">
-                    <!-- Farmer tips will be inserted here by JS -->
-                </div>
-            </section>
-            <section class="daily-forecast hidden">
-                <h2>Прогноз на неделю</h2>
-                <div class="daily">
-                    <!-- Daily forecast items will be inserted here by JS -->
-                </div>
-            </section>
-        </main>
-        <footer class="hidden">
-            <p>© 2024 WeatherNow</p>
-        </footer>
+        <div class="input-container">
+            <input type="text" id="cityInput" placeholder="Введите город">
+            <button id="getWeatherBtn">Узнать погоду</button>
+        </div>
+        <div class="current-weather hidden">
+            <h2 id="current-temp">--°C</h2>
+            <p id="current-feels-like">Ощущается как --°C</p>
+            <p id="current-condition">Погодные условия</p>
+        </div>
+        <div class="farmer-tips hidden">
+            <h3>Советы для фермера</h3>
+            <div id="farmer-tips-content"></div>
+        </div>
+        <button id="toggleForecastBtn">▼</button> <!-- Кнопка для раскрытия прогноза -->
+        <div class="daily-forecast hidden">
+            <!-- Прогноз на неделю будет добавляться сюда -->
+        </div>
+        <button id="returnBtn" class="hidden">Назад</button>
     </div>
+    <footer class="hidden">
+        <!-- Дополнительная информация или ссылки -->
+    </footer>
     <script src="script.js"></script>
 </body>
 </html>
