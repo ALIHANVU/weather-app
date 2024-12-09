@@ -158,6 +158,8 @@ button#getWeatherBtn:hover {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    max-height: 100%; /* Увеличиваем высоту */
+    overflow-y: auto; /* Добавляем прокрутку, если карточек слишком много */
 }
 
 .daily .day {
@@ -165,7 +167,6 @@ button#getWeatherBtn:hover {
     border-radius: 10px;
     background-color: #f0f0f0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 10px;
     transition: transform 0.3s, box-shadow 0.3s;
     display: flex;
     flex-direction: column;
@@ -188,6 +189,13 @@ button#getWeatherBtn:hover {
     font-size: 1.2em;
     color: #333;
 }
+
+.app-container {
+    max-height: 1000px; /* Обеспечиваем, что основной контейнер тоже увеличивает высоту */
+    transition: max-height 0.5s ease-in-out;
+    overflow: hidden;
+}
+
 
 /* Темная тема */
 .dark-theme {
