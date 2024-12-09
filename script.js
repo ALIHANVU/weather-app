@@ -92,32 +92,30 @@ const displayWeather = (data, city) => {
 };
 const displayForecast = (data) => {
     const days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
-    const forecastList = {};
+    const forecastList = Array(7).fill(null);
+    const today = new Date().getDay(); // Текущий день недели
 
     dailyForecastContainer.innerHTML = '';
 
-    // Проходим по всему списку прогнозов и сохраняем прогноз для каждого дня недели
     data.list.forEach(item => {
         const date = new Date(item.dt * 1000);
         const dayIndex = date.getDay();
-        const day = days[dayIndex];
         const tempMin = item.main.temp_min;
         const tempMax = item.main.temp_max;
         const condition = item.weather[0].description;
         const icon = item.weather[0].icon;
         const weatherEmoji = weatherEmojiMap[icon] || "❓";
 
+        // Заполняем прогноз для каждого дня недели
         forecastList[dayIndex] = `
             <div class="day">
-                <p>${day}</p>
+                <p>${days[dayIndex]}</p>
                 <p>${Math.round(tempMax)}°C / ${Math.round(tempMin)}°C</p>
                 <p>${weatherEmoji}</p>
                 <p>${capitalizeFirstLetter(condition)}</p>
             </div>
         `;
     });
-
-    const today = new Date().getDay(); // Получаем текущий день недели
 
     // Отображаем прогнозы, начиная с текущего дня и далее
     for (let i = 0; i < 7; i++) {
