@@ -100,11 +100,11 @@ const displayForecast = (data) => {
 const displayForecast = (data) => {
     const days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
     const forecastList = {};
-    const today = new Date().getDay(); // Получаем текущий день недели
 
     dailyForecastContainer.innerHTML = '';
 
-    data.list.forEach((item) => {
+    // Проходим по всему списку прогнозов и сохраняем прогноз для каждого дня недели
+    data.list.forEach(item => {
         const date = new Date(item.dt * 1000);
         const dayIndex = date.getDay();
         const day = days[dayIndex];
@@ -124,6 +124,9 @@ const displayForecast = (data) => {
         `;
     });
 
+    const today = new Date().getDay(); // Получаем текущий день недели
+
+    // Отображаем прогнозы, начиная с текущего дня и далее
     for (let i = 0; i < 7; i++) {
         const dayIndex = (today + i) % 7;
         dailyForecastContainer.innerHTML += forecastList[dayIndex] || `
