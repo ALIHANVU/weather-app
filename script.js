@@ -86,6 +86,7 @@ const displayWeather = (data, city) => {
     updateFarmerTips(temp, condition, main.humidity, main.pressure, weather[0].main);
 };
 
+// Показать скрытые элементы
 const displayForecast = (data) => {
     const days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
     const uniqueDays = {};
@@ -169,7 +170,6 @@ getWeatherBtn.addEventListener('click', () => {
     const city = cityInput.value.trim();
     fetchWeather(city);
 });
-
 returnBtn.addEventListener('click', () => {
     toggleDisplay('.input-container', true);
     toggleVisibility(returnBtn, false);
@@ -180,6 +180,12 @@ returnBtn.addEventListener('click', () => {
     dailyForecastContainer.innerHTML = '';
     farmerTipsContainer.innerHTML = '';
     cityInput.value = '';
+
+    // Скрыть элементы обратно
+    document.querySelector('.current-weather').classList.add('hidden');
+    document.querySelector('.farmer-tips').classList.add('hidden');
+    document.querySelector('.daily-forecast').classList.add('hidden');
+    document.querySelector('footer').classList.add('hidden');
 });
 
 const updateElement = (element, content) => {
