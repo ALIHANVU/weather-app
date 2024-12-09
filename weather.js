@@ -109,7 +109,26 @@ const displayForecast = (data) => {
         return false;
     });
 
-    console.log('Filtered forecast list:', forecastList);
+    const displayForecast = (data) => {
+    console.log('Processing forecast data...');
+    const days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
+    const uniqueDays = {};
+
+    console.log('Full forecast list:', data.list);  // Печать полного списка прогноза
+
+    const forecastList = data.list.filter((item) => {
+        const date = new Date(item.dt * 1000);
+        const dayIndex = date.getDay();
+        console.log(`Processing forecast for date: ${date}, dayIndex: ${dayIndex}`);  // Новое отладочное сообщение
+        if (!uniqueDays[dayIndex]) {
+            uniqueDays[dayIndex] = true;
+            console.log(`Adding forecast for day index: ${dayIndex}`);  // Новое отладочное сообщение
+            return true;
+        }
+        return false;
+    });
+
+    console.log('Filtered forecast list:', forecastList);  // Печать отфильтрованного списка прогноза
 
     dailyForecastContainer.innerHTML = '';
 
@@ -123,7 +142,7 @@ const displayForecast = (data) => {
         const icon = item.weather[0].icon;
         const weatherEmoji = weatherEmojiMap[icon] || '❓';
 
-        console.log(`Day: ${day}, Max Temp: ${tempMax}, Min Temp: ${tempMin}, Condition: ${condition}, Icon: ${icon}`);
+        console.log(`Day: ${day}, Max Temp: ${tempMax}, Min Temp: ${tempMin}, Condition: ${condition}, Icon: ${icon}`);  // Добавленное отладочное сообщение
 
         dailyForecastContainer.innerHTML += `
             <div class="day fade-in">
@@ -135,8 +154,9 @@ const displayForecast = (data) => {
         `;
     });
 
-    console.log('Finished processing forecast data.');
+    console.log('Finished processing forecast data');  // Добавленное отладочное сообщение
 };
+
 
 const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
     console.log('Fetching farmer tips...');
