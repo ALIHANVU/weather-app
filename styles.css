@@ -79,6 +79,30 @@ header, h1, .input-container, button#getWeatherBtn, .current-weather, .daily-for
     animation: slideIn 0.5s ease-in-out forwards;
 }
 
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;
+    width: 100%;
+    padding: 10px;
+}
+
+button#themeToggle,
+button#returnBtn {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+button#themeToggle:hover,
+button#returnBtn:hover {
+    transform: scale(1.2);
+}
+
 h1 {
     font-size: 1.8em;
     font-weight: 500;
@@ -87,18 +111,8 @@ h1 {
     animation-delay: 0.2s;
 }
 
-button#themeToggle {
-    background: none;
-    border: none;
-    font-size: 1.5em;
-    cursor: pointer;
-}
-
-button#themeToggle:hover {
-    transform: scale(1.2);
-}
-
-button#themeToggle:active {
+button#themeToggle:active,
+button#returnBtn:active {
     transform: rotate(360deg);
 }
 
@@ -182,7 +196,7 @@ button#getWeatherBtn:hover {
 
 .dark-theme .daily .day, .dark-theme .farmer-tips-content .tip {
     background-color: var(--dark-element);
-    color: var (--secondary-color);
+    color: var(--secondary-color);
 }
 
 .farmer-tips {
