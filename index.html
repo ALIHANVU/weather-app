@@ -21,25 +21,25 @@
                 <input type="text" id="cityInput" placeholder="Введите название города" aria-label="City Input">
                 <button id="getWeatherBtn">Узнать погоду</button>
             </div>
-            <section class="current-weather slide-fwd-center">
+            <section class="current-weather slide-fwd-center hidden">
                 <p id="current-temp">--°C</p>
                 <p id="current-feels-like">Ощущается как --°C</p>
                 <p id="current-condition">Погодные условия</p>
             </section>
-            <section class="farmer-tips">
+            <section class="farmer-tips hidden">
                 <h2>Подсказки фермерам</h2>
                 <div id="farmer-tips-content">
                     <!-- Farmer tips will be inserted here by JS -->
                 </div>
             </section>
-            <section class="daily-forecast">
+            <section class="daily-forecast hidden">
                 <h2>Прогноз на неделю</h2>
                 <div class="daily">
                     <!-- Daily forecast items will be inserted here by JS -->
                 </div>
             </section>
         </main>
-        <footer>
+        <footer class="hidden">
             <p>© 2024 WeatherNow</p>
         </footer>
     </div>
