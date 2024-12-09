@@ -8,6 +8,7 @@ const themeToggle = document.getElementById('themeToggle');
 const returnBtn = document.getElementById('returnBtn');
 const dailyForecastContainer = document.querySelector('.daily');
 const farmerTipsContainer = document.querySelector('#farmer-tips-content');
+const appContainer = document.querySelector('.app-container');
 let isDarkTheme = false;
 
 const apiKey = 'c708426913319b328c4ff4719583d1c6';
@@ -89,7 +90,6 @@ const displayWeather = (data, city) => {
 
     updateFarmerTips(temp, condition, main.humidity, main.pressure, weather[0].main);
 };
-
 const displayForecast = (data) => {
     const days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
     const uniqueDays = {};
@@ -173,6 +173,7 @@ getWeatherBtn.addEventListener('click', () => {
     const city = cityInput.value.trim();
     fetchWeather(city);
 });
+
 returnBtn.addEventListener('click', () => {
     toggleDisplay('.input-container', true);
     toggleVisibility(returnBtn, false);
@@ -193,6 +194,9 @@ returnBtn.addEventListener('click', () => {
     document.querySelector('.daily-forecast').classList.add('hidden');
     document.querySelector('footer').classList.remove('visible');
     document.querySelector('footer').classList.add('hidden');
+
+    // Плавно изменить высоту контейнера
+    appContainer.style.maxHeight = '200px';
 });
 
 const updateElement = (element, content) => {
@@ -211,6 +215,13 @@ const toggleDisplay = (selector, show) => {
 const toggleVisibility = (element, visible) => {
     element.classList.toggle('hidden', !visible);
     element.classList.toggle('visible', visible);
+
+    // Плавно изменить высоту контейнера
+    if (visible) {
+        appContainer.style.maxHeight = '1000px'; // Предполагаемая максимальная высота
+    } else {
+        appContainer.style.maxHeight = '200px';
+    }
 };
 
 const capitalizeFirstLetter = (string) => {
