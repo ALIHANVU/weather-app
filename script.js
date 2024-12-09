@@ -9,6 +9,7 @@ const returnBtn = document.getElementById('returnBtn');
 const dailyForecastContainer = document.querySelector('.daily');
 const farmerTipsContainer = document.querySelector('#farmer-tips-content');
 const appContainer = document.querySelector('.app-container');
+const toggleForecastBtn = document.getElementById('toggleForecastBtn');
 let isDarkTheme = false;
 
 const apiKey = 'c708426913319b328c4ff4719583d1c6';
@@ -90,6 +91,7 @@ const displayWeather = (data, city) => {
 
     updateFarmerTips(temp, condition, main.humidity, main.pressure, weather[0].main);
 };
+
 const displayForecast = (data) => {
     const days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
     const forecastList = Array(7).fill(null);
@@ -128,8 +130,6 @@ const displayForecast = (data) => {
         `;
     }
 };
-
-
 const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
     let tip = '';
 
@@ -202,6 +202,14 @@ returnBtn.addEventListener('click', () => {
     appContainer.style.maxHeight = '200px';
 });
 
+toggleForecastBtn.addEventListener('click', () => {
+    const forecastContainer = document.querySelector('.daily-forecast');
+    const isHidden = forecastContainer.classList.contains('hidden');
+    
+    toggleVisibility(forecastContainer, isHidden);
+    toggleForecastBtn.textContent = isHidden ? '▲' : '▼';
+});
+
 const updateElement = (element, content) => {
     element.style.opacity = 0;
     setTimeout(() => {
@@ -213,20 +221,4 @@ const updateElement = (element, content) => {
 const toggleDisplay = (selector, show) => {
     const element = document.querySelector(selector);
     element.style.display = show ? 'flex' : 'none';
-};
-
-const toggleVisibility = (element, visible) => {
-    element.classList.toggle('hidden', !visible);
-    element.classList.toggle('visible', visible);
-
-    // Плавно изменить высоту контейнера
-    if (visible) {
-        appContainer.style.maxHeight = '1000px'; // Предполагаемая максимальная высота
-    } else {
-        appContainer.style.maxHeight = '200px';
-    }
-};
-
-const capitalizeFirstLetter = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1);
 };
