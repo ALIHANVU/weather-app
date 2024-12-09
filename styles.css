@@ -211,6 +211,30 @@ button#getWeatherBtn:hover {
     display: none;
 }
 
+.visible {
+    display: block;
+    opacity: 0;
+    animation: fadeIn 1s forwards, expand 1s forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes expand {
+    from {
+        transform: scale(0.95);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
 /* Медиа-запрос */
 @media (max-width: 768px) {
     .app-container, header, h1, .input-container, button#getWeatherBtn, .current-weather, #current-temp, #current-feels-like, #current-condition, .daily-forecast, .farmer-tips {
