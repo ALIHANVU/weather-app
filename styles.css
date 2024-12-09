@@ -1,10 +1,16 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
     background-color: #f0f0f0;
     color: #333;
     display: flex;
     justify-content: center;
-    flex-direction: column;
     align-items: center;
-    justify-content: center;
     height: 100vh;
     position: relative;
     transition: background-color 0.3s, color 0.3s;
@@ -13,14 +19,17 @@
 button {
     transition: background-color 0.3s, transform 0.3s;
 }
+
 input {
     transition: border-color 0.3s;
 }
+
 #current-temp,
 #current-feels-like,
 #current-condition {
     transition: color 0.3s;
 }
+
 .app-container {
     max-width: 360px;
     margin: auto;
@@ -31,6 +40,7 @@ input {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     animation: fadeIn 0.5s ease-in-out;
 }
+
 header {
     display: flex;
     justify-content: space-between;
@@ -40,6 +50,7 @@ header {
     opacity: 0;
     animation: slideIn 0.5s ease-in-out 0.1s forwards;
 }
+
 h1 {
     font-size: 1.8em;
     font-weight: 500;
@@ -48,6 +59,7 @@ h1 {
     opacity: 0;
     animation: slideIn 0.5s ease-in-out 0.2s forwards;
 }
+
 button#themeToggle {
     background: none;
     border: none;
@@ -55,12 +67,15 @@ button#themeToggle {
     cursor: pointer;
     transition: transform 0.3s, color 0.3s;
 }
+
 button#themeToggle:hover {
     transform: scale(1.2);
 }
+
 button#themeToggle:active {
     transform: rotate(360deg);
 }
+
 .input-container {
     display: flex;
     flex-direction: column;
@@ -78,12 +93,13 @@ input#cityInput {
     width: 100%;
     transition: border-color 0.3s;
 }
+
 input#cityInput:focus {
     border-color: #007aff;
     outline: none;
 }
+
 button#getWeatherBtn {
-button {
     padding: 8px 16px;
     border-radius: 20px;
     border: none;
@@ -96,45 +112,47 @@ button {
 }
 
 button#getWeatherBtn:hover {
-button:hover {
     background-color: #005bb5;
 }
 
 button#getWeatherBtn:active {
     transform: scale(0.98);
 }
+
 button.hidden {
-.hidden {
     display: none;
 }
 
 button.return-btn {
     background: none;
     border: none;
-#themeToggle {
-    margin-top: 20px;
     font-size: 1.5em;
     cursor: pointer;
     transition: transform 0.3s, opacity 0.3s;
 }
+
 button.return-btn:hover {
     transform: scale(1.2);
     opacity: 0.7;
 }
+
 button.return-btn:active {
     transform: rotate(180deg);
 }
+
 .current-weather {
     margin-bottom: 20px;
     opacity: 0;
     animation: slideIn 0.5s ease-in-out 0.5s forwards;
 }
+
 #current-temp {
     font-size: 2.5em;
     font-weight: 700;
     opacity: 0;
     animation: slideIn 0.5s ease-in-out 0.6s forwards;
 }
+
 #current-feels-like {
     font-size: 1.2em;
     color: #666;
@@ -142,12 +160,14 @@ button.return-btn:active {
     opacity: 0;
     animation: slideIn 0.5s ease-in-out 0.7s forwards;
 }
+
 #current-condition {
     font-size: 1.2em;
     color: #666;
     opacity: 0;
     animation: slideIn 0.5s ease-in-out 0.8s forwards;
 }
+
 @keyframes slideIn {
     from {
         opacity: 0;
@@ -158,6 +178,7 @@ button.return-btn:active {
         transform: translateY(0);
     }
 }
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -166,6 +187,7 @@ button.return-btn:active {
         opacity: 1;
     }
 }
+
 .daily-forecast {
     margin: 20px 0;
     opacity: 0;
@@ -177,41 +199,40 @@ button.return-btn:active {
     opacity: 0;
     animation: slideIn 0.5s ease-in-out 0.9s forwards;
 }
+
 .daily,
 .farmer-tips-content {
     display: flex;
     flex-direction: column;
     gap: 10px;
     text-align: left;
-#weatherInfo {
-    text-align: center;
-    margin-top: 20px;
 }
 
 .daily .day,
 .farmer-tips-content .tip {
-.daily .day {
     padding: 10px;
     border-radius: 10px;
     background-color: #f0f0f0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s, box-shadow 0.3s;
 }
+
 .daily .day:hover,
 .farmer-tips-content .tip:hover {
     transform: translateY(-5px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    margin-top: 10px;
 }
 
 .dark-theme {
     background-color: #2c2c2e;
     color: #f0f0f0;
 }
+
 .dark-theme .app-container {
     background-color: #3c3c3e;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
 }
+
 .dark-theme h1,
 .dark-theme h2,
 .dark-theme #current-temp,
@@ -219,11 +240,13 @@ button.return-btn:active {
 .dark-theme #current-condition {
     color: #f0f0f0;
 }
+
 .dark-theme .daily .day,
 .dark-theme .farmer-tips-content .tip {
     background-color: #444;
     color: #f0f0f0;
 }
+
 /* Медиазапрос для мобильных устройств */
 @media (max-width: 768px) {
     .app-container,
