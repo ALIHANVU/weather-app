@@ -91,7 +91,6 @@ const displayWeather = (data, city) => {
 
     updateFarmerTips(temp, condition, main.humidity, main.pressure, weather[0].main);
 };
-
 const displayForecast = (data) => {
     const days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
     const forecastList = Array(7).fill(null);
@@ -130,6 +129,7 @@ const displayForecast = (data) => {
         `;
     }
 };
+
 const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
     let tip = '';
 
@@ -164,61 +164,4 @@ const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
     }
 
     updateElement(farmerTipsContainer, `<p class="tip">${tip}</p>`);
-};
-
-themeToggle.addEventListener('click', () => {
-    isDarkTheme = !isDarkTheme;
-    document.body.classList.toggle('dark-theme', isDarkTheme);
-    themeToggle.textContent = isDarkTheme ? '☀️' : '🌙';
-});
-
-getWeatherBtn.addEventListener('click', () => {
-    const city = cityInput.value.trim();
-    fetchWeather(city);
-});
-
-returnBtn.addEventListener('click', () => {
-    toggleDisplay('.input-container', true);
-    toggleVisibility(returnBtn, false);
-    updateElement(locationElement, 'WeatherNow');
-    updateElement(currentTempElement, '--°C');
-    updateElement(currentFeelsLikeElement, 'Ощущается как --°C');
-    updateElement(currentConditionElement, 'Погодные условия');
-    dailyForecastContainer.innerHTML = '';
-    farmerTipsContainer.innerHTML = '';
-    cityInput.value = '';
-
-    // Скрыть элементы обратно
-    document.querySelector('.current-weather').classList.remove('visible');
-    document.querySelector('.current-weather').classList.add('hidden');
-    document.querySelector('.farmer-tips').classList.remove('visible');
-    document.querySelector('.farmer-tips').classList.add('hidden');
-    document.querySelector('.daily-forecast').classList.remove('visible');
-    document.querySelector('.daily-forecast').classList.add('hidden');
-    document.querySelector('footer').classList.remove('visible');
-    document.querySelector('footer').classList.add('hidden');
-
-    // Плавно изменить высоту контейнера
-    appContainer.style.maxHeight = '200px';
-});
-
-toggleForecastBtn.addEventListener('click', () => {
-    const forecastContainer = document.querySelector('.daily-forecast');
-    const isHidden = forecastContainer.classList.contains('hidden');
-    
-    toggleVisibility(forecastContainer, isHidden);
-    toggleForecastBtn.textContent = isHidden ? '▲' : '▼';
-});
-
-const updateElement = (element, content) => {
-    element.style.opacity = 0;
-    setTimeout(() => {
-        element.innerHTML = content;
-        element.style.opacity = 1;
-    }, 300);
-};
-
-const toggleDisplay = (selector, show) => {
-    const element = document.querySelector(selector);
-    element.style.display = show ? 'flex' : 'none';
 };
