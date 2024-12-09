@@ -149,14 +149,6 @@ button#getWeatherBtn:hover {
     align-items: center;
 }
 
-.daily .day p:first-child {
-    font-family: 'FreeMono, monospace', sans-serif; 
-    font-weight: bold;
-    font-size: 1.2em;
-    color: #333;
-}
-
-
 .daily .day:hover {
     transform: translateY(-5px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -164,6 +156,13 @@ button#getWeatherBtn:hover {
 
 .daily .day p {
     margin: 5px 0;
+}
+
+.daily .day p:first-child {
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    font-size: 1.2em;
+    color: #333;
 }
 
 /* Темная тема */
@@ -183,7 +182,15 @@ button#getWeatherBtn:hover {
 
 .dark-theme .daily .day, .dark-theme .farmer-tips-content .tip {
     background-color: var(--dark-element);
-    color: var(--secondary-color);
+    color: var (--secondary-color);
+}
+
+.farmer-tips {
+    margin-bottom: 20px; /* Добавляем отступ снизу */
+}
+
+.daily-forecast {
+    margin-top: 20px; /* Добавляем отступ сверху */
 }
 
 /* Медиа-запрос */
