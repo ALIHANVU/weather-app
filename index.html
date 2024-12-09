@@ -4,18 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WeatherNow</title>
+    <meta name="description" content="WeatherNow - узнайте текущую погоду и прогноз на неделю.">
+    <meta name="keywords" content="погода, прогноз, WeatherNow, текущая погода, прогноз на неделю">
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="app-container">
         <header>
-            <button id="themeToggle" class="theme-toggle">🌙</button>
-            <button id="returnBtn" class="return-btn hidden">⮌</button>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+            <button id="returnBtn" class="return-btn hidden" aria-label="Return">⮌</button>
         </header>
         <main>
             <div class="input-container">
-                <input type="text" id="cityInput" placeholder="Введите название города">
+                <input type="text" id="cityInput" placeholder="Введите название города" aria-label="City Input">
                 <button id="getWeatherBtn">Узнать погоду</button>
             </div>
             <h1 id="location">WeatherNow</h1>
