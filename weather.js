@@ -128,6 +128,8 @@ const displayForecast = (data) => {
             </div>
         `;
     });
+
+    console.log('Finished processing forecast data');  // Добавленное отладочное сообщение
 };
 
 const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
@@ -186,4 +188,3 @@ const removePlaceholders = () => {
     dailyForecastContainer.innerHTML = '';
     farmerTipsContainer.innerHTML = '';
 };
-
