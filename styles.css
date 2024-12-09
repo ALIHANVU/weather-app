@@ -160,6 +160,7 @@ button#getWeatherBtn:hover {
     gap: 10px;
     max-height: 100%; /* Увеличиваем высоту */
     overflow-y: auto; /* Добавляем прокрутку, если карточек слишком много */
+    padding-bottom: 10px; /* Добавляем отступ снизу */
 }
 
 .daily .day {
@@ -172,6 +173,7 @@ button#getWeatherBtn:hover {
     flex-direction: column;
     align-items: center;
     width: 100%; /* Обеспечиваем, что каждая карточка занимает всю ширину контейнера */
+    margin-bottom: 10px; /* Добавляем отступ снизу */
 }
 
 .daily .day:hover {
@@ -194,6 +196,7 @@ button#getWeatherBtn:hover {
     max-height: 1000px; /* Обеспечиваем, что основной контейнер тоже увеличивает высоту */
     transition: max-height 0.5s ease-in-out;
     overflow: hidden;
+    padding-bottom: 10px; /* Добавляем отступ снизу */
 }
 
 
