@@ -77,16 +77,19 @@ const displayWeather = (data, city) => {
     updateElement(locationElement, city);
     toggleVisibility(returnBtn, true);
 
-    // Показать скрытые элементы
+    // Показать скрытые элементы с анимацией
     document.querySelector('.current-weather').classList.remove('hidden');
+    document.querySelector('.current-weather').classList.add('visible');
     document.querySelector('.farmer-tips').classList.remove('hidden');
+    document.querySelector('.farmer-tips').classList.add('visible');
     document.querySelector('.daily-forecast').classList.remove('hidden');
+    document.querySelector('.daily-forecast').classList.add('visible');
     document.querySelector('footer').classList.remove('hidden');
+    document.querySelector('footer').classList.add('visible');
 
     updateFarmerTips(temp, condition, main.humidity, main.pressure, weather[0].main);
 };
 
-// Показать скрытые элементы
 const displayForecast = (data) => {
     const days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
     const uniqueDays = {};
@@ -182,9 +185,13 @@ returnBtn.addEventListener('click', () => {
     cityInput.value = '';
 
     // Скрыть элементы обратно
+    document.querySelector('.current-weather').classList.remove('visible');
     document.querySelector('.current-weather').classList.add('hidden');
+    document.querySelector('.farmer-tips').classList.remove('visible');
     document.querySelector('.farmer-tips').classList.add('hidden');
+    document.querySelector('.daily-forecast').classList.remove('visible');
     document.querySelector('.daily-forecast').classList.add('hidden');
+    document.querySelector('footer').classList.remove('visible');
     document.querySelector('footer').classList.add('hidden');
 });
 
@@ -203,6 +210,7 @@ const toggleDisplay = (selector, show) => {
 
 const toggleVisibility = (element, visible) => {
     element.classList.toggle('hidden', !visible);
+    element.classList.toggle('visible', visible);
 };
 
 const capitalizeFirstLetter = (string) => {
