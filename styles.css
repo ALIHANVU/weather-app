@@ -106,13 +106,17 @@ button#getWeatherBtn {
     background-color: #007aff;
     color: #fff;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.3s;
     opacity: 0;
     animation: slideIn 0.5s ease-in-out 0.4s forwards;
 }
 
 button#getWeatherBtn:hover {
     background-color: #005bb5;
+}
+
+button#getWeatherBtn:active {
+    transform: scale(0.98);
 }
 
 button.hidden {
@@ -124,11 +128,16 @@ button.return-btn {
     border: none;
     font-size: 1.5em;
     cursor: pointer;
-    transition: transform 0.3s;
+    transition: transform 0.3s, opacity 0.3s;
 }
 
 button.return-btn:hover {
     transform: scale(1.2);
+    opacity: 0.7;
+}
+
+button.return-btn:active {
+    transform: rotate(180deg);
 }
 
 .current-weather {
@@ -167,6 +176,15 @@ button.return-btn:hover {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
     }
 }
 
@@ -246,9 +264,3 @@ button.return-btn:hover {
         animation-fill-mode: forwards;
     }
 }
-
-
-
-
-
-
