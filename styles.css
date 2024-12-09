@@ -207,6 +207,10 @@ button#getWeatherBtn:hover {
     margin-top: 20px; /* Добавляем отступ сверху */
 }
 
+.hidden {
+    display: none;
+}
+
 /* Медиа-запрос */
 @media (max-width: 768px) {
     .app-container, header, h1, .input-container, button#getWeatherBtn, .current-weather, #current-temp, #current-feels-like, #current-condition, .daily-forecast, .farmer-tips {
