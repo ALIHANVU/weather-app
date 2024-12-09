@@ -72,8 +72,9 @@ button, input {
     border-radius: 20px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     animation: fadeIn 0.5s ease-in-out;
-    transition: height 0.5s ease-in-out;
+    transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
     overflow: hidden;
+    max-height: 200px; /* Начальная высота */
 }
 
 header, h1, .input-container, button#getWeatherBtn, .current-weather, .daily-forecast, .farmer-tips {
@@ -216,7 +217,7 @@ button#getWeatherBtn:hover {
 .visible {
     display: block;
     opacity: 0;
-    animation: fadeIn 1s forwards, expand 1s forwards;
+    animation: fadeIn 1s forwards;
 }
 
 @keyframes fadeIn {
@@ -225,17 +226,6 @@ button#getWeatherBtn:hover {
     }
     to {
         opacity: 1;
-    }
-}
-
-@keyframes expand {
-    from {
-        transform: scale(0.95);
-        height: 0;
-    }
-    to {
-        transform: scale(1);
-        height: 100%;
     }
 }
 
