@@ -2,17 +2,20 @@
 body.dark-theme {
     background-color: #121212;
     color: #e0e0e0;
+    outline: 2px dashed red;  /* Отладка: Контур для body в темной теме */
 }
 
 .app-container.dark-theme {
     background-color: #1e1e1e;
     color: #e0e0e0;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
+    outline: 2px dashed blue;  /* Отладка: Контур для app-container в темной теме */
 }
 
 button.dark-theme {
     background-color: #bb86fc;
     color: #121212;
+    outline: 2px dashed green;  /* Отладка: Контур для button в темной теме */
 }
 
 button.dark-theme:hover {
@@ -27,6 +30,7 @@ input.dark-theme {
     background-color: #2e2e2e;
     color: #e0e0e0;
     border-color: #bb86fc;
+    outline: 2px dashed yellow;  /* Отладка: Контур для input в темной теме */
 }
 
 input.dark-theme:focus {
@@ -37,6 +41,7 @@ input.dark-theme:focus {
     background-color: #2e2e2e;
     border-radius: 10px;
     padding: 20px;
+    outline: 2px dashed cyan;  /* Отладка: Контур для current-weather */
 }
 
 .daily-forecast .day.dark-theme {
@@ -50,6 +55,7 @@ input.dark-theme:focus {
     flex-direction: column;
     align-items: center;
     transition: background-color 0.3s, transform 0.3s;
+    outline: 2px dashed purple;  /* Отладка: Контур для day в прогнозе */
 }
 
 .daily-forecast .day.dark-theme:hover {
@@ -61,9 +67,11 @@ input.dark-theme:focus {
     color: #e0e0e0;
     border-radius: 10px;
     padding: 20px;
+    outline: 2px dashed magenta;  /* Отладка: Контур для farmer-tips */
 }
 
 .loading-spinner.dark-theme {
     border-color: #e0e0e0;
     border-top-color: #bb86fc;
+    outline: 2px dashed lime;  /* Отладка: Контур для loading-spinner */
 }
