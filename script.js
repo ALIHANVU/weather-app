@@ -99,7 +99,7 @@ const displayForecast = (data) => {
     forecastList.forEach((item, index) => {
         const date = new Date(item.dt * 1000);
         const dayIndex = date.getDay();
-        const day = index === 0 ? 'Сегодня' : (index === 1 ? 'Завтра' : days[dayIndex]);
+        const day = index === 0 ? days[dayIndex] : (index === 1 ? 'Завтра' : days[dayIndex]);
         const tempMin = item.main.temp_min;
         const tempMax = item.main.temp_max;
         const condition = item.weather[0].description;
@@ -116,6 +116,7 @@ const displayForecast = (data) => {
         `;
     });
 };
+
 
 const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
     let tip = '';
