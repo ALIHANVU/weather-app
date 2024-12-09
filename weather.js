@@ -101,24 +101,6 @@ const displayForecast = (data) => {
     const forecastList = data.list.filter((item) => {
         const date = new Date(item.dt * 1000);
         const dayIndex = date.getDay();
-        if (!uniqueDays[dayIndex]) {
-            uniqueDays[dayIndex] = true;
-            console.log(`Adding forecast for day index: ${dayIndex}`);
-            return true;
-        }
-        return false;
-    });
-
-    const displayForecast = (data) => {
-    console.log('Processing forecast data...');
-    const days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
-    const uniqueDays = {};
-
-    console.log('Full forecast list:', data.list);  // Печать полного списка прогноза
-
-    const forecastList = data.list.filter((item) => {
-        const date = new Date(item.dt * 1000);
-        const dayIndex = date.getDay();
         console.log(`Processing forecast for date: ${date}, dayIndex: ${dayIndex}`);  // Новое отладочное сообщение
         if (!uniqueDays[dayIndex]) {
             uniqueDays[dayIndex] = true;
@@ -154,9 +136,8 @@ const displayForecast = (data) => {
         `;
     });
 
-    console.log('Finished processing forecast data');  // Добавленное отладочное сообщение
+    console.log('Finished processing forecast data.');  // Добавленное отладочное сообщение
 };
-
 
 const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
     console.log('Fetching farmer tips...');
