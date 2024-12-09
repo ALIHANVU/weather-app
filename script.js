@@ -42,8 +42,10 @@ const fetchWeather = async (city) => {
     try {
         const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=ru&appid=${apiKey}`;
         const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&lang=ru&appid=${apiKey}`;
-        const weatherResponse = await fetch(weatherUrl);
-        const forecastResponse = await fetch(forecastUrl);
+        const [weatherResponse, forecastResponse] = await Promise.all([
+            fetch(weatherUrl),
+            fetch(forecastUrl)
+        ]);
 
         if (!weatherResponse.ok || !forecastResponse.ok) {
             throw new Error(`Ошибка: ${weatherResponse.status} ${weatherResponse.statusText}`);
@@ -55,6 +57,7 @@ const fetchWeather = async (city) => {
         displayForecast(forecastData);
     } catch (error) {
         console.error('Ошибка загрузки данных:', error);
+        alert('Ошибка загрузки данных. Пожалуйста, попробуйте еще раз.');
     }
 };
 
@@ -66,13 +69,13 @@ const displayWeather = (data, city) => {
     const icon = weather[0].icon;
     const weatherEmoji = weatherEmojiMap[icon] || "❓";
 
-    currentTempElement.textContent = `${Math.round(temp)}°C ${weatherEmoji}`;
-    currentFeelsLikeElement.textContent = `Ощущается как ${Math.round(feelsLike)}°C`;
-    currentConditionElement.textContent = condition.charAt(0).toUpperCase() + condition.slice(1);
+    updateElement(currentTempElement, `${Math.round(temp)}°C ${weatherEmoji}`);
+    updateElement(currentFeelsLikeElement, `Ощущается как ${Math.round(feelsLike)}°C`);
+    updateElement(currentConditionElement, capitalizeFirstLetter(condition));
 
-    document.querySelector('.input-container').style.display = 'none';
-    locationElement.textContent = city;
-    returnBtn.classList.remove('hidden');
+    toggleDisplay('.input-container', false);
+    updateElement(locationElement, city);
+    toggleVisibility(returnBtn, true);
 
     updateFarmerTips(temp, condition, main.humidity, main.pressure, weather[0].main);
 };
@@ -108,7 +111,7 @@ const displayForecast = (data) => {
                 <p>${day}</p>
                 <p>${Math.round(tempMax)}°C / ${Math.round(tempMin)}°C</p>
                 <p>${weatherEmoji}</p>
-                <p>${condition}</p>
+                <p>${capitalizeFirstLetter(condition)}</p>
             </div>
         `;
     });
@@ -147,11 +150,7 @@ const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
         tip += ' Низкое давление. Возможны затруднения в опылении.';
     }
 
-    farmerTipsContainer.style.opacity = 0;
-    setTimeout(() => {
-        farmerTipsContainer.innerHTML = `<p class="tip">${tip}</p>`;
-        farmerTipsContainer.style.opacity = 1;
-    }, 300);
+    updateElement(farmerTipsContainer, `<p class="tip">${tip}</p>`);
 };
 
 themeToggle.addEventListener('click', () => {
@@ -166,13 +165,34 @@ getWeatherBtn.addEventListener('click', () => {
 });
 
 returnBtn.addEventListener('click', () => {
-    document.querySelector('.input-container').style.display = 'flex';
-    returnBtn.classList.add('hidden');
-    locationElement.textContent = 'WeatherNow';
-    currentTempElement.textContent = '--°C';
-    currentFeelsLikeElement.textContent = 'Ощущается как --°C';
-    currentConditionElement.textContent = 'Погодные условия';
+    toggleDisplay('.input-container', true);
+    toggleVisibility(returnBtn, false);
+    updateElement(locationElement, 'WeatherNow');
+    updateElement(currentTempElement, '--°C');
+    updateElement(currentFeelsLikeElement, 'Ощущается как --°C');
+    updateElement(currentConditionElement, 'Погодные условия');
     dailyForecastContainer.innerHTML = '';
     farmerTipsContainer.innerHTML = '';
     cityInput.value = '';
 });
+
+const updateElement = (element, content) => {
+    element.style.opacity = 0;
+    setTimeout(() => {
+        element.innerHTML = content;
+        element.style.opacity = 1;
+    }, 300);
+};
+
+const toggleDisplay = (selector, show) => {
+    const element = document.querySelector(selector);
+    element.style.display = show ? 'flex' : 'none';
+};
+
+const toggleVisibility = (element, visible) => {
+    element.classList.toggle('hidden', !visible);
+};
+
+const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+};
