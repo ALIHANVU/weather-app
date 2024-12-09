@@ -129,6 +129,7 @@ const displayForecast = (data) => {
     }
 };
 
+
 const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
     let tip = '';
 
