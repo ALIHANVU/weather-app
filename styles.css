@@ -149,6 +149,14 @@ button#getWeatherBtn:hover {
     align-items: center;
 }
 
+.daily .day p:first-child {
+    font-family: 'FreeMono, monospace', sans-serif; 
+    font-weight: bold;
+    font-size: 1.2em;
+    color: #333;
+}
+
+
 .daily .day:hover {
     transform: translateY(-5px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
