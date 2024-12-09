@@ -4,7 +4,7 @@
     --dark-background: #2c2c2e;
     --dark-foreground: #3c3c3e;
     --dark-element: #444;
-    --transition-time: 0.3s;
+    --transition-time: 0.5s; /* Увеличение времени перехода */
 }
 
 /* Анимация */
@@ -72,7 +72,7 @@ button, input {
     border-radius: 20px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     animation: fadeIn 0.5s ease-in-out;
-    transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    transition: max-height var(--transition-time) ease-in-out, opacity var(--transition-time) ease-in-out;
     overflow: hidden;
     max-height: 200px; /* Начальная высота */
 }
@@ -98,7 +98,7 @@ button#returnBtn {
     border: none;
     font-size: 1.5em;
     cursor: pointer;
-    transition: transform 0.3s;
+    transition: transform var(--transition-time);
 }
 
 button#themeToggle:hover,
@@ -160,7 +160,7 @@ button#getWeatherBtn:hover {
     background-color: #f0f0f0;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     margin-bottom: 10px;
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: transform var(--transition-time), box-shadow var(--transition-time);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -194,20 +194,20 @@ button#getWeatherBtn:hover {
 }
 
 .dark-theme h1, .dark-theme h2, .dark-theme #current-temp, .dark-theme #current-feels-like, .dark-theme #current-condition {
-    color: var(--secondary-color);
+    color: var (--secondary-color);
 }
 
 .dark-theme .daily .day, .dark-theme .farmer-tips-content .tip {
     background-color: var(--dark-element);
-    color: var(--secondary-color);
+    color: var (--secondary-color);
 }
 
 .farmer-tips {
-    margin-bottom: 20px; /* Добавляем отступ снизу */
+    margin-bottom: 20px;
 }
 
 .daily-forecast {
-    margin-top: 20px; /* Добавляем отступ сверху */
+    margin-top: 20px;
 }
 
 .hidden {
@@ -217,7 +217,7 @@ button#getWeatherBtn:hover {
 .visible {
     display: block;
     opacity: 0;
-    animation: fadeIn 1s forwards;
+    animation: fadeIn var(--transition-time) forwards;
 }
 
 @keyframes fadeIn {
@@ -232,7 +232,7 @@ button#getWeatherBtn:hover {
 /* Медиа-запрос */
 @media (max-width: 768px) {
     .app-container, header, h1, .input-container, button#getWeatherBtn, .current-weather, #current-temp, #current-feels-like, #current-condition, .daily-forecast, .farmer-tips {
-        animation-duration: 0.5s;
+        animation-duration: var(--transition-time);
         animation-fill-mode: forwards;
     }
 }
