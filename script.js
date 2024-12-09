@@ -97,8 +97,14 @@ const displayForecast = (data) => {
     // Заполняем контейнер значением по умолчанию
     dailyForecastContainer.innerHTML = '';
 
-    // Проходим по всему списку прогнозов и сохраняем прогноз для каждого дня недели
-    data.list.forEach(item => {
+const displayForecast = (data) => {
+    const days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
+    const forecastList = {};
+    const today = new Date().getDay(); // Получаем текущий день недели
+
+    dailyForecastContainer.innerHTML = '';
+
+    data.list.forEach((item) => {
         const date = new Date(item.dt * 1000);
         const dayIndex = date.getDay();
         const day = days[dayIndex];
@@ -108,7 +114,7 @@ const displayForecast = (data) => {
         const icon = item.weather[0].icon;
         const weatherEmoji = weatherEmojiMap[icon] || "❓";
 
-        forecastPerDay[day] = `
+        forecastList[dayIndex] = `
             <div class="day">
                 <p>${day}</p>
                 <p>${Math.round(tempMax)}°C / ${Math.round(tempMin)}°C</p>
@@ -118,16 +124,17 @@ const displayForecast = (data) => {
         `;
     });
 
-    // Отображаем прогнозы для всех дней недели, если они имеются
-    days.forEach(day => {
-        dailyForecastContainer.innerHTML += forecastPerDay[day] || `
+    for (let i = 0; i < 7; i++) {
+        const dayIndex = (today + i) % 7;
+        dailyForecastContainer.innerHTML += forecastList[dayIndex] || `
             <div class="day">
-                <p>${day}</p>
+                <p>${days[dayIndex]}</p>
                 <p>Нет данных</p>
             </div>
         `;
-    });
+    }
 };
+
 
 const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
     let tip = '';
