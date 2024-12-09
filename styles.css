@@ -154,6 +154,12 @@ button#getWeatherBtn:hover {
 }
 
 /* Стили для прогноза погоды на неделю */
+.daily-forecast {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
 .daily .day {
     padding: 15px;
     border-radius: 10px;
@@ -164,7 +170,7 @@ button#getWeatherBtn:hover {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%; /* Обеспечиваем, что каждый день занимает всю ширину контейнера */
+    width: 100%; /* Обеспечиваем, что каждая карточка занимает всю ширину контейнера */
 }
 
 .daily .day:hover {
@@ -182,7 +188,6 @@ button#getWeatherBtn:hover {
     font-size: 1.2em;
     color: #333;
 }
-
 
 /* Темная тема */
 .dark-theme {
