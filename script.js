@@ -92,24 +92,14 @@ const displayWeather = (data, city) => {
 };
 const displayForecast = (data) => {
     const days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
-    const uniqueDays = {};
-
-    const forecastList = data.list.filter((item) => {
-        const date = new Date(item.dt * 1000);
-        const dayIndex = date.getDay();
-        if (!uniqueDays[dayIndex]) {
-            uniqueDays[dayIndex] = true;
-            return true;
-        }
-        return false;
-    });
+    const forecastList = data.list.filter((item, index) => index % 8 === 0); // Используем каждый 8-й элемент для ежедневного прогноза
 
     dailyForecastContainer.innerHTML = '';
 
-    forecastList.forEach((item, index) => {
+    forecastList.forEach((item) => {
         const date = new Date(item.dt * 1000);
         const dayIndex = date.getDay();
-        const day = index === 0 ? days[dayIndex] : (index === 1 ? 'Завтра' : days[dayIndex]);
+        const day = days[dayIndex];
         const tempMin = item.main.temp_min;
         const tempMax = item.main.temp_max;
         const condition = item.weather[0].description;
@@ -126,6 +116,7 @@ const displayForecast = (data) => {
         `;
     });
 };
+
 
 const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
     let tip = '';
