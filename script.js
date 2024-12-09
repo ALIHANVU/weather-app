@@ -77,6 +77,12 @@ const displayWeather = (data, city) => {
     updateElement(locationElement, city);
     toggleVisibility(returnBtn, true);
 
+    // Показать скрытые элементы
+    document.querySelector('.current-weather').classList.remove('hidden');
+    document.querySelector('.farmer-tips').classList.remove('hidden');
+    document.querySelector('.daily-forecast').classList.remove('hidden');
+    document.querySelector('footer').classList.remove('hidden');
+
     updateFarmerTips(temp, condition, main.humidity, main.pressure, weather[0].main);
 };
 
@@ -116,7 +122,6 @@ const displayForecast = (data) => {
         `;
     });
 };
-
 
 const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
     let tip = '';
