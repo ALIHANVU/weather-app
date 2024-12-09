@@ -1,4 +1,13 @@
-/* Анимация slide-fwd-center */
+:root {
+    --primary-color: #007aff;
+    --secondary-color: #f0f0f0;
+    --dark-background: #2c2c2e;
+    --dark-foreground: #3c3c3e;
+    --dark-element: #444;
+    --transition-time: 0.3s;
+}
+
+/* Анимация */
 @-webkit-keyframes slide-fwd-center {
     0% {
         -webkit-transform: translateZ(0);
@@ -9,6 +18,7 @@
                 transform: translateZ(160px);
     }
 }
+
 @keyframes slide-fwd-center {
     0% {
         -webkit-transform: translateZ(0);
@@ -25,7 +35,7 @@
             animation: slide-fwd-center 0.45s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
 }
 
-/* Существующие стили */
+/* Основные стили */
 * {
     margin: 0;
     padding: 0;
@@ -34,30 +44,25 @@
 }
 
 body {
-    background-color: #f0f0f0;
+    background-color: var(--secondary-color);
     color: #333;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     position: relative;
-    transition: background-color 0.3s, color 0.3s;
+    transition: background-color var(--transition-time), color var(--transition-time);
 }
 
-button {
-    transition: background-color 0.3s, transform 0.3s;
+button, input {
+    transition: background-color var(--transition-time), transform var(--transition-time);
 }
 
-input {
-    transition: border-color 0.3s;
+#current-temp, #current-feels-like, #current-condition {
+    transition: color var(--transition-time);
 }
 
-#current-temp,
-#current-feels-like,
-#current-condition {
-    transition: color 0.3s;
-}
-
+/* Стиль для контейнера */
 .app-container {
     max-width: 360px;
     margin: auto;
@@ -69,23 +74,17 @@ input {
     animation: fadeIn 0.5s ease-in-out;
 }
 
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    position: relative;
+header, h1, .input-container, button#getWeatherBtn, .current-weather, .daily-forecast, .farmer-tips {
     opacity: 0;
-    animation: slideIn 0.5s ease-in-out 0.1s forwards;
+    animation: slideIn 0.5s ease-in-out forwards;
 }
 
 h1 {
     font-size: 1.8em;
     font-weight: 500;
-    color: #007aff;
+    color: var(--primary-color);
     margin: 20px 0;
-    opacity: 0;
-    animation: slideIn 0.5s ease-in-out 0.2s forwards;
+    animation-delay: 0.2s;
 }
 
 button#themeToggle {
@@ -93,7 +92,6 @@ button#themeToggle {
     border: none;
     font-size: 1.5em;
     cursor: pointer;
-    transition: transform 0.3s, color 0.3s;
 }
 
 button#themeToggle:hover {
@@ -110,8 +108,7 @@ button#themeToggle:active {
     align-items: center;
     gap: 10px;
     margin-bottom: 20px;
-    opacity: 0;
-    animation: slideIn 0.5s ease-in-out 0.3s forwards;
+    animation-delay: 0.3s;
 }
 
 input#cityInput {
@@ -119,11 +116,10 @@ input#cityInput {
     border-radius: 20px;
     border: 1px solid #ccc;
     width: 100%;
-    transition: border-color 0.3s;
 }
 
 input#cityInput:focus {
-    border-color: #007aff;
+    border-color: var(--primary-color);
     outline: none;
 }
 
@@ -131,60 +127,41 @@ button#getWeatherBtn {
     padding: 8px 16px;
     border-radius: 20px;
     border: none;
-    background-color: #007aff;
+    background-color: var(--primary-color);
     color: #fff;
     cursor: pointer;
-    transition: background-color 0.3s;
-    opacity: 0;
-    animation: slideIn 0.5s ease-in-out 0.4s forwards;
 }
 
 button#getWeatherBtn:hover {
     background-color: #005bb5;
 }
 
-button.hidden {
-    display: none;
+/* Темная тема */
+.dark-theme {
+    background-color: var(--dark-background);
+    color: var(--secondary-color);
 }
 
-button.return-btn {
-    background: none;
-    border: none;
-    font-size: 1.5em;
-    cursor: pointer;
-    transition: transform 0.3s;
+.dark-theme .app-container {
+    background-color: var(--dark-foreground);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
 }
 
-button.return-btn:hover {
-    transform: scale(1.2);
+.dark-theme h1, .dark-theme h2, .dark-theme #current-temp, .dark-theme #current-feels-like, .dark-theme #current-condition {
+    color: var(--secondary-color);
 }
 
-.current-weather {
-    margin-bottom: 20px;
-    opacity: 0;
-    animation: slideIn 0.5s ease-in-out 0.5s forwards;
+.dark-theme .daily .day, .dark-theme .farmer-tips-content .tip {
+    background-color: var(--dark-element);
+    color: var(--secondary-color);
 }
 
-#current-temp {
-    font-size: 2.5em;
-    font-weight: 700;
-    opacity: 0;
-    animation: slideIn 0.5s ease-in-out 0.6s forwards;
-}
-
-#current-feels-like {
-    font-size: 1.2em;
-    color: #666;
-    margin-bottom: 10px;
-    opacity: 0;
-    animation: slideIn 0.5s ease-in-out 0.7s forwards;
-}
-
-#current-condition {
-    font-size: 1.2em;
-    color: #666;
-    opacity: 0;
-    animation: slideIn 0.5s ease-in-out 0.8s forwards;
+/* Медиа-запрос */
+@media (max-width: 768px) {
+    .app-container, header, h1, .input-container, button#getWeatherBtn, .current-weather, #current-temp, #current-feels-like, #current-condition, .daily-forecast, .farmer-tips {
+        animation-duration: 0.5s;
+        animation-fill-mode: forwards;
+    }
 }
 
 @keyframes slideIn {
@@ -195,82 +172,5 @@ button.return-btn:hover {
     to {
         opacity: 1;
         transform: translateY(0);
-    }
-}
-
-.daily-forecast {
-    margin: 20px 0;
-    opacity: 0;
-    animation: slideIn 0.5s ease-in-out 0.9s forwards;
-}
-
-.farmer-tips {
-    margin: 20px 0;
-    opacity: 0;
-    animation: slideIn 0.5s ease-in-out 0.9s forwards;
-}
-
-.daily,
-.farmer-tips-content {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    text-align: left;
-}
-
-.daily .day,
-.farmer-tips-content .tip {
-    padding: 10px;
-    border-radius: 10px;
-    background-color: #f0f0f0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.daily .day:hover,
-.farmer-tips-content .tip:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.dark-theme {
-    background-color: #2c2c2e;
-    color: #f0f0f0;
-}
-
-.dark-theme .app-container {
-    background-color: #3c3c3e;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-}
-
-.dark-theme h1,
-.dark-theme h2,
-.dark-theme #current-temp,
-.dark-theme #current-feels-like,
-.dark-theme #current-condition {
-    color: #f0f0f0;
-}
-
-.dark-theme .daily .day,
-.dark-theme .farmer-tips-content .tip {
-    background-color: #444;
-    color: #f0f0f0;
-}
-
-/* Медиазапрос для мобильных устройств */
-@media (max-width: 768px) {
-    .app-container,
-    header,
-    h1,
-    .input-container,
-    button#getWeatherBtn,
-    .current-weather,
-    #current-temp,
-    #current-feels-like,
-    #current-condition,
-    .daily-forecast,
-    .farmer-tips {
-        animation-duration: 0.5s;
-        animation-fill-mode: forwards;
     }
 }
