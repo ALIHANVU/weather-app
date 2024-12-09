@@ -60,14 +60,17 @@ const fetchWeather = async (city) => {
 };
 
 const getWeatherUrl = (city) => {
+    console.log('Getting weather URL...');
     return `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=ru&appid=${apiKey}`;
 };
 
 const getForecastUrl = (city) => {
+    console.log('Getting forecast URL...');
     return `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&lang=ru&appid=${apiKey}`;
 };
 
 const displayWeather = (data, city) => {
+    console.log('Displaying weather data...');
     const { main, weather } = data;
     const temp = main.temp;
     const feelsLike = main.feels_like;
@@ -83,27 +86,30 @@ const displayWeather = (data, city) => {
     locationElement.textContent = city;
     returnBtn.classList.remove('hidden');
 
+    console.log('Updating farmer tips...');
     updateFarmerTips(temp, condition, main.humidity, main.pressure, weather[0].main);
+    console.log('Weather data displayed successfully.');
 };
 
 const displayForecast = (data) => {
+    console.log('Processing forecast data...');
     const days = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
     const uniqueDays = {};
 
-    console.log('Processing forecast data...');  // Добавленное отладочное сообщение
-    console.log('Forecast list:', data.list);  // Печать полного списка прогноза
+    console.log('Full forecast list:', data.list);
 
     const forecastList = data.list.filter((item) => {
         const date = new Date(item.dt * 1000);
         const dayIndex = date.getDay();
         if (!uniqueDays[dayIndex]) {
             uniqueDays[dayIndex] = true;
+            console.log(`Adding forecast for day index: ${dayIndex}`);
             return true;
         }
         return false;
     });
 
-    console.log('Filtered forecast list:', forecastList);  // Печать отфильтрованного списка прогноза
+    console.log('Filtered forecast list:', forecastList);
 
     dailyForecastContainer.innerHTML = '';
 
@@ -117,7 +123,7 @@ const displayForecast = (data) => {
         const icon = item.weather[0].icon;
         const weatherEmoji = weatherEmojiMap[icon] || '❓';
 
-        console.log(`Day: ${day}, Max Temp: ${tempMax}, Min Temp: ${tempMin}, Condition: ${condition}, Icon: ${icon}`);  // Добавленное отладочное сообщение
+        console.log(`Day: ${day}, Max Temp: ${tempMax}, Min Temp: ${tempMin}, Condition: ${condition}, Icon: ${icon}`);
 
         dailyForecastContainer.innerHTML += `
             <div class="day fade-in">
@@ -129,7 +135,7 @@ const displayForecast = (data) => {
         `;
     });
 
-    console.log('Finished processing forecast data');  // Добавленное отладочное сообщение
+    console.log('Finished processing forecast data.');
 };
 
 const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
@@ -185,6 +191,8 @@ const updateFarmerTips = (temp, condition, humidity, pressure, weatherMain) => {
 
 // Не забудьте удалить placeholders после загрузки данных
 const removePlaceholders = () => {
+    console.log('Removing placeholders...');
     dailyForecastContainer.innerHTML = '';
     farmerTipsContainer.innerHTML = '';
+    console.log('Placeholders removed.');
 };
