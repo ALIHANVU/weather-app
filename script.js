@@ -36,19 +36,42 @@ const weatherEmoji = {
 async function loadFarmerTips() {
     try {
         console.log('Начинаем загрузку советов...');
-        // Используйте прямую ссылку на JSON файл с GitHub
-        const response = await fetch('https://alihanvu.github.io/weather-app/farmer-tips.json');
+        // Добавим случайный параметр для предотвращения кэширования
+        const response = await fetch('https://alihanvu.github.io/weather-app/farmer-tips.json?' + new Date().getTime(), {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Cache-Control': 'no-cache'
+            }
+        });
+        
+        console.log('Ответ от сервера:', response);
+        
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
+        
         const data = await response.json();
+        console.log('Советы успешно загружены:', data);
         return data;
     } catch (error) {
-        console.error('Ошибка загрузки советов:', error);
+        console.error('Подробная ошибка загрузки советов:', error);
+        
+        // Пробуем альтернативный путь
+        try {
+            const alternativeResponse = await fetch('./farmer-tips.json');
+            if (alternativeResponse.ok) {
+                const data = await alternativeResponse.json();
+                console.log('Советы загружены через альтернативный путь:', data);
+                return data;
+            }
+        } catch (altError) {
+            console.error('Ошибка при попытке загрузить через альтернативный путь:', altError);
+        }
+        
         return null;
     }
 }
-
 // Форматирование времени
 function formatTime(timestamp) {
     return new Date(timestamp * 1000).toLocaleTimeString('ru-RU', {
