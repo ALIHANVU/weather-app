@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeatherNow</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- Font Awesome -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <button id="themeToggle" class="theme-toggle"><i class="fas fa-moon"></i></button> <!-- Иконка для смены темы -->
+            <button id="returnBtn" class="return-btn hidden">⮌</button>
+        </header>
+        <main>
+            <div class="input-container">
+                <input type="text" id="cityInput" placeholder="Введите название города">
+                <button id="getWeatherBtn" class="send-btn">
+                    <i class="wi wi-direction-right"></i>
+                </button>
+            </div>
+            <h1 id="location"> </h1>
+            <section class="current-weather visible">
+                <i class="weather-icon wi hidden"></i>
+                <p id="current-temp">--°C</p>
+                <p id="current-feels-like">Ощущается как --°C</p>
+                <p id="current-condition">Погодные условия</p>
+            </section>
+            <section class="farmer-tips visible">
+                <h2>Подсказки фермерам</h2>
+                <div id="farmer-tips-content">
+                    <!-- Farmer tips will be inserted here by JS -->
+                </div>
+            </section>
+            <section class="daily-forecast visible">
+                <h2>Прогноз на неделю</h2>
+                <div class="daily">
+                    <!-- Элементы прогноза на неделю будут вставлены здесь с помощью JS -->
+                </div>
+            </section>
+        </main>
+        <footer>
+            <p>© 2024 WeatherNow</p>
+        </footer>
+    </div>
+    <div id="loadingIndicator" class="hidden"></div>
+    <script src="script.js"></script>
+</body>
+</html>
