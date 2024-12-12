@@ -37,7 +37,7 @@ async function loadFarmerTips() {
     try {
         console.log('Начинаем загрузку советов...');
         // Используйте прямую ссылку на JSON файл с GitHub
-        const response = await fetch('https://raw.githubusercontent.com/ВАШЕ_ИМЯ/ВАШ_РЕПОЗИТОРИЙ/main/farmer-tips.json');
+        const response = await fetch('https://raw.githubusercontent.com/ALIHANVU/weather-app/main/farmer-tips.json');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
