@@ -32,13 +32,20 @@ const weatherEmoji = {
     "50d": "🌫️", "50n": "🌫️"
 };
 
-// Загрузка советов 
+// Загрузка советов
 async function loadFarmerTips() {
     try {
+        console.log('Начинаем загрузку советов...');
         const response = await fetch('farmer-tips.json');
-        return await response.json();
+        console.log('Ответ получен:', response);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log('Советы загружены:', data);
+        return data;
     } catch (error) {
-        console.error('Ошибка загрузки советов:', error);
+        console.error('Подробная ошибка загрузки советов:', error);
         return null;
     }
 }
@@ -52,23 +59,27 @@ function formatTime(timestamp) {
     });
 }
 
-// Получение координат города
-async function getCoordinates(city) {
-    const geoUrl = `${BASE_URL}/geo/1.0/direct?q=${city}&limit=1&appid=${API_KEY}`;
-    const response = await fetch(geoUrl);
-    const data = await response.json();
-    
-    if (!data.length) {
-        throw new Error('Город не найден');
-    }
-    
-    return data[0];
+// Определение сезона
+function getCurrentSeason() {
+    const month = new Date().getMonth();
+    if (month >= 2 && month <= 4) return 'spring';
+    if (month >= 5 && month <= 7) return 'summer';
+    if (month >= 8 && month <= 10) return 'autumn';
+    return 'winter';
 }
 
 // Получение данных о погоде
 async function fetchWeatherData(city) {
     try {
-        const { lat, lon } = await getCoordinates(city);
+        const geoUrl = `${BASE_URL}/geo/1.0/direct?q=${city}&limit=1&appid=${API_KEY}`;
+        const geoResponse = await fetch(geoUrl);
+        const geoData = await geoResponse.json();
+
+        if (!geoData.length) {
+            throw new Error('Город не найден');
+        }
+
+        const { lat, lon } = geoData[0];
 
         const [weather, forecast] = await Promise.all([
             fetch(`${BASE_URL}/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}`),
@@ -82,19 +93,18 @@ async function fetchWeatherData(city) {
     }
 }
 
-// Определение сезона
-function getCurrentSeason() {
-    const month = new Date().getMonth();
-    if (month >= 2 && month <= 4) return 'spring';
-    if (month >= 5 && month <= 7) return 'summer';
-    if (month >= 8 && month <= 10) return 'autumn';
-    return 'winter';
-}
-
 // Генерация советов
 async function generateFarmerTips(weatherData) {
+    console.log('Начинаем генерацию советов...');
+    console.log('Погодные данные:', weatherData);
+    
     const tips = await loadFarmerTips();
-    if (!tips) return [];
+    console.log('Загруженные советы:', tips);
+    
+    if (!tips) {
+        console.log('Советы не загружены, возвращаем пустой массив');
+        return [];
+    }
 
     const result = [];
     const temp = weatherData.main.temp;
@@ -110,11 +120,6 @@ async function generateFarmerTips(weatherData) {
     if (humidity >= 70) result.push(...tips.humidity.high.tips);
     else if (humidity >= 40) result.push(...tips.humidity.normal.tips);
     else result.push(...tips.humidity.low.tips);
-
-    // Советы по ветру
-    if (windSpeed >= 10) result.push(...tips.wind.strong.tips);
-    else if (windSpeed >= 5) result.push(...tips.wind.moderate.tips);
-    else result.push(...tips.wind.light.tips);
 
     // Сезонные советы
     result.push(...tips.seasons[getCurrentSeason()].tips);
@@ -161,6 +166,7 @@ function updateHourlyForecast(forecast) {
 // Обновление советов
 async function updateFarmerTips(weatherData) {
     const tips = await generateFarmerTips(weatherData);
+    console.log('Полученные советы для отображения:', tips);
     elements.tipsContainer.innerHTML = '';
     
     tips.forEach((tip, index) => {
@@ -192,6 +198,7 @@ async function updateWeather(city) {
     try {
         elements.weatherResult.classList.add('loading');
         const data = await fetchWeatherData(city);
+        console.log('Полученные данные о погоде:', data);
         
         updateCurrentWeather(data.weather);
         updateHourlyForecast(data.forecast);
@@ -202,29 +209,6 @@ async function updateWeather(city) {
         console.error('Ошибка:', error);
     } finally {
         elements.weatherResult.classList.remove('loading');
-    }
-}
-
-// Определение местоположения
-function getUserLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            async (position) => {
-                try {
-                    const { latitude, longitude } = position.coords;
-                    const response = await fetch(
-                        `${BASE_URL}/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`
-                    );
-                    const data = await response.json();
-                    if (data.length > 0) {
-                        updateWeather(data[0].name);
-                    }
-                } catch (error) {
-                    console.error('Ошибка геолокации:', error);
-                }
-            },
-            (error) => console.error('Ошибка:', error)
-        );
     }
 }
 
@@ -261,7 +245,40 @@ elements.citySearch.addEventListener('input', (e) => {
     }, 500);
 });
 
-// Инициализация при загрузке
+// Инициализация
 document.addEventListener('DOMContentLoaded', () => {
-    getUserLocation();
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                try {
+                    const { latitude, longitude } = position.coords;
+                    const response = await fetch(
+                        `${BASE_URL}/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`
+                    );
+                    const data = await response.json();
+                    if (data.length > 0) {
+                        updateWeather(data[0].name);
+                    }
+                } catch (error) {
+                    console.error('Ошибка геолокации:', error);
+                    // Если геолокация не удалась, используем город по умолчанию
+                    updateWeather('Москва');
+                }
+            },
+            (error) => {
+                console.log('Геолокация отключена, используем город по умолчанию');
+                // Если пользователь отключил геолокацию, используем город по умолчанию
+                updateWeather('Москва');
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0
+            }
+        );
+    } else {
+        // Если геолокация не поддерживается, используем город по умолчанию
+        console.log('Геолокация не поддерживается, используем город по умолчанию');
+        updateWeather('Москва');
+    }
 });
