@@ -32,11 +32,11 @@ const weatherEmoji = {
     "50d": "🌫️", "50n": "🌫️"
 };
 
-// Загрузка советов
 async function loadFarmerTips() {
     try {
         console.log('Начинаем загрузку советов...');
-        const response = await fetch('farmer-tips.json');
+        // Замените URL на путь к вашему JSON файлу на GitHub
+        const response = await fetch('https://raw.githubusercontent.com/ALIHANVU/weather-app/main/farmer-tips.json');
         console.log('Ответ получен:', response);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
