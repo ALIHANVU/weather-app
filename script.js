@@ -154,7 +154,43 @@ function updateBackground(weatherIcon) {
     const backgroundType = weatherBackgrounds[weatherIcon] || 'clear';
     console.log('Текущая погода:', weatherIcon);
     console.log('Выбранный фон:', backgroundType);
+    console.log('Предыдущие классы body:', document.body.className);
     document.body.className = `weather-bg ${backgroundType}`;
+    console.log('Новые классы body:', document.body.className);
+    
+    // Попробуем принудительно установить стиль
+    document.body.style.backgroundImage = `url('images/${backgroundType}.jpg')`;
+    console.log('Установлен фон:', `url('images/${backgroundType}.jpg')`);
+}
+function preloadImage(url) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.src = url;
+        img.onload = () => {
+            console.log('Изображение успешно загружено:', url);
+            resolve(url);
+        };
+        img.onerror = () => {
+            console.error('Ошибка загрузки изображения:', url);
+            reject(url);
+        };
+    });
+}
+
+async function updateBackground(weatherIcon) {
+    const backgroundType = weatherBackgrounds[weatherIcon] || 'clear';
+    console.log('Текущая погода:', weatherIcon);
+    console.log('Выбранный фон:', backgroundType);
+    
+    try {
+        await preloadImage(`images/${backgroundType}.jpg`);
+        document.body.className = `weather-bg ${backgroundType}`;
+        document.body.style.backgroundImage = `url('images/${backgroundType}.jpg')`;
+    } catch (error) {
+        console.error('Не удалось загрузить изображение:', error);
+        // Установим хотя бы цвет фона
+        document.body.className = `weather-bg ${backgroundType}`;
+    }
 }
 
 // Генерация советов
