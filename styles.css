@@ -32,32 +32,32 @@ body {
 
 /* Фоны для разных погодных условий */
 .weather-bg.clear {
-    background-image: url('https://alihanvu.github.io/weather-app/images/clear.jpg');
+    background-image: url('https://raw.githubusercontent.com/alihanvu/weather-app/main/images/clear.jpg');
     background-color: #87CEEB;
 }
 
 .weather-bg.clouds {
-    background-image: url('https://alihanvu.github.io/weather-app/images/clouds.jpg');
+    background-image: url('https://raw.githubusercontent.com/alihanvu/weather-app/main/images/clouds.jpg');
     background-color: #808080;
 }
 
 .weather-bg.rain {
-    background-image: url('https://alihanvu.github.io/weather-app/images/rain.jpg');
+    background-image: url('https://raw.githubusercontent.com/alihanvu/weather-app/main/images/rain.jpg');
     background-color: #4682B4;
 }
 
 .weather-bg.snow {
-    background-image: url('https://alihanvu.github.io/weather-app/images/snow.jpg');
+    background-image: url('https://raw.githubusercontent.com/alihanvu/weather-app/main/images/snow.jpg');
     background-color: #FFFFFF;
 }
 
 .weather-bg.thunderstorm {
-    background-image: url('https://alihanvu.github.io/weather-app/images/thunderstorm.jpg');
+    background-image: url('https://raw.githubusercontent.com/alihanvu/weather-app/main/images/thunderstorm.jpg');
     background-color: #4B0082;
 }
 
 .weather-bg.fog {
-    background-image: url('https://alihanvu.github.io/weather-app/images/fog.jpg');
+    background-image: url('https://raw.githubusercontent.com/alihanvu/weather-app/main/images/fog.jpg');
     background-color: #D3D3D3;
 }
 
