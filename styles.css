@@ -31,27 +31,27 @@ body {
 
 /* Фоны для разных погодных условий */
 .weather-bg.clear {
-    background: url('/weather-app/images/clear.jpg') center/cover no-repeat fixed;
+    background: url('images/clear.jpg') center/cover no-repeat fixed;
 }
 
 .weather-bg.clouds {
-    background: url('/weather-app/images/clouds.jpg') center/cover no-repeat fixed;
+    background: url('images/clouds.jpg') center/cover no-repeat fixed;
 }
 
 .weather-bg.rain {
-    background: url('/weather-app/images/rain.jpg') center/cover no-repeat fixed;
+    background: url('images/rain.jpg') center/cover no-repeat fixed;
 }
 
 .weather-bg.snow {
-    background: url('/weather-app/images/snow.jpg') center/cover no-repeat fixed;
+    background: url('images/snow.jpg') center/cover no-repeat fixed;
 }
 
 .weather-bg.thunderstorm {
-    background: url('/weather-app/images/thunderstorm.jpg') center/cover no-repeat fixed;
+    background: url('images/thunderstorm.jpg') center/cover no-repeat fixed;
 }
 
 .weather-bg.fog {
-    background: url('/weather-app/images/fog.jpg') center/cover no-repeat fixed;
+    background: url('images/fog.jpg') center/cover no-repeat fixed;
 }
 
 .ios-container {
