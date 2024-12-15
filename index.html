@@ -1,101 +1,386 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Weather iOS</title>
-    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link href="styles.css" rel="stylesheet">
-</head>
-<body>
-    <div class="ios-container">
-        <!-- Поисковая секция -->
-        <div class="search-section">
-            <div class="search-container">
-                <div class="search-icon">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                </div>
-                <input 
-                    type="text" 
-                    id="citySearch" 
-                    placeholder="Поиск"
-                    autocomplete="off"
-                >
-                <button id="searchButton" class="search-button">
-                    Найти
-                </button>
-            </div>
-        </div>
+/* Базовые настройки и темы */
+:root {
+    --ios-blue: #007AFF;
+    --ios-background: #000000;
+    --ios-card-bg: rgba(30, 30, 30, 0.8);
+    --ios-text: #FFFFFF;
+    --ios-secondary-text: rgba(255, 255, 255, 0.6);
+    --ios-border: rgba(255, 255, 255, 0.2);
+}
 
-        <!-- Основной контент -->
-        <div id="weatherResult" class="hidden">
-            <!-- Основная информация о погоде -->
-            <div class="weather-main">
-                <div class="city-name" id="cityName">-</div>
-                <div class="temperature" id="temperature">-°</div>
-                <div class="weather-condition" id="weatherDescription">-</div>
-                <div class="temp-range">
-                    Макс.: <span id="maxTemp">-</span>° Мин.: <span id="minTemp">-</span>°
-                </div>
-            </div>
+/* Сброс стилей */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
 
-            <!-- Почасовой прогноз -->
-            <div class="weather-card hourly-forecast">
-                <div class="forecast-scroll" id="forecastDays">
-                    <!-- Генерируется динамически -->
-                </div>
-            </div>
+/* Основные стили */
+body {
+    background: var(--ios-background);
+    color: var(--ios-text);
+    min-height: 100vh;
+    line-height: 1.2;
+    background: linear-gradient(180deg, #1e1e1e 0%, #000000 100%);
+}
 
-            <!-- Детали погоды -->
-            <div class="weather-card weather-details">
-                <div class="details-grid">
-                    <div class="detail-item">
-                        <div class="detail-header">
-                            <span class="detail-icon">💨</span>
-                            <span class="detail-title">ВЕТЕР</span>
-                        </div>
-                        <div class="detail-value" id="windSpeed">- м/с</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-header">
-                            <span class="detail-icon">💧</span>
-                            <span class="detail-title">ВЛАЖНОСТЬ</span>
-                        </div>
-                        <div class="detail-value" id="humidity">-%</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-header">
-                            <span class="detail-icon">👁</span>
-                            <span class="detail-title">ВИДИМОСТЬ</span>
-                        </div>
-                        <div class="detail-value" id="visibility">- км</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-header">
-                            <span class="detail-icon">🌡</span>
-                            <span class="detail-title">ОЩУЩАЕТСЯ</span>
-                        </div>
-                        <div class="detail-value" id="feelsLike">-°</div>
-                    </div>
-                </div>
-            </div>
+.ios-container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 16px;
+    min-height: 100vh;
+}
 
-            <!-- Советы для фермеров -->
-            <div class="weather-card farmer-tips">
-                <div class="tips-header">
-                    <span class="tips-icon">🌱</span>
-                    <span class="tips-title">Советы для фермеров</span>
-                </div>
-                <div id="tipsContainer" class="tips-container">
-                    <!-- Генерируется динамически -->
-                </div>
-            </div>
-        </div>
-    </div>
+/* Поисковая секция */
+.search-section {
+    margin-bottom: 24px;
+}
 
-    <script src="script.js"></script>
-</body>
-</html>
+.search-container {
+    display: flex;
+    align-items: center;
+    background: var(--ios-card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 12px;
+    padding: 8px 12px;
+    gap: 12px;
+    transition: all 0.3s ease;
+}
+
+.search-container:hover {
+    transform: translateY(-2px);
+}
+
+.search-icon {
+    color: var(--ios-secondary-text);
+}
+
+#citySearch {
+    flex: 1;
+    border: none;
+    background: none;
+    padding: 8px 0;
+    font-size: 17px;
+    color: var(--ios-text);
+    outline: none;
+}
+
+#citySearch::placeholder {
+    color: var(--ios-secondary-text);
+}
+
+.search-button {
+    background: none;
+    border: none;
+    color: var(--ios-blue);
+    font-size: 17px;
+    font-weight: 400;
+    padding: 4px 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 6px;
+}
+
+.search-button:hover {
+    background: rgba(0, 122, 255, 0.1);
+}
+
+.search-button:active {
+    transform: scale(0.95);
+}
+
+/* Основная информация о погоде */
+.weather-main {
+    text-align: center;
+    padding: 32px 0;
+    animation: fadeIn 0.6s ease forwards;
+}
+
+.city-name {
+    font-size: 34px;
+    font-weight: 400;
+    margin-bottom: 8px;
+}
+
+.temperature {
+    font-size: 96px;
+    font-weight: 200;
+    line-height: 1;
+    margin: 20px 0;
+}
+
+.weather-condition {
+    font-size: 24px;
+    margin-bottom: 8px;
+    color: var(--ios-text);
+}
+
+.temp-range {
+    font-size: 17px;
+    color: var(--ios-secondary-text);
+}
+
+/* Карточки погоды */
+.weather-card {
+    background: var(--ios-card-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 16px;
+    margin-bottom: 16px;
+    overflow: hidden;
+}
+
+/* Почасовой прогноз */
+.forecast-scroll {
+    display: flex;
+    overflow-x: auto;
+    padding: 16px;
+    gap: 24px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.forecast-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.forecast-hour {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    min-width: 50px;
+    transition: transform 0.3s ease;
+}
+
+.forecast-hour:hover {
+    transform: translateY(-5px);
+}
+
+.forecast-time {
+    font-size: 15px;
+    color: var(--ios-text);
+}
+
+.forecast-icon {
+    font-size: 24px;
+}
+
+.forecast-temp {
+    font-size: 20px;
+    font-weight: 400;
+}
+
+/* Детали погоды */
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background-color: var(--ios-border);
+}
+
+.detail-item {
+    background: var(--ios-card-bg);
+    padding: 16px;
+}
+
+.detail-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.detail-icon {
+    font-size: 16px;
+}
+
+.detail-title {
+    font-size: 13px;
+    color: var(--ios-secondary-text);
+    font-weight: 500;
+}
+
+.detail-value {
+    font-size: 28px;
+    font-weight: 400;
+}
+
+/* Советы для фермеров */
+.farmer-tips {
+    margin-top: 16px;
+}
+
+.tips-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border-bottom: 1px solid var(--ios-border);
+}
+
+.tips-icon {
+    font-size: 20px;
+}
+
+.tips-title {
+    font-size: 17px;
+    font-weight: 500;
+}
+
+.tips-container {
+    padding: 8px;
+}
+
+.tip-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    margin-bottom: 8px;
+    transition: all 0.3s ease;
+}
+
+.tip-item:hover {
+    transform: translateX(5px);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.tip-icon {
+    font-size: 16px;
+    padding-top: 2px;
+}
+
+.tip-text {
+    font-size: 15px;
+    line-height: 1.4;
+    color: var(--ios-text);
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.hidden {
+    display: none;
+}
+
+/* Уведомления об ошибках */
+.error-notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 59, 48, 0.9);
+    padding: 12px 24px;
+    border-radius: 12px;
+    color: white;
+    font-size: 15px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.loading-spinner {
+    text-align: center;
+    color: white;
+}
+
+.loading-text {
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+.loading-spinner:before {
+    content: '';
+    width: 40px;
+    height: 40px;
+    display: block;
+    margin: 0 auto;
+    border: 4px solid #fff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Состояние загрузки */
+.loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border-radius: inherit;
+}
+
+/* Адаптивность */
+@media (max-width: 480px) {
+    .ios-container {
+        padding: 12px;
+    }
+
+    .temperature {
+        font-size: 84px;
+    }
+
+    .city-name {
+        font-size: 30px;
+    }
+
+    .detail-value {
+        font-size: 24px;
+    }
+}
