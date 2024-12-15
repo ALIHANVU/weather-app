@@ -22,37 +22,45 @@ body {
     color: var(--ios-text);
     min-height: 100vh;
     line-height: 1.2;
-    background-position: center;
+    transition: background-image 1s ease-in-out;
     background-size: cover;
+    background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    transition: background-image 1s ease-in-out;
+    background-color: var(--ios-background);
 }
 
-/* Добавим тестовые цвета для проверки работы классов */
+/* Фоны для разных погодных условий */
 .weather-bg.clear {
-    background-color: #87CEEB;  /* светло-голубой */
+    background-image: url('https://alihanvu.github.io/weather-app/images/clear.jpg');
+    background-color: #87CEEB;
 }
 
 .weather-bg.clouds {
-    background-color: #808080;  /* серый */
+    background-image: url('https://alihanvu.github.io/weather-app/images/clouds.jpg');
+    background-color: #808080;
 }
 
 .weather-bg.rain {
-    background-color: #4682B4;  /* синий */
+    background-image: url('https://alihanvu.github.io/weather-app/images/rain.jpg');
+    background-color: #4682B4;
 }
 
 .weather-bg.snow {
-    background-color: #FFFFFF;  /* белый */
+    background-image: url('https://alihanvu.github.io/weather-app/images/snow.jpg');
+    background-color: #FFFFFF;
 }
 
 .weather-bg.thunderstorm {
-    background-color: #4B0082;  /* индиго */
+    background-image: url('https://alihanvu.github.io/weather-app/images/thunderstorm.jpg');
+    background-color: #4B0082;
 }
 
 .weather-bg.fog {
-    background-color: #D3D3D3;  /* светло-серый */
+    background-image: url('https://alihanvu.github.io/weather-app/images/fog.jpg');
+    background-color: #D3D3D3;
 }
+
 .ios-container {
     max-width: 480px;
     margin: 0 auto;
