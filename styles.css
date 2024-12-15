@@ -22,38 +22,37 @@ body {
     color: var(--ios-text);
     min-height: 100vh;
     line-height: 1.2;
-    transition: background-image 1s ease-in-out;
-    background-size: cover;
     background-position: center;
+    background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
+    transition: background-image 1s ease-in-out;
 }
 
-/* Фоны для разных погодных условий */
+/* Добавим тестовые цвета для проверки работы классов */
 .weather-bg.clear {
-    background: url('images/clear.jpg') center/cover no-repeat fixed;
+    background-color: #87CEEB;  /* светло-голубой */
 }
 
 .weather-bg.clouds {
-    background: url('images/clouds.jpg') center/cover no-repeat fixed;
+    background-color: #808080;  /* серый */
 }
 
 .weather-bg.rain {
-    background: url('images/rain.jpg') center/cover no-repeat fixed;
+    background-color: #4682B4;  /* синий */
 }
 
 .weather-bg.snow {
-    background: url('images/snow.jpg') center/cover no-repeat fixed;
+    background-color: #FFFFFF;  /* белый */
 }
 
 .weather-bg.thunderstorm {
-    background: url('images/thunderstorm.jpg') center/cover no-repeat fixed;
+    background-color: #4B0082;  /* индиго */
 }
 
 .weather-bg.fog {
-    background: url('images/fog.jpg') center/cover no-repeat fixed;
+    background-color: #D3D3D3;  /* светло-серый */
 }
-
 .ios-container {
     max-width: 480px;
     margin: 0 auto;
