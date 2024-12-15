@@ -109,7 +109,7 @@ function getUserLocation() {
                 try {
                     const { latitude, longitude } = position.coords;
                     const response = await fetch(
-                        ${BASE_URL}/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}
+                        const geoUrl = `${BASE_URL}/geo/1.0/direct?q=${city}&limit=1&appid=${API_KEY}`;
                     );
                     const data = await response.json();
                     if (data.length > 0) {
