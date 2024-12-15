@@ -19,7 +19,7 @@ const elements = {
     tipsContainer: document.querySelector('#tipsContainer')
 };
 
-// Иконки погоды и соответствующие фоны
+// Иконки погоды
 const weatherEmoji = {
     "01d": "☀️", "01n": "🌙",
     "02d": "⛅", "02n": "☁️",
@@ -32,38 +32,11 @@ const weatherEmoji = {
     "50d": "🌫️", "50n": "🌫️"
 };
 
-const weatherBackgrounds = {
-    '01d': 'clear', // ясно днем
-    '01n': 'clear', // ясно ночью
-    '02d': 'clouds', // малооблачно днем
-    '02n': 'clouds', // малооблачно ночью
-    '03d': 'clouds', // облачно
-    '03n': 'clouds',
-    '04d': 'clouds', // пасмурно
-    '04n': 'clouds',
-    '09d': 'rain', // дождь
-    '09n': 'rain',
-    '10d': 'rain', // сильный дождь
-    '10n': 'rain',
-    '11d': 'thunderstorm', // гроза
-    '11n': 'thunderstorm',
-    '13d': 'snow', // снег
-    '13n': 'snow',
-    '50d': 'fog', // туман
-    '50n': 'fog'
-};
-
 // Загрузка советов
 async function loadFarmerTips() {
     try {
         console.log('Начинаем загрузку советов...');
-        const response = await fetch('https://alihanvu.github.io/weather-app/farmer-tips.json?' + new Date().getTime(), {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Cache-Control': 'no-cache'
-            }
-        });
+        const response = await fetch('farmer-tips.json');
         
         console.log('Ответ от сервера:', response);
         
@@ -76,18 +49,6 @@ async function loadFarmerTips() {
         return data;
     } catch (error) {
         console.error('Подробная ошибка загрузки советов:', error);
-        
-        try {
-            const alternativeResponse = await fetch('./farmer-tips.json');
-            if (alternativeResponse.ok) {
-                const data = await alternativeResponse.json();
-                console.log('Советы загружены через альтернативный путь:', data);
-                return data;
-            }
-        } catch (altError) {
-            console.error('Ошибка при попытке загрузить через альтернативный путь:', altError);
-        }
-        
         return null;
     }
 }
@@ -110,12 +71,6 @@ function getCurrentSeason() {
     return 'winter';
 }
 
-function updateBackground(weatherIcon) {
-    const backgroundType = weatherBackgrounds[weatherIcon] || 'clear';
-    console.log('Текущая погода:', weatherIcon);
-    console.log('Выбранный фон:', backgroundType);
-    document.body.className = `weather-bg ${backgroundType}`;
-}
 // Получение геолокации
 function getUserLocation() {
     return new Promise((resolve, reject) => {
@@ -192,6 +147,14 @@ async function fetchWeatherData(city) {
         showError(error.message);
         throw error;
     }
+}
+
+// Обновление фона
+function updateBackground(weatherIcon) {
+    const backgroundType = weatherBackgrounds[weatherIcon] || 'clear';
+    console.log('Текущая погода:', weatherIcon);
+    console.log('Выбранный фон:', backgroundType);
+    document.body.className = `weather-bg ${backgroundType}`;
 }
 
 // Генерация советов
@@ -352,6 +315,28 @@ elements.citySearch.addEventListener('input', (e) => {
         }
     }, 500);
 });
+
+// Определение типов погоды и соответствующих фонов
+const weatherBackgrounds = {
+    '01d': 'clear', // ясно днем
+    '01n': 'clear', // ясно ночью
+    '02d': 'clouds', // малооблачно днем
+    '02n': 'clouds', // малооблачно ночью
+    '03d': 'clouds', // облачно
+    '03n': 'clouds',
+    '04d': 'clouds', // пасмурно
+    '04n': 'clouds',
+    '09d': 'rain', // дождь
+    '09n': 'rain',
+    '10d': 'rain', // сильный дождь
+    '10n': 'rain',
+    '11d': 'thunderstorm', // гроза
+    '11n': 'thunderstorm',
+    '13d': 'snow', // снег
+    '13n': 'snow',
+    '50d': 'fog', // туман
+    '50n': 'fog'
+};
 
 // Инициализация
 document.addEventListener('DOMContentLoaded', async () => {
