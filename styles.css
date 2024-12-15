@@ -13,55 +13,17 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
     -webkit-tap-highlight-color: transparent;
 }
 
-/* Основные стили body и фоны */
+/* Основные стили */
 body {
+    background: var(--ios-background);
     color: var(--ios-text);
     min-height: 100vh;
     line-height: 1.2;
-    transition: background-image 1s ease-in-out;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-color: var(--ios-background);
-}
-
-/* Фоны для разных погодных условий */
-.weather-bg.clear {
-    background-image: url('https://raw.githubusercontent.com/ALIHANVU/weather-app/main/images/clear.jpg');
-    background-color: #87CEEB;
-}
-
-.weather-bg.clouds {
-    background-image: url('https://raw.githubusercontent.com/ALIHANVU/weather-app/main/images/clouds.jpg');
-    background-color: #808080;
-}
-
-
-/* и так далее для остальных */
-
-.weather-bg.rain {
-    background-image: url('images/rain.jpg');
-    background-color: #4682B4;
-}
-
-.weather-bg.snow {
-    background-image: url('images/snow.jpg');
-    background-color: #FFFFFF;
-}
-
-.weather-bg.thunderstorm {
-    background-image: url('images/thunderstorm.jpg');
-    background-color: #4B0082;
-}
-
-.weather-bg.fog {
-    background-image: url('images/fog.jpg');
-    background-color: #D3D3D3;
+    background: linear-gradient(180deg, #1e1e1e 0%, #000000 100%);
 }
 
 .ios-container {
@@ -141,7 +103,6 @@ body {
     font-size: 34px;
     font-weight: 400;
     margin-bottom: 8px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .temperature {
@@ -149,14 +110,12 @@ body {
     font-weight: 200;
     line-height: 1;
     margin: 20px 0;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .weather-condition {
     font-size: 24px;
     margin-bottom: 8px;
     color: var(--ios-text);
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .temp-range {
@@ -167,13 +126,11 @@ body {
 /* Карточки погоды */
 .weather-card {
     background: var(--ios-card-bg);
-    backdrop-filter: blur(20px) brightness(1.1);
-    -webkit-backdrop-filter: blur(20px) brightness(1.1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border-radius: 16px;
     margin-bottom: 16px;
     overflow: hidden;
-    animation: fadeIn 0.6s ease forwards;
-    opacity: 0;
 }
 
 /* Почасовой прогноз */
@@ -349,7 +306,6 @@ body {
     animation: fadeIn 0.3s ease;
 }
 
-/* Состояние загрузки */
 .loading-overlay {
     position: fixed;
     top: 0;
@@ -391,6 +347,7 @@ body {
     100% { transform: rotate(360deg); }
 }
 
+/* Состояние загрузки */
 .loading {
     position: relative;
     pointer-events: none;
