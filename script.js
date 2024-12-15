@@ -79,9 +79,8 @@ async function updateBackground(weatherIcon) {
     console.log('Текущая погода:', weatherIcon);
     console.log('Выбранный фон:', backgroundType);
     
-    // Используем абсолютный путь через ваш GitHub Pages домен
-    const domain = window.location.protocol + '//' + window.location.host;
-    const imagePath = `${domain}/weather-app/images/${backgroundType}.jpg`;
+    // Используем прямую ссылку на raw файлы
+    const imagePath = `https://raw.githubusercontent.com/ALIHANVU/weather-app/main/images/${backgroundType}.jpg`;
     
     try {
         await preloadImage(imagePath);
@@ -90,7 +89,6 @@ async function updateBackground(weatherIcon) {
         console.log('Установлен фон:', imagePath);
     } catch (error) {
         console.error('Ошибка при установке фона:', error);
-        // В случае ошибки хотя бы установим цветной фон
         document.body.className = `weather-bg ${backgroundType}`;
     }
 }
