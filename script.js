@@ -94,21 +94,23 @@ async function updateBackground(weatherIcon) {
 }
 
 // Загрузка советов
-const testImage = 'https://picsum.photos/1920/1080';
-
-async function updateBackground(weatherIcon) {
-    const backgroundType = weatherBackgrounds[weatherIcon] || 'clear';
-    console.log('Текущая погода:', weatherIcon);
-    console.log('Выбранный фон:', backgroundType);
-    
+async function loadFarmerTips() {
     try {
-        await preloadImage(testImage);
-        document.body.className = `weather-bg ${backgroundType}`;
-        document.body.style.backgroundImage = `url('${testImage}')`;
-        console.log('Установлен тестовый фон:', testImage);
+        console.log('Начинаем загрузку советов...');
+        const response = await fetch('farmer-tips.json');
+        
+        console.log('Ответ от сервера:', response);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('Советы успешно загружены:', data);
+        return data;
     } catch (error) {
-        console.error('Ошибка при установке фона:', error);
-        document.body.className = `weather-bg ${backgroundType}`;
+        console.error('Подробная ошибка загрузки советов:', error);
+        return null;
     }
 }
 
