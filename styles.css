@@ -32,7 +32,7 @@ body {
 
 /* Фоны для разных погодных условий */
 .weather-bg.clear {
-    background-image: url('/weather-app/images/clear.jpg');
+    background-image: url('../images/clear.jpg');
     background-color: #87CEEB;
 }
 
