@@ -1,3 +1,6 @@
+// Логирование текущего пути
+console.log('Текущий путь:', window.location.pathname);
+
 const API_KEY = 'c708426913319b328c4ff4719583d1c6';
 const BASE_URL = 'https://api.openweathermap.org';
 
@@ -31,6 +34,67 @@ const weatherEmoji = {
     "13d": "🌨️", "13n": "🌨️",
     "50d": "🌫️", "50n": "🌫️"
 };
+
+// Определение типов погоды и соответствующих фонов
+const weatherBackgrounds = {
+    '01d': 'clear', // ясно днем
+    '01n': 'clear', // ясно ночью
+    '02d': 'clouds', // малооблачно днем
+    '02n': 'clouds', // малооблачно ночью
+    '03d': 'clouds', // облачно
+    '03n': 'clouds',
+    '04d': 'clouds', // пасмурно
+    '04n': 'clouds',
+    '09d': 'rain', // дождь
+    '09n': 'rain',
+    '10d': 'rain', // сильный дождь
+    '10n': 'rain',
+    '11d': 'thunderstorm', // гроза
+    '11n': 'thunderstorm',
+    '13d': 'snow', // снег
+    '13n': 'snow',
+    '50d': 'fog', // туман
+    '50n': 'fog'
+};
+
+// Функция предварительной загрузки изображения
+function preloadImage(url) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.src = url;
+        img.onload = () => {
+            console.log('Изображение успешно загружено:', url);
+            resolve(url);
+        };
+        img.onerror = () => {
+            console.error('Ошибка загрузки изображения:', url);
+            reject(url);
+        };
+    });
+}
+
+// Обновление фона
+async function updateBackground(weatherIcon) {
+    const backgroundType = weatherBackgrounds[weatherIcon] || 'clear';
+    console.log('Текущая погода:', weatherIcon);
+    console.log('Выбранный фон:', backgroundType);
+    
+    // Используем абсолютный путь для GitHub Pages
+    const imagePath = `https://alihanvu.github.io/weather-app/images/${backgroundType}.jpg`;
+    
+    try {
+        await preloadImage(imagePath);
+        console.log('Предыдущие классы body:', document.body.className);
+        document.body.className = `weather-bg ${backgroundType}`;
+        document.body.style.backgroundImage = `url('${imagePath}')`;
+        console.log('Новые классы body:', document.body.className);
+        console.log('Установлен фон:', imagePath);
+    } catch (error) {
+        console.error('Ошибка при установке фона:', error);
+        // Установим хотя бы класс для цветного фона
+        document.body.className = `weather-bg ${backgroundType}`;
+    }
+}
 
 // Загрузка советов
 async function loadFarmerTips() {
@@ -146,50 +210,6 @@ async function fetchWeatherData(city) {
     } catch (error) {
         showError(error.message);
         throw error;
-    }
-}
-
-// Обновление фона
-function updateBackground(weatherIcon) {
-    const backgroundType = weatherBackgrounds[weatherIcon] || 'clear';
-    console.log('Текущая погода:', weatherIcon);
-    console.log('Выбранный фон:', backgroundType);
-    console.log('Предыдущие классы body:', document.body.className);
-    document.body.className = `weather-bg ${backgroundType}`;
-    console.log('Новые классы body:', document.body.className);
-    
-    // Попробуем принудительно установить стиль
-    document.body.style.backgroundImage = `url('images/${backgroundType}.jpg')`;
-    console.log('Установлен фон:', `url('images/${backgroundType}.jpg')`);
-}
-function preloadImage(url) {
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.src = url;
-        img.onload = () => {
-            console.log('Изображение успешно загружено:', url);
-            resolve(url);
-        };
-        img.onerror = () => {
-            console.error('Ошибка загрузки изображения:', url);
-            reject(url);
-        };
-    });
-}
-
-async function updateBackground(weatherIcon) {
-    const backgroundType = weatherBackgrounds[weatherIcon] || 'clear';
-    console.log('Текущая погода:', weatherIcon);
-    console.log('Выбранный фон:', backgroundType);
-    
-    try {
-        await preloadImage(`images/${backgroundType}.jpg`);
-        document.body.className = `weather-bg ${backgroundType}`;
-        document.body.style.backgroundImage = `url('images/${backgroundType}.jpg')`;
-    } catch (error) {
-        console.error('Не удалось загрузить изображение:', error);
-        // Установим хотя бы цвет фона
-        document.body.className = `weather-bg ${backgroundType}`;
     }
 }
 
@@ -351,28 +371,6 @@ elements.citySearch.addEventListener('input', (e) => {
         }
     }, 500);
 });
-
-// Определение типов погоды и соответствующих фонов
-const weatherBackgrounds = {
-    '01d': 'clear', // ясно днем
-    '01n': 'clear', // ясно ночью
-    '02d': 'clouds', // малооблачно днем
-    '02n': 'clouds', // малооблачно ночью
-    '03d': 'clouds', // облачно
-    '03n': 'clouds',
-    '04d': 'clouds', // пасмурно
-    '04n': 'clouds',
-    '09d': 'rain', // дождь
-    '09n': 'rain',
-    '10d': 'rain', // сильный дождь
-    '10n': 'rain',
-    '11d': 'thunderstorm', // гроза
-    '11n': 'thunderstorm',
-    '13d': 'snow', // снег
-    '13n': 'snow',
-    '50d': 'fog', // туман
-    '50n': 'fog'
-};
 
 // Инициализация
 document.addEventListener('DOMContentLoaded', async () => {
