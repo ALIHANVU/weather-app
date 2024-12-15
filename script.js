@@ -21,15 +21,15 @@ const elements = {
 
 // Иконки погоды
 const weatherEmoji = {
-    "01d": "☀", "01n": "🌙",
-    "02d": "⛅", "02n": "☁",
-    "03d": "☁", "03n": "☁",
-    "04d": "☁", "04n": "☁",
-    "09d": "🌧", "09n": "🌧",
-    "10d": "🌦", "10n": "🌧",
-    "11d": "⛈", "11n": "⛈",
-    "13d": "🌨", "13n": "🌨",
-    "50d": "🌫", "50n": "🌫"
+    "01d": "☀️", "01n": "🌙",
+    "02d": "⛅", "02n": "☁️",
+    "03d": "☁️", "03n": "☁️",
+    "04d": "☁️", "04n": "☁️",
+    "09d": "🌧️", "09n": "🌧️",
+    "10d": "🌦️", "10n": "🌧️",
+    "11d": "⛈️", "11n": "⛈️",
+    "13d": "🌨️", "13n": "🌨️",
+    "50d": "🌫️", "50n": "🌫️"
 };
 
 // Загрузка советов
@@ -47,7 +47,7 @@ async function loadFarmerTips() {
         
         console.log('Ответ от сервера:', response);
         
-         if (!response.ok) {
+        if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
@@ -109,7 +109,7 @@ function getUserLocation() {
                 try {
                     const { latitude, longitude } = position.coords;
                     const response = await fetch(
-                        const geoUrl = `${BASE_URL}/geo/1.0/direct?q=${city}&limit=1&appid=${API_KEY}`;
+                        `${BASE_URL}/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`
                     );
                     const data = await response.json();
                     if (data.length > 0) {
@@ -146,7 +146,7 @@ function getUserLocation() {
 // Получение данных о погоде
 async function fetchWeatherData(city) {
     try {
-        const geoUrl = ${BASE_URL}/geo/1.0/direct?q=${city}&limit=1&appid=${API_KEY};
+        const geoUrl = `${BASE_URL}/geo/1.0/direct?q=${city}&limit=1&appid=${API_KEY}`;
         const geoResponse = await fetch(geoUrl);
         const geoData = await geoResponse.json();
 
@@ -157,8 +157,8 @@ async function fetchWeatherData(city) {
         const { lat, lon } = geoData[0];
 
         const [weather, forecast] = await Promise.all([
-            fetch(${BASE_URL}/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}),
-            fetch(${BASE_URL}/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY})
+            fetch(`${BASE_URL}/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}`),
+            fetch(`${BASE_URL}/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}`)
         ]).then(responses => Promise.all(responses.map(res => res.json())));
 
         return { weather, forecast };
@@ -199,15 +199,15 @@ function updateCurrentWeather(data) {
     const { main, weather, name, visibility, wind } = data;
     
     elements.cityName.textContent = name;
-    elements.temperature.textContent = ${Math.round(main.temp)}°;
+    elements.temperature.textContent = `${Math.round(main.temp)}°`;
     elements.weatherDescription.textContent = weather[0].description.charAt(0).toUpperCase() + 
                                             weather[0].description.slice(1);
-    elements.feelsLike.textContent = ${Math.round(main.feels_like)}°;
+    elements.feelsLike.textContent = `${Math.round(main.feels_like)}°`;
     elements.maxTemp.textContent = Math.round(main.temp_max);
     elements.minTemp.textContent = Math.round(main.temp_min);
-    elements.humidity.textContent = ${main.humidity}%;
-    elements.windSpeed.textContent = ${wind.speed.toFixed(1)} м/с;
-    elements.visibility.textContent = ${(visibility / 1000).toFixed(1)} км;
+    elements.humidity.textContent = `${main.humidity}%`;
+    elements.windSpeed.textContent = `${wind.speed.toFixed(1)} м/с`;
+    elements.visibility.textContent = `${(visibility / 1000).toFixed(1)} км`;
 }
 
 // Обновление почасового прогноза
@@ -217,7 +217,7 @@ function updateHourlyForecast(forecast) {
     forecast.list.slice(0, 24).forEach((item, index) => {
         const hourlyDiv = document.createElement('div');
         hourlyDiv.className = 'forecast-hour';
-        hourlyDiv.style.animationDelay = ${index * 0.1}s;
+        hourlyDiv.style.animationDelay = `${index * 0.1}s`;
         
         hourlyDiv.innerHTML = `
             <div class="forecast-time">${index === 0 ? 'Сейчас' : formatTime(item.dt)}</div>
@@ -237,7 +237,7 @@ async function updateFarmerTips(weatherData) {
     tips.forEach((tip, index) => {
         const tipElement = document.createElement('div');
         tipElement.className = 'tip-item';
-        tipElement.style.animationDelay = ${index * 0.1}s;
+        tipElement.style.animationDelay = `${index * 0.1}s`;
         
         tipElement.innerHTML = `
             <span class="tip-icon">🌱</span>
