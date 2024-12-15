@@ -47,8 +47,8 @@ async function loadFarmerTips() {
         
         console.log('Ответ от сервера:', response);
         
-        if (!response.ok) {
-            throw new Error(HTTP error! status: ${response.status});
+         if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const data = await response.json();
