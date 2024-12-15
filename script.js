@@ -1,6 +1,3 @@
-// Логирование текущего пути
-console.log('Текущий путь:', window.location.pathname);
-
 const API_KEY = 'c708426913319b328c4ff4719583d1c6';
 const BASE_URL = 'https://api.openweathermap.org';
 
@@ -24,85 +21,34 @@ const elements = {
 
 // Иконки погоды
 const weatherEmoji = {
-    "01d": "☀️", "01n": "🌙",
-    "02d": "⛅", "02n": "☁️",
-    "03d": "☁️", "03n": "☁️",
-    "04d": "☁️", "04n": "☁️",
-    "09d": "🌧️", "09n": "🌧️",
-    "10d": "🌦️", "10n": "🌧️",
-    "11d": "⛈️", "11n": "⛈️",
-    "13d": "🌨️", "13n": "🌨️",
-    "50d": "🌫️", "50n": "🌫️"
+    "01d": "☀", "01n": "🌙",
+    "02d": "⛅", "02n": "☁",
+    "03d": "☁", "03n": "☁",
+    "04d": "☁", "04n": "☁",
+    "09d": "🌧", "09n": "🌧",
+    "10d": "🌦", "10n": "🌧",
+    "11d": "⛈", "11n": "⛈",
+    "13d": "🌨", "13n": "🌨",
+    "50d": "🌫", "50n": "🌫"
 };
-
-// Определение типов погоды и соответствующих фонов
-const weatherBackgrounds = {
-    '01d': 'clear', // ясно днем
-    '01n': 'clear', // ясно ночью
-    '02d': 'clouds', // малооблачно днем
-    '02n': 'clouds', // малооблачно ночью
-    '03d': 'clouds', // облачно
-    '03n': 'clouds',
-    '04d': 'clouds', // пасмурно
-    '04n': 'clouds',
-    '09d': 'rain', // дождь
-    '09n': 'rain',
-    '10d': 'rain', // сильный дождь
-    '10n': 'rain',
-    '11d': 'thunderstorm', // гроза
-    '11n': 'thunderstorm',
-    '13d': 'snow', // снег
-    '13n': 'snow',
-    '50d': 'fog', // туман
-    '50n': 'fog'
-};
-
-// Функция предварительной загрузки изображения
-function preloadImage(url) {
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.src = url;
-        img.onload = () => {
-            console.log('Изображение успешно загружено:', url);
-            resolve(url);
-        };
-        img.onerror = () => {
-            console.error('Ошибка загрузки изображения:', url);
-            reject(url);
-        };
-    });
-}
-
-// Обновление фона
-async function updateBackground(weatherIcon) {
-    const backgroundType = weatherBackgrounds[weatherIcon] || 'clear';
-    console.log('Текущая погода:', weatherIcon);
-    console.log('Выбранный фон:', backgroundType);
-    
-    // Используем прямую ссылку на raw файлы
-    const imagePath = `https://raw.githubusercontent.com/ALIHANVU/weather-app/main/images/${backgroundType}.jpg`;
-    
-    try {
-        await preloadImage(imagePath);
-        document.body.className = `weather-bg ${backgroundType}`;
-        document.body.style.backgroundImage = `url('${imagePath}')`;
-        console.log('Установлен фон:', imagePath);
-    } catch (error) {
-        console.error('Ошибка при установке фона:', error);
-        document.body.className = `weather-bg ${backgroundType}`;
-    }
-}
 
 // Загрузка советов
 async function loadFarmerTips() {
     try {
         console.log('Начинаем загрузку советов...');
-        const response = await fetch('farmer-tips.json');
+        // Добавим случайный параметр для предотвращения кэширования
+        const response = await fetch('https://alihanvu.github.io/weather-app/farmer-tips.json?' + new Date().getTime(), {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Cache-Control': 'no-cache'
+            }
+        });
         
         console.log('Ответ от сервера:', response);
         
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(HTTP error! status: ${response.status});
         }
         
         const data = await response.json();
@@ -110,10 +56,22 @@ async function loadFarmerTips() {
         return data;
     } catch (error) {
         console.error('Подробная ошибка загрузки советов:', error);
+        
+        // Пробуем альтернативный путь
+        try {
+            const alternativeResponse = await fetch('./farmer-tips.json');
+            if (alternativeResponse.ok) {
+                const data = await alternativeResponse.json();
+                console.log('Советы загружены через альтернативный путь:', data);
+                return data;
+            }
+        } catch (altError) {
+            console.error('Ошибка при попытке загрузить через альтернативный путь:', altError);
+        }
+        
         return null;
     }
 }
-
 // Форматирование времени
 function formatTime(timestamp) {
     return new Date(timestamp * 1000).toLocaleTimeString('ru-RU', {
@@ -151,7 +109,7 @@ function getUserLocation() {
                 try {
                     const { latitude, longitude } = position.coords;
                     const response = await fetch(
-                        `${BASE_URL}/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`
+                        ${BASE_URL}/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}
                     );
                     const data = await response.json();
                     if (data.length > 0) {
@@ -188,7 +146,7 @@ function getUserLocation() {
 // Получение данных о погоде
 async function fetchWeatherData(city) {
     try {
-        const geoUrl = `${BASE_URL}/geo/1.0/direct?q=${city}&limit=1&appid=${API_KEY}`;
+        const geoUrl = ${BASE_URL}/geo/1.0/direct?q=${city}&limit=1&appid=${API_KEY};
         const geoResponse = await fetch(geoUrl);
         const geoData = await geoResponse.json();
 
@@ -199,8 +157,8 @@ async function fetchWeatherData(city) {
         const { lat, lon } = geoData[0];
 
         const [weather, forecast] = await Promise.all([
-            fetch(`${BASE_URL}/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}`),
-            fetch(`${BASE_URL}/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}`)
+            fetch(${BASE_URL}/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}),
+            fetch(${BASE_URL}/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY})
         ]).then(responses => Promise.all(responses.map(res => res.json())));
 
         return { weather, forecast };
@@ -218,6 +176,7 @@ async function generateFarmerTips(weatherData) {
     const result = [];
     const temp = weatherData.main.temp;
     const humidity = weatherData.main.humidity;
+    const windSpeed = weatherData.wind.speed;
 
     // Температурные советы
     if (temp >= 25) result.push(...tips.temperature.hot.tips);
@@ -239,19 +198,16 @@ async function generateFarmerTips(weatherData) {
 function updateCurrentWeather(data) {
     const { main, weather, name, visibility, wind } = data;
     
-    // Обновляем фон
-    updateBackground(weather[0].icon);
-    
     elements.cityName.textContent = name;
-    elements.temperature.textContent = `${Math.round(main.temp)}°`;
+    elements.temperature.textContent = ${Math.round(main.temp)}°;
     elements.weatherDescription.textContent = weather[0].description.charAt(0).toUpperCase() + 
                                             weather[0].description.slice(1);
-    elements.feelsLike.textContent = `${Math.round(main.feels_like)}°`;
+    elements.feelsLike.textContent = ${Math.round(main.feels_like)}°;
     elements.maxTemp.textContent = Math.round(main.temp_max);
     elements.minTemp.textContent = Math.round(main.temp_min);
-    elements.humidity.textContent = `${main.humidity}%`;
-    elements.windSpeed.textContent = `${wind.speed.toFixed(1)} м/с`;
-    elements.visibility.textContent = `${(visibility / 1000).toFixed(1)} км`;
+    elements.humidity.textContent = ${main.humidity}%;
+    elements.windSpeed.textContent = ${wind.speed.toFixed(1)} м/с;
+    elements.visibility.textContent = ${(visibility / 1000).toFixed(1)} км;
 }
 
 // Обновление почасового прогноза
@@ -261,7 +217,7 @@ function updateHourlyForecast(forecast) {
     forecast.list.slice(0, 24).forEach((item, index) => {
         const hourlyDiv = document.createElement('div');
         hourlyDiv.className = 'forecast-hour';
-        hourlyDiv.style.animationDelay = `${index * 0.1}s`;
+        hourlyDiv.style.animationDelay = ${index * 0.1}s;
         
         hourlyDiv.innerHTML = `
             <div class="forecast-time">${index === 0 ? 'Сейчас' : formatTime(item.dt)}</div>
@@ -281,7 +237,7 @@ async function updateFarmerTips(weatherData) {
     tips.forEach((tip, index) => {
         const tipElement = document.createElement('div');
         tipElement.className = 'tip-item';
-        tipElement.style.animationDelay = `${index * 0.1}s`;
+        tipElement.style.animationDelay = ${index * 0.1}s;
         
         tipElement.innerHTML = `
             <span class="tip-icon">🌱</span>
