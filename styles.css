@@ -32,14 +32,16 @@ body {
 
 /* Фоны для разных погодных условий */
 .weather-bg.clear {
-    background-image: url('../images/clear.jpg');
+    background-image: url('https://raw.githubusercontent.com/ALIHANVU/weather-app/main/images/clear.jpg');
     background-color: #87CEEB;
 }
 
 .weather-bg.clouds {
-    background-image: url('/weather-app/images/clouds.jpg');
+    background-image: url('https://raw.githubusercontent.com/ALIHANVU/weather-app/main/images/clouds.jpg');
     background-color: #808080;
 }
+
+/* и так далее для остальных */
 
 /* и так далее для остальных */
 
