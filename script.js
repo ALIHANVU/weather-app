@@ -19,7 +19,7 @@ const elements = {
     tipsContainer: document.querySelector('#tipsContainer')
 };
 
-// Иконки погоды
+// Иконки погоды и соответствующие фоны
 const weatherEmoji = {
     "01d": "☀️", "01n": "🌙",
     "02d": "⛅", "02n": "☁️",
@@ -32,11 +32,31 @@ const weatherEmoji = {
     "50d": "🌫️", "50n": "🌫️"
 };
 
+const weatherBackgrounds = {
+    '01d': 'clear', // ясно днем
+    '01n': 'clear', // ясно ночью
+    '02d': 'clouds', // малооблачно днем
+    '02n': 'clouds', // малооблачно ночью
+    '03d': 'clouds', // облачно
+    '03n': 'clouds',
+    '04d': 'clouds', // пасмурно
+    '04n': 'clouds',
+    '09d': 'rain', // дождь
+    '09n': 'rain',
+    '10d': 'rain', // сильный дождь
+    '10n': 'rain',
+    '11d': 'thunderstorm', // гроза
+    '11n': 'thunderstorm',
+    '13d': 'snow', // снег
+    '13n': 'snow',
+    '50d': 'fog', // туман
+    '50n': 'fog'
+};
+
 // Загрузка советов
 async function loadFarmerTips() {
     try {
         console.log('Начинаем загрузку советов...');
-        // Добавим случайный параметр для предотвращения кэширования
         const response = await fetch('https://alihanvu.github.io/weather-app/farmer-tips.json?' + new Date().getTime(), {
             method: 'GET',
             headers: {
@@ -57,7 +77,6 @@ async function loadFarmerTips() {
     } catch (error) {
         console.error('Подробная ошибка загрузки советов:', error);
         
-        // Пробуем альтернативный путь
         try {
             const alternativeResponse = await fetch('./farmer-tips.json');
             if (alternativeResponse.ok) {
@@ -72,6 +91,7 @@ async function loadFarmerTips() {
         return null;
     }
 }
+
 // Форматирование времени
 function formatTime(timestamp) {
     return new Date(timestamp * 1000).toLocaleTimeString('ru-RU', {
@@ -90,6 +110,12 @@ function getCurrentSeason() {
     return 'winter';
 }
 
+function updateBackground(weatherIcon) {
+    const backgroundType = weatherBackgrounds[weatherIcon] || 'clear';
+    console.log('Текущая погода:', weatherIcon);
+    console.log('Выбранный фон:', backgroundType);
+    document.body.className = `weather-bg ${backgroundType}`;
+}
 // Получение геолокации
 function getUserLocation() {
     return new Promise((resolve, reject) => {
@@ -176,7 +202,6 @@ async function generateFarmerTips(weatherData) {
     const result = [];
     const temp = weatherData.main.temp;
     const humidity = weatherData.main.humidity;
-    const windSpeed = weatherData.wind.speed;
 
     // Температурные советы
     if (temp >= 25) result.push(...tips.temperature.hot.tips);
@@ -197,6 +222,9 @@ async function generateFarmerTips(weatherData) {
 // Обновление текущей погоды
 function updateCurrentWeather(data) {
     const { main, weather, name, visibility, wind } = data;
+    
+    // Обновляем фон
+    updateBackground(weather[0].icon);
     
     elements.cityName.textContent = name;
     elements.temperature.textContent = `${Math.round(main.temp)}°`;
