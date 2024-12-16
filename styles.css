@@ -285,6 +285,112 @@ body {
     }
 }
 
+/* Новые расширенные анимации */
+@keyframes buttonPress {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+}
+
+@keyframes swipeRefresh {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    10%, 90% { transform: rotate(-3deg); }
+    20%, 80% { transform: rotate(3deg); }
+    30%, 70% { transform: rotate(-3deg); }
+    40%, 60% { transform: rotate(3deg); }
+    50% { transform: rotate(0deg); }
+}
+
+@keyframes slideUp {
+    0% { 
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes breathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+@keyframes colorPulse {
+    0%, 100% { color: var(--ios-text); }
+    50% { color: var(--ios-blue); }
+}
+
+@keyframes shadowPulse {
+    0%, 100% { box-shadow: 0 0 0 rgba(0,0,0,0); }
+    50% { box-shadow: 0 5px 15px rgba(0,122,255,0.2); }
+}
+
+/* Применение новых анимаций */
+.search-button:active {
+    animation: buttonPress 0.2s ease, shadowPulse 1s ease;
+}
+
+.forecast-hour:hover {
+    animation: pulse 0.5s ease, colorPulse 1.5s infinite;
+}
+
+.tip-item:active {
+    animation: buttonPress 0.2s ease;
+}
+
+.detail-item:hover {
+    animation: wiggle 0.5s ease, shadowPulse 1s ease;
+}
+
+.weather-card {
+    animation: slideUp 0.6s ease forwards;
+}
+
+.city-name {
+    animation: breathe 3s infinite ease-in-out, colorPulse 4s infinite;
+}
+
+.ios-container {
+    touch-action: pan-y;
+}
+
+.forecast-scroll {
+    cursor: grab;
+}
+
+.forecast-scroll:active {
+    cursor: grabbing;
+}
+
+/* Анимация обновления при свайпе */
+@media (max-width: 480px) {
+    .ios-container {
+        overscroll-behavior-y: contain;
+    }
+    
+    .ios-container:active {
+        animation: swipeRefresh 0.5s ease;
+    }
+
+    .search-container:hover {
+        animation: wiggle 0.5s ease;
+    }
+}
+
 .hidden {
     display: none;
 }
