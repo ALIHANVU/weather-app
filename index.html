@@ -8,7 +8,6 @@
     <link href="styles.css" rel="stylesheet">
 </head>
 <body>
-
     <div class="ios-container">
         <!-- Поисковая секция -->
         <div class="search-section">
@@ -44,14 +43,14 @@
             </div>
 
             <!-- Почасовой прогноз -->
-            <div class="weather-card hourly-forecast">
+            <div class="weather-card hourly-forecast" style="--index: 1">
                 <div class="forecast-scroll" id="forecastDays">
                     <!-- Генерируется динамически -->
                 </div>
             </div>
 
             <!-- Детали погоды -->
-            <div class="weather-card weather-details">
+            <div class="weather-card weather-details" style="--index: 2">
                 <div class="details-grid">
                     <div class="detail-item">
                         <div class="detail-header">
@@ -85,7 +84,7 @@
             </div>
 
             <!-- Советы для фермеров -->
-            <div class="weather-card farmer-tips">
+            <div class="weather-card farmer-tips" style="--index: 3">
                 <div class="tips-header">
                     <span class="tips-icon">🌱</span>
                     <span class="tips-title">Советы для фермеров</span>
@@ -99,4 +98,4 @@
 
     <script src="script.js"></script>
 </body>
-</html
+</html>
