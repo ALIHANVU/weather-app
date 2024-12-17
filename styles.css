@@ -47,7 +47,7 @@ body {
     border-radius: 12px;
     padding: 8px 12px;
     gap: 12px;
-    transition: transform 0.25s cubic-bezier(0.4, 0.0, 0.2, 1.0), background-color 0.25s cubic-bezier(0.4, 0.0, 0.2, 1.0), box-shadow 0.25s cubic-bezier(0.4, 0.0, 0.2, 1.0);
+     transition: transform 0.25s cubic-bezier(0.4, 0.0, 0.2, 1.0), background-color 0.25s cubic-bezier(0.4, 0.0, 0.2, 1.0), box-shadow 0.25s cubic-bezier(0.4, 0.0, 0.2, 1.0);
 }
 
 .search-container:hover {
@@ -67,7 +67,13 @@ body {
     font-size: 17px;
     color: var(--ios-text);
     outline: none;
+    transition: box-shadow 0.3s cubic-bezier(0.4, 0.0, 0.2, 1.0);
 }
+
+#citySearch:focus {
+    box-shadow: 0 0 0 2px var(--ios-blue);
+}
+
 
 #citySearch::placeholder {
     color: var(--ios-secondary-text);
@@ -207,17 +213,17 @@ body {
     position: relative;
     overflow: hidden;
     animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+     transition: transform 0.15s cubic-bezier(0.075, 0.82, 0.165, 1), box-shadow 0.3s cubic-bezier(0.4, 0.0, 0.2, 1.0);
 }
 
 .detail-item:hover {
-  
-  box-shadow: 0 5px 15px rgba(0,122,255,0.2);
-   transition: box-shadow 0.3s cubic-bezier(0.4, 0.0, 0.2, 1.0);
+      box-shadow: 0 5px 15px rgba(0,122,255,0.2);
 }
+
 .detail-item:active {
-      transform: scale(0.98);
-      transition: transform 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
+       transform: scale(0.98);
 }
+
 
 .detail-header {
     display: flex;
@@ -279,7 +285,7 @@ body {
     border-radius: 12px;
     background: rgba(255, 255, 255, 0.05);
     margin-bottom: 8px;
-    transition: transform 0.25s cubic-bezier(0.4, 0.0, 0.2, 1.0), background-color 0.25s cubic-bezier(0.4, 0.0, 0.2, 1.0);
+     transition: transform 0.25s cubic-bezier(0.4, 0.0, 0.2, 1.0), background-color 0.25s cubic-bezier(0.4, 0.0, 0.2, 1.0);
     position: relative;
     overflow: hidden;
 }
