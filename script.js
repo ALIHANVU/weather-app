@@ -276,11 +276,31 @@ function hideLoading() {
         loadingDiv.remove();
     }
 }
+ // Ripple effect
+function createRipple(event) {
+    const target = event.currentTarget;
+    const ripple = document.createElement('span');
+    const diameter = Math.max(target.clientWidth, target.clientHeight);
+    const radius = diameter / 2;
 
+    ripple.style.width = ripple.style.height = `${diameter}px`;
+    ripple.style.left = `${event.clientX - target.offsetLeft - radius}px`;
+    ripple.style.top = `${event.clientY - target.offsetTop - radius}px`;
+    ripple.classList.add('ripple');
+
+    target.appendChild(ripple);
+
+    setTimeout(() => ripple.remove(), 600);
+}
 // Основная функция обновления погоды
 async function updateWeather(city) {
     try {
         elements.weatherResult.classList.add('loading');
+        // Добавляем класс loading для skeleton эффектов
+        elements.cityName.classList.add('loading');
+        elements.temperature.classList.add('loading');
+        elements.weatherDescription.classList.add('loading');
+        
         const data = await fetchWeatherData(city);
         
         updateCurrentWeather(data.weather);
@@ -292,6 +312,9 @@ async function updateWeather(city) {
         console.error('Ошибка:', error);
     } finally {
         elements.weatherResult.classList.remove('loading');
+        elements.cityName.classList.remove('loading');
+        elements.temperature.classList.remove('loading');
+        elements.weatherDescription.classList.remove('loading');
     }
 }
 
@@ -337,4 +360,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     } finally {
         hideLoading();
     }
+});
+const rippleElements = document.querySelectorAll('.search-button, .tip-item');
+rippleElements.forEach(element => {
+    element.addEventListener('click', createRipple);
 });
