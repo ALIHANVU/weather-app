@@ -1,11 +1,11 @@
 /* Базовые настройки и темы */
 :root {
-    --ios-blue: #007AFF;
-    --ios-background: #000000;
-    --ios-card-bg: rgba(30, 30, 30, 0.8);
-    --ios-text: #FFFFFF;
-    --ios-secondary-text: rgba(255, 255, 255, 0.6);
-    --ios-border: rgba(255, 255, 255, 0.2);
+    --ios-blue: #0A84FF; /* Более мягкий синий */
+    --ios-background: #1c1c1e; /* Темно-серый фон */
+    --ios-card-bg: rgba(60, 60, 67, 0.75); /* Полупрозрачная карточка */
+    --ios-text: #FFFFFF; /* Белый основной текст */
+    --ios-secondary-text: rgba(235, 235, 245, 0.6); /* Светло-серый вторичный текст */
+    --ios-border: rgba(84, 84, 88, 0.65); /* Тонкий серый бордюр */
 }
 
 /* Сброс стилей */
@@ -23,7 +23,7 @@ body {
     color: var(--ios-text);
     min-height: 100vh;
     line-height: 1.2;
-    background: linear-gradient(180deg, #1e1e1e 0%, #000000 100%);
+     background: linear-gradient(180deg, #1c1c1e 0%, #000000 100%);
 }
 
 .ios-container {
@@ -67,13 +67,12 @@ body {
     font-size: 17px;
     color: var(--ios-text);
     outline: none;
-    transition: box-shadow 0.3s cubic-bezier(0.4, 0.0, 0.2, 1.0);
+     transition: box-shadow 0.3s cubic-bezier(0.4, 0.0, 0.2, 1.0);
 }
 
 #citySearch:focus {
     box-shadow: 0 0 0 2px var(--ios-blue);
 }
-
 
 #citySearch::placeholder {
     color: var(--ios-secondary-text);
@@ -89,12 +88,12 @@ body {
     cursor: pointer;
     transition: all 0.2s ease;
     border-radius: 6px;
-    position: relative; /* Для ripple-эффекта */
+    position: relative;
     overflow: hidden;
 }
 
 .search-button:hover {
-    background: rgba(0, 122, 255, 0.1);
+    background: rgba(10, 132, 255, 0.1); /* Мягкий синий */
 }
 
 .search-button:active {
@@ -217,13 +216,12 @@ body {
 }
 
 .detail-item:hover {
-      box-shadow: 0 5px 15px rgba(0,122,255,0.2);
+      box-shadow: 0 5px 15px rgba(10, 132, 255, 0.2); /* Мягкий синий */
 }
 
 .detail-item:active {
        transform: scale(0.98);
 }
-
 
 .detail-header {
     display: flex;
@@ -388,7 +386,7 @@ body {
 
 @keyframes shadowPulse {
     0%, 100% { box-shadow: 0 0 0 rgba(0,0,0,0); }
-    50% { box-shadow: 0 5px 15px rgba(0,122,255,0.2); }
+    50% { box-shadow: 0 5px 15px rgba(10, 132, 255, 0.2); } /* Мягкий синий */
 }
 
 /* Скелетон анимация */
