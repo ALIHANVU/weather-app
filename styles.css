@@ -92,14 +92,14 @@ body {
 }
 
 .search-button:active {
-    animation: buttonPress 0.2s cubic-bezier(0.075, 0.82, 0.165, 1), shadowPulse 1s ease;
+    animation: buttonPress 0.15s cubic-bezier(0.075, 0.82, 0.165, 1), shadowPulse 1s ease;
 }
 
 /* Основная информация о погоде */
 .weather-main {
     text-align: center;
     padding: 32px 0;
-    animation: fadeIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    animation: fadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 .city-name {
@@ -141,7 +141,7 @@ body {
     border-radius: 16px;
     margin-bottom: 16px;
     overflow: hidden;
-    animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 /* Почасовой прогноз */
@@ -210,7 +210,13 @@ body {
 }
 
 .detail-item:hover {
-    animation: wiggle 0.5s cubic-bezier(0.4, 0.0, 0.2, 1.0), shadowPulse 1s ease;
+  
+  box-shadow: 0 5px 15px rgba(0,122,255,0.2);
+   transition: box-shadow 0.3s cubic-bezier(0.4, 0.0, 0.2, 1.0);
+}
+.detail-item:active {
+      transform: scale(0.98);
+      transition: transform 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 .detail-header {
@@ -316,7 +322,7 @@ body {
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(10px);
     }
     to {
         opacity: 1;
@@ -351,15 +357,6 @@ body {
     0% { transform: scale(1); }
     50% { transform: scale(1.05); }
     100% { transform: scale(1); }
-}
-
-@keyframes wiggle {
-    0%, 100% { transform: rotate(0deg); }
-    10%, 90% { transform: rotate(-3deg); }
-    20%, 80% { transform: rotate(3deg); }
-    30%, 70% { transform: rotate(-3deg); }
-    40%, 60% { transform: rotate(3deg); }
-    50% { transform: rotate(0deg); }
 }
 
 @keyframes slideUp {
@@ -418,7 +415,8 @@ body {
     }
 
     .search-container:hover {
-        animation: wiggle 0.5s ease;
+       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+       transition: box-shadow 0.3s cubic-bezier(0.4, 0.0, 0.2, 1.0), transform 0.25s cubic-bezier(0.4, 0.0, 0.2, 1.0);
     }
 }
 
