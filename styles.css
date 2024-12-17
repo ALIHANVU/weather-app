@@ -92,14 +92,14 @@ body {
 }
 
 .search-button:active {
-    animation: buttonPress 0.2s ease, shadowPulse 1s ease;
+    animation: buttonPress 0.2s cubic-bezier(0.075, 0.82, 0.165, 1), shadowPulse 1s ease;
 }
 
 /* Основная информация о погоде */
 .weather-main {
     text-align: center;
     padding: 32px 0;
-    animation: fadeIn 0.6s ease forwards;
+    animation: fadeIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 .city-name {
@@ -141,7 +141,7 @@ body {
     border-radius: 16px;
     margin-bottom: 16px;
     overflow: hidden;
-    animation: slideUp 0.6s ease forwards;
+    animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 /* Почасовой прогноз */
@@ -175,7 +175,7 @@ body {
 }
 
 .forecast-hour:hover {
-   animation: pulse 0.5s ease, colorPulse 1.5s infinite;
+   animation: pulse 0.5s cubic-bezier(0.4, 0.0, 0.2, 1.0), colorPulse 1.5s infinite;
    transform: translateY(-5px);
 }
 
@@ -206,11 +206,11 @@ body {
     padding: 16px;
     position: relative;
     overflow: hidden;
-    animation: slideUp 0.3s ease forwards;
+    animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 .detail-item:hover {
-  animation: wiggle 0.5s ease, shadowPulse 1s ease;
+    animation: wiggle 0.5s cubic-bezier(0.4, 0.0, 0.2, 1.0), shadowPulse 1s ease;
 }
 
 .detail-header {
@@ -284,7 +284,7 @@ body {
 }
 
 .tip-item:active {
-    animation: buttonPress 0.2s ease;
+    animation: buttonPress 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 .tip-icon {
@@ -304,7 +304,7 @@ body {
     transform: scale(0);
     background-color: rgba(255, 255, 255, 0.2);
     pointer-events: none;
-    animation: ripple-effect 0.6s ease-out;
+    animation: ripple-effect 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 @keyframes ripple-effect {
      to {
@@ -338,8 +338,7 @@ body {
 /* Новые расширенные анимации */
 @keyframes buttonPress {
     0% { transform: scale(1); }
-    50% { transform: scale(0.95); }
-    100% { transform: scale(1); }
+    100% { transform: scale(0.95); }
 }
 
 @keyframes swipeRefresh {
@@ -364,9 +363,9 @@ body {
 }
 
 @keyframes slideUp {
-    0% { 
+    0% {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(10px);
     }
     100% {
         opacity: 1;
@@ -395,10 +394,6 @@ body {
         100% { background-position: -100% 0; }
 }
 
-
-/* Применение новых анимаций */
-
-
 /* touch-action */
 .ios-container {
     touch-action: pan-y;
@@ -417,7 +412,7 @@ body {
     .ios-container {
         overscroll-behavior-y: contain;
     }
-    
+
     .ios-container:active {
         animation: swipeRefresh 0.5s ease;
     }
