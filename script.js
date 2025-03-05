@@ -16,7 +16,8 @@ const elements = {
     windSpeed: document.querySelector('#windSpeed'),
     visibility: document.querySelector('#visibility'),
     forecastDays: document.querySelector('#forecastDays'),
-    tipsContainer: document.querySelector('#tipsContainer')
+    tipsContainer: document.querySelector('#tipsContainer'),
+    weeklyForecastContainer: document.querySelector('#weeklyForecastContainer')
 };
 
 // Иконки погоды
@@ -36,7 +37,6 @@ const weatherEmoji = {
 async function loadFarmerTips() {
     try {
         console.log('Начинаем загрузку советов...');
-        // Добавим случайный параметр для предотвращения кэширования
         const response = await fetch('https://alihanvu.github.io/weather-app/farmer-tips.json?' + new Date().getTime(), {
             method: 'GET',
             headers: {
@@ -57,7 +57,6 @@ async function loadFarmerTips() {
     } catch (error) {
         console.error('Подробная ошибка загрузки советов:', error);
         
-        // Пробуем альтернативный путь
         try {
             const alternativeResponse = await fetch('./farmer-tips.json');
             if (alternativeResponse.ok) {
@@ -72,6 +71,7 @@ async function loadFarmerTips() {
         return null;
     }
 }
+
 // Форматирование времени
 function formatTime(timestamp) {
     return new Date(timestamp * 1000).toLocaleTimeString('ru-RU', {
@@ -79,6 +79,12 @@ function formatTime(timestamp) {
         minute: '2-digit',
         hour12: false
     });
+}
+
+// Определение дня недели
+function getDayOfWeek(timestamp) {
+    const days = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+    return days[new Date(timestamp * 1000).getDay()];
 }
 
 // Определение сезона
@@ -229,6 +235,55 @@ function updateHourlyForecast(forecast) {
     });
 }
 
+// Обновление недельного прогноза
+function updateWeeklyForecast(forecast) {
+    elements.weeklyForecastContainer.innerHTML = '';
+    
+    // Группировка прогноза по дням
+    const dailyForecasts = {};
+    forecast.list.forEach(item => {
+        const date = new Date(item.dt * 1000);
+        const day = date.toISOString().split('T')[0];
+        
+        if (!dailyForecasts[day]) {
+            dailyForecasts[day] = {
+                temps: [],
+                weather: [],
+                day: getDayOfWeek(item.dt)
+            };
+        }
+        
+        dailyForecasts[day].temps.push(item.main.temp);
+        dailyForecasts[day].weather.push(item.weather[0].icon);
+    });
+    
+    // Выбираем уникальные дни и создаем карточки
+    const uniqueDays = Object.values(dailyForecasts).slice(0, 7);
+    
+    uniqueDays.forEach((dayData, index) => {
+        const avgTemp = Math.round(
+            dayData.temps.reduce((a, b) => a + b, 0) / dayData.temps.length
+        );
+        
+        // Определяем наиболее частую иконку погоды
+        const mostFrequentIcon = dayData.weather.reduce(
+            (a, b) => dayData.weather.filter(v => v === a).length >= dayData.weather.filter(v => v === b).length ? a : b
+        );
+        
+        const dayElement = document.createElement('div');
+        dayElement.className = 'weekly-day';
+        dayElement.style.animationDelay = `${index * 0.1}s`;
+        
+        dayElement.innerHTML = `
+            <div class="weekly-day-name">${dayData.day}</div>
+            <div class="weekly-day-icon">${weatherEmoji[mostFrequentIcon]}</div>
+            <div class="weekly-day-temp">${avgTemp}°</div>
+        `;
+        
+        elements.weeklyForecastContainer.appendChild(dayElement);
+    });
+}
+
 // Обновление советов
 async function updateFarmerTips(weatherData) {
     const tips = await generateFarmerTips(weatherData);
@@ -276,7 +331,8 @@ function hideLoading() {
         loadingDiv.remove();
     }
 }
- // Ripple effect
+
+// Создание эффекта ripple
 function createRipple(event) {
     const target = event.currentTarget;
     const ripple = document.createElement('span');
@@ -292,11 +348,11 @@ function createRipple(event) {
 
     setTimeout(() => ripple.remove(), 600);
 }
+
 // Основная функция обновления погоды
 async function updateWeather(city) {
     try {
         elements.weatherResult.classList.add('loading');
-        // Добавляем класс loading для skeleton эффектов
         elements.cityName.classList.add('loading');
         elements.temperature.classList.add('loading');
         elements.weatherDescription.classList.add('loading');
@@ -305,6 +361,7 @@ async function updateWeather(city) {
         
         updateCurrentWeather(data.weather);
         updateHourlyForecast(data.forecast);
+        updateWeeklyForecast(data.forecast);
         await updateFarmerTips(data.weather);
         
         elements.weatherResult.classList.remove('hidden');
