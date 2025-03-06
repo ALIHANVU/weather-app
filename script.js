@@ -279,7 +279,7 @@ function updateWeeklyForecast(forecast) {
         dayElement.className = 'weekly-day';
         dayElement.style.animationDelay = `${index * 0.1}s`;
         
-        // Используем data-атрибут для полного названия дня
+        // Исправленный код: используем правильные данные из объекта dayData
         dayElement.innerHTML = `
             <div class="weekly-day-name" data-full-name="${dayData.day}">${dayData.shortDay}</div>
             <div class="weekly-day-icon">${weatherEmoji[mostFrequentIcon]}</div>
@@ -289,7 +289,6 @@ function updateWeeklyForecast(forecast) {
         elements.weeklyForecastContainer.appendChild(dayElement);
     });
 }
-
 // Обновление советов
 async function updateFarmerTips(weatherData) {
     const tips = await generateFarmerTips(weatherData);
