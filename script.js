@@ -246,10 +246,15 @@ function updateWeeklyForecast(forecast) {
         const day = date.toISOString().split('T')[0];
         
         if (!dailyForecasts[day]) {
+            // Добавляем короткую форму дня недели для мобильных устройств
+            const fullDayName = getDayOfWeek(item.dt);
+            const shortDayName = fullDayName.substring(0, 3); // Первые 3 буквы
+            
             dailyForecasts[day] = {
                 temps: [],
                 weather: [],
-                day: getDayOfWeek(item.dt)
+                day: fullDayName,
+                shortDay: shortDayName
             };
         }
         
@@ -274,8 +279,9 @@ function updateWeeklyForecast(forecast) {
         dayElement.className = 'weekly-day';
         dayElement.style.animationDelay = `${index * 0.1}s`;
         
+        // Используем data-атрибут для полного названия дня
         dayElement.innerHTML = `
-            <div class="weekly-day-name">${dayData.day}</div>
+            <div class="weekly-day-name" data-full-name="${dayData.day}">${dayData.shortDay}</div>
             <div class="weekly-day-icon">${weatherEmoji[mostFrequentIcon]}</div>
             <div class="weekly-day-temp">${avgTemp}°</div>
         `;
