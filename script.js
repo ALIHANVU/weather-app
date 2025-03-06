@@ -279,9 +279,10 @@ function updateWeeklyForecast(forecast) {
         dayElement.className = 'weekly-day';
         dayElement.style.animationDelay = `${index * 0.1}s`;
         
-        // Исправленный код: используем правильные данные из объекта dayData
+        // Исправленная часть кода для корректного отображения дней недели
         dayElement.innerHTML = `
-            <div class="weekly-day-name" data-full-name="${dayData.day}">${dayData.shortDay}</div>
+            <div class="weekly-day-name">${dayData.shortDay}</div>
+            <div class="weekly-day-name full-day-name" style="display: none;">${dayData.day}</div>
             <div class="weekly-day-icon">${weatherEmoji[mostFrequentIcon]}</div>
             <div class="weekly-day-temp">${avgTemp}°</div>
         `;
