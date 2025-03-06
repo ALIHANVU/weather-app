@@ -1,167 +1,158 @@
-/* Базовые настройки и темы */
+/* Базовые настройки в стиле Apple */
 :root {
-    --ios-blue: #0A84FF; /* Более мягкий синий */
-    --ios-background: #1c1c1e; /* Темно-серый фон */
-    --ios-card-bg: rgba(60, 60, 67, 0.75); /* Полупрозрачная карточка */
-    --ios-text: #FFFFFF; /* Белый основной текст */
-    --ios-secondary-text: rgba(235, 235, 245, 0.6); /* Светло-серый вторичный текст */
-    --ios-border: rgba(84, 84, 88, 0.65); /* Тонкий серый бордюр */
+    --apple-system-font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+    --ios-background: rgba(22, 22, 23, 0.95);
+    --ios-card-bg: rgba(40, 40, 42, 0.8);
+    --ios-card-highlight: rgba(255, 255, 255, 0.1);
+    --ios-text-primary: rgba(255, 255, 255, 0.92);
+    --ios-text-secondary: rgba(255, 255, 255, 0.65);
+    --ios-blur-effect: 25px;
+    --ios-border-radius: 16px;
+    --ios-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    --ios-blue: #0A84FF;
+    --ios-animation-timing: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-/* Сброс стилей */
-* {
+body {
+    font-family: var(--apple-system-font);
+    background: var(--ios-background);
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-    -webkit-tap-highlight-color: transparent;
+    color: var(--ios-text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.01em;
 }
 
-/* Основные стили */
-body {
-    background: var(--ios-background);
-    color: var(--ios-text);
-    min-height: 100vh;
-    line-height: 1.2;
-     background: linear-gradient(180deg, #1c1c1e 0%, #000000 100%);
-}
-
+/* iOS Container */
 .ios-container {
-    max-width: 480px;
+    max-width: 430px;
     margin: 0 auto;
     padding: 16px;
-    min-height: 100vh;
 }
 
-/* Поисковая секция */
+/* Поисковое поле в стиле iOS */
 .search-section {
     margin-bottom: 24px;
 }
 
 .search-container {
+    background: var(--ios-card-bg);
+    border-radius: 12px;
+    padding: 0 12px;
     display: flex;
     align-items: center;
-    background: var(--ios-card-bg);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 12px;
-    padding: 8px 12px;
-    gap: 12px;
-     transition: transform 0.25s cubic-bezier(0.4, 0.0, 0.2, 1.0), background-color 0.25s cubic-bezier(0.4, 0.0, 0.2, 1.0), box-shadow 0.25s cubic-bezier(0.4, 0.0, 0.2, 1.0);
-}
-
-.search-container:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(var(--ios-blur-effect));
+    -webkit-backdrop-filter: blur(var(--ios-blur-effect));
+    box-shadow: var(--ios-shadow);
+    height: 36px;
 }
 
 .search-icon {
-    color: var(--ios-secondary-text);
+    color: var(--ios-text-secondary);
+    margin-right: 8px;
 }
 
 #citySearch {
     flex: 1;
+    background: transparent;
     border: none;
-    background: none;
-    padding: 8px 0;
+    color: var(--ios-text-primary);
+    font-family: var(--apple-system-font);
     font-size: 17px;
-    color: var(--ios-text);
     outline: none;
-     transition: box-shadow 0.3s cubic-bezier(0.4, 0.0, 0.2, 1.0);
-}
-
-#citySearch:focus {
-    box-shadow: 0 0 0 2px var(--ios-blue);
+    height: 36px;
 }
 
 #citySearch::placeholder {
-    color: var(--ios-secondary-text);
+    color: var(--ios-text-secondary);
 }
 
 .search-button {
-    background: none;
+    background: var(--ios-blue);
+    color: white;
     border: none;
-    color: var(--ios-blue);
-    font-size: 17px;
-    font-weight: 400;
-    padding: 4px 8px;
+    border-radius: 8px;
+    padding: 4px 12px;
+    font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s ease;
-    border-radius: 6px;
-    position: relative;
+    transition: all 0.2s var(--ios-animation-timing);
     overflow: hidden;
-}
-
-.search-button:hover {
-    background: rgba(10, 132, 255, 0.1); /* Мягкий синий */
+    position: relative;
 }
 
 .search-button:active {
-    animation: buttonPress 0.15s cubic-bezier(0.075, 0.82, 0.165, 1), shadowPulse 1s ease;
+    transform: scale(0.96);
+    opacity: 0.9;
 }
 
-/* Основная информация о погоде */
+/* Основной контент */
 .weather-main {
+    padding: 32px 0 40px;
     text-align: center;
-    padding: 32px 0;
-    animation: fadeIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    position: relative;
 }
 
 .city-name {
-    font-size: 34px;
+    font-size: 36px;
     font-weight: 400;
     margin-bottom: 8px;
-    position: relative;
-    overflow: hidden;
-    animation: breathe 3s infinite ease-in-out, colorPulse 4s infinite;
+    transition: opacity 0.3s ease;
 }
 
 .temperature {
     font-size: 96px;
     font-weight: 200;
     line-height: 1;
-    margin: 20px 0;
-    position: relative;
-    overflow: hidden;
+    margin-bottom: 8px;
+    transition: opacity 0.3s ease;
 }
 
 .weather-condition {
-    font-size: 24px;
-    margin-bottom: 8px;
-    color: var(--ios-text);
-    position: relative;
-    overflow: hidden;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--ios-text-secondary);
+    margin-bottom: 16px;
+    transition: opacity 0.3s ease;
 }
 
 .temp-range {
-    font-size: 17px;
-    color: var(--ios-secondary-text);
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--ios-text-secondary);
 }
 
-/* Карточки погоды */
+/* Карточки прогноза */
 .weather-card {
     background: var(--ios-card-bg);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-radius: 16px;
+    border-radius: var(--ios-border-radius);
     margin-bottom: 16px;
-    overflow: hidden;
-    animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    padding: 16px;
+    backdrop-filter: blur(var(--ios-blur-effect));
+    -webkit-backdrop-filter: blur(var(--ios-blur-effect));
+    box-shadow: var(--ios-shadow);
+    transform: translateY(20px);
+    opacity: 0;
+    animation: slide-in 0.5s var(--ios-animation-timing) forwards;
+    animation-delay: calc(var(--index) * 0.1s);
+}
+
+@keyframes slide-in {
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 /* Почасовой прогноз */
 .forecast-scroll {
     display: flex;
     overflow-x: auto;
-    padding: 16px;
-    gap: 24px;
+    padding: 8px 0;
+    -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    -ms-overflow-style: none;
-    cursor: grab;
-}
-
-.forecast-scroll:active {
-    cursor: grabbing;
+    gap: 16px;
 }
 
 .forecast-scroll::-webkit-scrollbar {
@@ -169,280 +160,188 @@ body {
 }
 
 .forecast-hour {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    min-width: 50px;
-    transition: transform 0.25s cubic-bezier(0.4, 0.0, 0.2, 1.0);
-    position: relative;
-    overflow: hidden;
+    flex: 0 0 auto;
+    text-align: center;
+    min-width: 60px;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fade-in 0.5s var(--ios-animation-timing) forwards;
 }
 
-.forecast-hour:hover {
-   animation: pulse 0.5s cubic-bezier(0.4, 0.0, 0.2, 1.0), colorPulse 1.5s infinite;
-   transform: translateY(-5px);
+@keyframes fade-in {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .forecast-time {
     font-size: 15px;
-    color: var(--ios-text);
+    color: var(--ios-text-secondary);
+    margin-bottom: 8px;
 }
 
 .forecast-icon {
     font-size: 24px;
+    margin-bottom: 8px;
 }
 
 .forecast-temp {
-    font-size: 20px;
-    font-weight: 400;
+    font-size: 18px;
+    font-weight: 500;
 }
 
 /* Детали погоды */
 .details-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1px;
-    background-color: var(--ios-border);
+    gap: 16px;
 }
 
 .detail-item {
-    background: var(--ios-card-bg);
     padding: 16px;
-    position: relative;
-    overflow: hidden;
-    animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-     transition: transform 0.15s cubic-bezier(0.075, 0.82, 0.165, 1), box-shadow 0.3s cubic-bezier(0.4, 0.0, 0.2, 1.0);
-}
-
-.detail-item:hover {
-      box-shadow: 0 5px 15px rgba(10, 132, 255, 0.2); /* Мягкий синий */
-}
-
-.detail-item:active {
-       transform: scale(0.98);
+    background: var(--ios-card-highlight);
+    border-radius: 12px;
 }
 
 .detail-header {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .detail-icon {
-    font-size: 16px;
+    font-size: 14px;
+    margin-right: 8px;
 }
 
 .detail-title {
-    font-size: 13px;
-    color: var(--ios-secondary-text);
+    font-size: 12px;
     font-weight: 500;
+    color: var(--ios-text-secondary);
+    letter-spacing: 0.05em;
 }
 
 .detail-value {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 400;
 }
 
 /* Советы для фермеров */
-.farmer-tips {
-    margin-top: 16px;
-}
-
-.tips-header {
+.tips-header, .forecast-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 16px;
-    border-bottom: 1px solid var(--ios-border);
-    position: sticky;
-    top: 0;
-    background-color: var(--ios-card-bg);
-    z-index: 10;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--ios-card-highlight);
 }
 
-.tips-icon {
-    font-size: 20px;
+.tips-icon, .forecast-icon {
+    font-size: 16px;
+    margin-right: 8px;
 }
 
-.tips-title {
+.tips-title, .forecast-title {
     font-size: 17px;
-    font-weight: 500;
-}
-
-.tips-container {
-    padding: 8px;
+    font-weight: 600;
 }
 
 .tip-item {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
     padding: 12px;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.05);
     margin-bottom: 8px;
-     transition: transform 0.25s cubic-bezier(0.4, 0.0, 0.2, 1.0), background-color 0.25s cubic-bezier(0.4, 0.0, 0.2, 1.0);
+    background: var(--ios-card-highlight);
+    border-radius: 12px;
+    opacity: 0;
+    transform: translateX(-10px);
+    animation: slide-in-right 0.5s var(--ios-animation-timing) forwards;
     position: relative;
     overflow: hidden;
 }
 
-.tip-item:hover {
-    transform: translateX(5px);
-    background: rgba(255, 255, 255, 0.08);
-}
-
-.tip-item:active {
-    animation: buttonPress 0.15s cubic-bezier(0.075, 0.82, 0.165, 1);
-}
-
-.tip-icon {
-    font-size: 16px;
-    padding-top: 2px;
-}
-
-.tip-text {
-    font-size: 15px;
-    line-height: 1.4;
-    color: var(--ios-text);
-}
-/* Ripple Effect */
-.ripple {
-    position: absolute;
-    border-radius: 50%;
-    transform: scale(0);
-    background-color: rgba(255, 255, 255, 0.2);
-    pointer-events: none;
-    animation: ripple-effect 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-@keyframes ripple-effect {
-     to {
-         transform: scale(2);
-         opacity: 0;
-     }
- }
-/* Анимации */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
+@keyframes slide-in-right {
     to {
         opacity: 1;
         transform: translateX(0);
     }
 }
 
-/* Новые расширенные анимации */
-@keyframes buttonPress {
-    0% { transform: scale(1); }
-    100% { transform: scale(0.95); }
+.tip-icon {
+    flex-shrink: 0;
+    margin-right: 12px;
+    font-size: 14px;
 }
 
-@keyframes swipeRefresh {
-    0% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-    100% { transform: translateY(0); }
+.tip-text {
+    font-size: 15px;
+    line-height: 1.4;
 }
 
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+/* Недельный прогноз в стиле iOS */
+.weekly-forecast-grid {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 8px 0;
+    gap: 12px;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
 }
 
-@keyframes slideUp {
-    0% {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes breathe {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.02); }
-}
-
-@keyframes colorPulse {
-    0%, 100% { color: var(--ios-text); }
-    50% { color: var(--ios-blue); }
-}
-
-@keyframes shadowPulse {
-    0%, 100% { box-shadow: 0 0 0 rgba(0,0,0,0); }
-    50% { box-shadow: 0 5px 15px rgba(10, 132, 255, 0.2); } /* Мягкий синий */
-}
-
-/* Скелетон анимация */
-@keyframes skeleton-loading {
-        0% { background-position: 100% 0; }
-        100% { background-position: -100% 0; }
-}
-
-/* touch-action */
-.ios-container {
-    touch-action: pan-y;
-}
-
-.forecast-scroll {
-    cursor: grab;
-}
-
-.forecast-scroll:active {
-    cursor: grabbing;
-}
-
-/* Анимация обновления при свайпе */
-@media (max-width: 480px) {
-    .ios-container {
-        overscroll-behavior-y: contain;
-    }
-
-    .ios-container:active {
-        animation: swipeRefresh 0.5s ease;
-    }
-
-    .search-container:hover {
-       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-       transition: box-shadow 0.3s cubic-bezier(0.4, 0.0, 0.2, 1.0), transform 0.25s cubic-bezier(0.4, 0.0, 0.2, 1.0);
-    }
-}
-
-.hidden {
+.weekly-forecast-grid::-webkit-scrollbar {
     display: none;
 }
 
-/* Уведомления об ошибках */
-.error-notification {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(255, 59, 48, 0.9);
-    padding: 12px 24px;
+.weekly-day {
+    flex: 0 0 auto;
+    text-align: center;
+    min-width: 70px;
+    padding: 12px 8px;
     border-radius: 12px;
-    color: white;
+    background-color: var(--ios-card-highlight);
+    opacity: 0;
+    transform: translateY(10px);
+    animation: fade-in 0.6s var(--ios-animation-timing) forwards;
+}
+
+.weekly-day-name {
     font-size: 15px;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    z-index: 1000;
-    animation: fadeIn 0.3s ease;
+    color: var(--ios-text-secondary);
+    margin-bottom: 10px;
+}
+
+.weekly-day-icon {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.weekly-day-temp {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+/* Анимации загрузки */
+.loading {
+    position: relative;
+    opacity: 0.7;
+}
+
+.loading::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    animation: loading-shine 1.5s infinite;
+}
+
+@keyframes loading-shine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
 }
 
 .loading-overlay {
@@ -451,147 +350,152 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
+    background: var(--ios-background);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    backdrop-filter: blur(5px);
 }
 
 .loading-spinner {
-    text-align: center;
-    color: white;
-}
-
-.loading-text {
-    margin-top: 10px;
-    font-size: 16px;
-}
-
-.loading-spinner:before {
-    content: '';
-    width: 40px;
-    height: 40px;
-    display: block;
-    margin: 0 auto;
-    border: 4px solid #fff;
-    border-radius: 50%;
-    border-top-color: transparent;
-    animation: spin 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* Состояние загрузки */
-.loading {
-    position: relative;
-    pointer-events: none;
-}
-
-.loading::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    border-radius: inherit;
-}
-
-/* Адаптивность */
-@media (max-width: 480px) {
-    .ios-container {
-        padding: 12px;
-    }
-
-    .temperature {
-        font-size: 84px;
-    }
-
-    .city-name {
-        font-size: 30px;
-    }
-
-    .detail-value {
-        font-size: 24px;
-    }
-}
-/* Раздел недельного прогноза */
-.weekly-forecast {
-    margin-top: 16px;
-}
-
-.forecast-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 16px;
-    border-bottom: 1px solid var(--ios-border);
-}
-
-.forecast-icon {
-    font-size: 20px;
-}
-
-.forecast-title {
-    font-size: 17px;
-    font-weight: 500;
-}
-
-.weekly-forecast-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-    padding: 16px;
-}
-
-.weekly-day {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
-    padding: 12px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    transition: transform 0.25s cubic-bezier(0.4, 0.0, 0.2, 1.0);
-    animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-.weekly-day:hover {
-    transform: scale(1.05);
-    background: rgba(255, 255, 255, 0.08);
+.loading-spinner::before {
+    content: "";
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.1);
+    border-top-color: var(--ios-blue);
+    animation: spin 1s infinite linear;
+    margin-bottom: 16px;
 }
 
-.weekly-day-name {
-    font-size: 13px;
-    color: var(--ios-secondary-text);
-}
-
-.weekly-day-icon {
-    font-size: 24px;
-}
-
-.weekly-day-temp {
-    font-size: 17px;
+.loading-text {
+    font-size: 16px;
+    color: var(--ios-text-secondary);
     font-weight: 500;
 }
 
-/* Адаптивность для недельного прогноза */
-@media (max-width: 480px) {
-    .weekly-forecast-grid {
-        grid-template-columns: repeat(4, 1fr);
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-    }
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
 
+/* Ripple эффект */
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: scale(0);
+    animation: ripple 0.6s linear;
+}
+
+@keyframes ripple {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* Уведомления об ошибках */
+.error-notification {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 59, 48, 0.9);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 500;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(var(--ios-blur-effect));
+    -webkit-backdrop-filter: blur(var(--ios-blur-effect));
+    animation: notification-appear 0.3s var(--ios-animation-timing), notification-disappear 0.3s var(--ios-animation-timing) 2.7s forwards;
+    z-index: 1000;
+}
+
+@keyframes notification-appear {
+    from {
+        transform: translate(-50%, -20px);
+        opacity: 0;
+    }
+    to {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+}
+
+@keyframes notification-disappear {
+    from {
+        transform: translate(-50%, 0);
+        opacity: 1;
+    }
+    to {
+        transform: translate(-50%, -20px);
+        opacity: 0;
+    }
+}
+
+/* Медиа-запросы для адаптивности */
+@media (max-width: 768px) {
+    .ios-container {
+        padding: 12px;
+    }
+    
+    .city-name {
+        font-size: 28px;
+    }
+    
+    .temperature {
+        font-size: 84px;
+    }
+    
+    .weather-card {
+        border-radius: 14px;
+        padding: 14px;
+    }
+    
+    .weekly-forecast-grid {
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        padding-bottom: 8px;
+    }
+    
     .weekly-day {
-        scroll-snap-align: start;
+        flex: 0 0 auto;
+        min-width: 70px;
+        margin-right: 10px;
+    }
+    
+    .weekly-day:last-child {
+        margin-right: 0;
+    }
+    
+    .details-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+    
+    .detail-item {
+        padding: 12px;
+    }
+}
+
+/* Dark Mode / Light Mode в стиле iOS */
+@media (prefers-color-scheme: light) {
+    :root {
+        --ios-background: rgba(242, 242, 247, 0.95);
+        --ios-card-bg: rgba(255, 255, 255, 0.8);
+        --ios-card-highlight: rgba(0, 0, 0, 0.05);
+        --ios-text-primary: rgba(0, 0, 0, 0.92);
+        --ios-text-secondary: rgba(0, 0, 0, 0.65);
     }
 }
