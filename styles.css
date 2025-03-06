@@ -10,18 +10,22 @@
     --ios-border-radius: 16px;
     --ios-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     --ios-blue: #0A84FF;
+    --ios-green: #32D74B;
     --ios-animation-timing: cubic-bezier(0.23, 1, 0.32, 1);
+    --ios-transition: all 0.3s var(--ios-animation-timing);
 }
 
 body {
     font-family: var(--apple-system-font);
     background: var(--ios-background);
+    background-image: linear-gradient(to bottom, rgba(22, 22, 23, 0.8), rgba(22, 22, 23, 0.98));
     margin: 0;
     padding: 0;
     color: var(--ios-text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     letter-spacing: -0.01em;
+    min-height: 100vh;
 }
 
 /* iOS Container */
@@ -34,6 +38,12 @@ body {
 /* Поисковое поле в стиле iOS */
 .search-section {
     margin-bottom: 24px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(var(--ios-blur-effect));
+    -webkit-backdrop-filter: blur(var(--ios-blur-effect));
+    padding: 8px 0;
 }
 
 .search-container {
@@ -46,6 +56,13 @@ body {
     -webkit-backdrop-filter: blur(var(--ios-blur-effect));
     box-shadow: var(--ios-shadow);
     height: 36px;
+    transition: var(--ios-transition);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.search-container:focus-within {
+    box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.3);
+    border-color: var(--ios-blue);
 }
 
 .search-icon {
@@ -77,7 +94,7 @@ body {
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s var(--ios-animation-timing);
+    transition: var(--ios-transition);
     overflow: hidden;
     position: relative;
 }
@@ -92,6 +109,9 @@ body {
     padding: 32px 0 40px;
     text-align: center;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .city-name {
@@ -99,6 +119,7 @@ body {
     font-weight: 400;
     margin-bottom: 8px;
     transition: opacity 0.3s ease;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .temperature {
@@ -107,6 +128,22 @@ body {
     line-height: 1;
     margin-bottom: 8px;
     transition: opacity 0.3s ease;
+    position: relative;
+    display: inline-block;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.temperature::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 20px;
+    bottom: -10px;
+    left: 0;
+    background: radial-gradient(ellipse at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(5px);
+    z-index: -1;
 }
 
 .weather-condition {
@@ -121,14 +158,19 @@ body {
     font-size: 16px;
     font-weight: 400;
     color: var(--ios-text-secondary);
+    background: rgba(255, 255, 255, 0.08);
+    padding: 6px 12px;
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
 }
 
 /* Карточки прогноза */
 .weather-card {
     background: var(--ios-card-bg);
     border-radius: var(--ios-border-radius);
-    margin-bottom: 16px;
-    padding: 16px;
+    margin-bottom: 20px;
+    padding: 18px;
     backdrop-filter: blur(var(--ios-blur-effect));
     -webkit-backdrop-filter: blur(var(--ios-blur-effect));
     box-shadow: var(--ios-shadow);
@@ -136,6 +178,20 @@ body {
     opacity: 0;
     animation: slide-in 0.5s var(--ios-animation-timing) forwards;
     animation-delay: calc(var(--index) * 0.1s);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.weather-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--ios-blue), rgba(10, 132, 255, 0.1));
+    opacity: 0.7;
 }
 
 @keyframes slide-in {
@@ -153,6 +209,18 @@ body {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     gap: 16px;
+    position: relative;
+}
+
+.forecast-scroll::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 40px;
+    background: linear-gradient(to right, transparent, var(--ios-card-bg));
+    pointer-events: none;
 }
 
 .forecast-scroll::-webkit-scrollbar {
@@ -166,6 +234,13 @@ body {
     opacity: 0;
     transform: translateY(10px);
     animation: fade-in 0.5s var(--ios-animation-timing) forwards;
+    padding: 10px;
+    border-radius: 12px;
+    transition: var(--ios-transition);
+}
+
+.forecast-hour:hover {
+    background: rgba(255, 255, 255, 0.05);
 }
 
 @keyframes fade-in {
@@ -184,6 +259,7 @@ body {
 .forecast-icon {
     font-size: 24px;
     margin-bottom: 8px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .forecast-temp {
@@ -199,9 +275,34 @@ body {
 }
 
 .detail-item {
-    padding: 16px;
+    padding: 18px;
     background: var(--ios-card-highlight);
-    border-radius: 12px;
+    border-radius: 14px;
+    transition: var(--ios-transition);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.detail-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.detail-item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.detail-item:hover::before {
+    opacity: 1;
 }
 
 .detail-header {
@@ -213,6 +314,7 @@ body {
 .detail-icon {
     font-size: 14px;
     margin-right: 8px;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
 }
 
 .detail-title {
@@ -232,13 +334,14 @@ body {
     display: flex;
     align-items: center;
     margin-bottom: 16px;
-    padding-bottom: 8px;
+    padding-bottom: 10px;
     border-bottom: 1px solid var(--ios-card-highlight);
 }
 
 .tips-icon, .forecast-icon {
     font-size: 16px;
     margin-right: 8px;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
 }
 
 .tips-title, .forecast-title {
@@ -249,8 +352,8 @@ body {
 .tip-item {
     display: flex;
     align-items: flex-start;
-    padding: 12px;
-    margin-bottom: 8px;
+    padding: 14px;
+    margin-bottom: 10px;
     background: var(--ios-card-highlight);
     border-radius: 12px;
     opacity: 0;
@@ -258,6 +361,17 @@ body {
     animation: slide-in-right 0.5s var(--ios-animation-timing) forwards;
     position: relative;
     overflow: hidden;
+    transition: var(--ios-transition);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.tip-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(2px);
+}
+
+.tip-item:last-child {
+    margin-bottom: 0;
 }
 
 @keyframes slide-in-right {
@@ -270,7 +384,8 @@ body {
 .tip-icon {
     flex-shrink: 0;
     margin-right: 12px;
-    font-size: 14px;
+    font-size: 16px;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
 }
 
 .tip-text {
@@ -288,6 +403,18 @@ body {
     width: 100%;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    position: relative;
+}
+
+.weekly-forecast-grid::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 40px;
+    background: linear-gradient(to right, transparent, var(--ios-card-bg));
+    pointer-events: none;
 }
 
 .weekly-forecast-grid::-webkit-scrollbar {
@@ -297,28 +424,80 @@ body {
 .weekly-day {
     flex: 0 0 auto;
     text-align: center;
-    min-width: 70px;
-    padding: 12px 8px;
-    border-radius: 12px;
+    min-width: 75px;
+    padding: 16px 12px;
+    border-radius: 14px;
     background-color: var(--ios-card-highlight);
     opacity: 0;
     transform: translateY(10px);
     animation: fade-in 0.6s var(--ios-animation-timing) forwards;
+    transition: var(--ios-transition);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+    overflow: hidden;
+}
+
+.weekly-day:hover {
+    transform: translateY(-2px) scale(1.02);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.weekly-day::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.weekly-day:hover::before {
+    opacity: 1;
 }
 
 .weekly-day-name {
     font-size: 15px;
     color: var(--ios-text-secondary);
-    margin-bottom: 10px;
+    margin-bottom: 12px;
+    position: relative;
+}
+
+.weekly-day-name::after {
+    content: attr(data-full-name);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: -30px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    pointer-events: none;
+}
+
+.weekly-day:hover .weekly-day-name::after {
+    opacity: 1;
+    visibility: visible;
+    top: -40px;
 }
 
 .weekly-day-icon {
-    font-size: 24px;
-    margin-bottom: 10px;
+    font-size: 28px;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .weekly-day-temp {
-    font-size: 18px;
+    font-size: 20px;
     font-weight: 500;
 }
 
@@ -355,6 +534,8 @@ body {
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .loading-spinner {
@@ -372,6 +553,7 @@ body {
     border-top-color: var(--ios-blue);
     animation: spin 1s infinite linear;
     margin-bottom: 16px;
+    box-shadow: 0 0 20px rgba(10, 132, 255, 0.3);
 }
 
 .loading-text {
@@ -417,6 +599,7 @@ body {
     -webkit-backdrop-filter: blur(var(--ios-blur-effect));
     animation: notification-appear 0.3s var(--ios-animation-timing), notification-disappear 0.3s var(--ios-animation-timing) 2.7s forwards;
     z-index: 1000;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 @keyframes notification-appear {
@@ -438,6 +621,30 @@ body {
     to {
         transform: translate(-50%, -20px);
         opacity: 0;
+    }
+}
+
+/* Эффект появления на странице */
+.hidden {
+    display: none;
+}
+
+#weatherResult.hidden {
+    display: none;
+}
+
+#weatherResult {
+    animation: content-fade-in 0.5s var(--ios-animation-timing);
+}
+
+@keyframes content-fade-in {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
     }
 }
 
@@ -497,5 +704,21 @@ body {
         --ios-card-highlight: rgba(0, 0, 0, 0.05);
         --ios-text-primary: rgba(0, 0, 0, 0.92);
         --ios-text-secondary: rgba(0, 0, 0, 0.65);
+    }
+    
+    body {
+        background-image: linear-gradient(to bottom, rgba(242, 242, 247, 0.8), rgba(242, 242, 247, 0.98));
+    }
+    
+    .weather-card::before {
+        background: linear-gradient(to right, var(--ios-blue), rgba(10, 132, 255, 0.05));
+    }
+    
+    .detail-item, .tip-item, .weekly-day {
+        border-color: rgba(0, 0, 0, 0.05);
+    }
+    
+    .temperature::after {
+        background: radial-gradient(ellipse at center, rgba(0,0,0,0.05) 0%, transparent 70%);
     }
 }
