@@ -246,7 +246,7 @@ function updateWeeklyForecast(forecast) {
         const day = date.toISOString().split('T')[0];
         
         if (!dailyForecasts[day]) {
-            // Добавляем короткую форму дня недели для мобильных устройств
+            // Получаем день недели
             const fullDayName = getDayOfWeek(item.dt);
             const shortDayName = fullDayName.substring(0, 3); // Первые 3 буквы
             
@@ -279,10 +279,9 @@ function updateWeeklyForecast(forecast) {
         dayElement.className = 'weekly-day';
         dayElement.style.animationDelay = `${index * 0.1}s`;
         
-        // Исправленная часть кода для корректного отображения дней недели
+        // ИСПРАВЛЕНИЕ: напрямую отображаем день недели
         dayElement.innerHTML = `
-            <div class="weekly-day-name">${dayData.shortDay}</div>
-            <div class="weekly-day-name full-day-name" style="display: none;">${dayData.day}</div>
+            <div class="weekly-day-name">${dayData.day}</div>
             <div class="weekly-day-icon">${weatherEmoji[mostFrequentIcon]}</div>
             <div class="weekly-day-temp">${avgTemp}°</div>
         `;
@@ -290,6 +289,7 @@ function updateWeeklyForecast(forecast) {
         elements.weeklyForecastContainer.appendChild(dayElement);
     });
 }
+
 // Обновление советов
 async function updateFarmerTips(weatherData) {
     const tips = await generateFarmerTips(weatherData);
