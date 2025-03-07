@@ -230,13 +230,13 @@ body {
     overflow-x: auto;
     padding: 8px 0 12px 0;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE и Edge */
     margin: 0 -4px;
 }
 
 .forecast-scroll::-webkit-scrollbar {
-    display: none;
+    display: none; /* Chrome и Safari */
 }
 
 .forecast-hour {
@@ -348,96 +348,60 @@ body {
     font-weight: 600;
 }
 
-/* Фермерские советы */
-/* Заголовок и панель фильтров */
-.tips-header,
-.forecast-header {
+/* Советы для фермеров */
+.tips-header, .forecast-header {
     display: flex;
     align-items: center;
     margin-bottom: 14px;
 }
 
-.tips-icon,
-.forecast-icon {
+.tips-icon, .forecast-icon {
     font-size: 18px;
     margin-right: 10px;
 }
 
-.tips-title,
-.forecast-title {
+.tips-title, .forecast-title {
     font-size: 17px;
     font-weight: 600;
     letter-spacing: -0.3px;
 }
 
-/* Панель категорий для советов */
-.tips-categories {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 12px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-    padding-bottom: 8px;
-}
-
-.tip-category {
-    background: transparent;
-    border: none;
-    color: var(--ios-text);
-    font-weight: 500;
-    cursor: pointer;
-    padding: 6px 10px;
-    transition: color 0.2s;
-}
-
-.tip-category.active,
-.tip-category:hover {
-    color: var(--ios-blue);
-    border-bottom: 2px solid var(--ios-blue);
-}
-
-/* Контейнер для советов */
 .tips-container {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-/* Карточка совета */
 .tip-item {
     background-color: rgba(255, 255, 255, 0.35);
-    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 14px;
     padding: 14px;
     display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 15px;
+    align-items: flex-start;
+    animation: fadeIn 0.5s both;
+    position: relative;
+    overflow: hidden;
     transition: transform 0.2s;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.tip-item:hover {
-    transform: translateY(-2px);
+.tip-item:active {
+    transform: scale(0.98);
 }
 
-/* Кнопка "Показать еще" */
-.show-more-btn {
-    background-color: var(--ios-blue);
-    color: #fff;
-    border: none;
-    border-radius: 12px;
-    padding: 8px 16px;
-    margin: 10px auto;
-    cursor: pointer;
-    font-size: 14px;
-    display: block;
-    transition: background-color 0.2s;
+.tip-icon {
+    margin-right: 10px;
+    font-size: 16px;
+    margin-top: 1px;
 }
 
-.show-more-btn:hover {
-    background-color: #0069d9;
+.tip-text {
+    font-size: 15px;
+    flex: 1;
+    line-height: 1.5;
 }
 
-/* Недельный прогноз */
+/* Стили для недельного прогноза */
 .weekly-forecast-grid {
     display: grid;
     gap: 10px;
@@ -445,7 +409,7 @@ body {
 
 .weekly-day {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-columns: 2fr 1fr 1fr; /* Увеличиваем размер колонки с днём недели */
     background-color: rgba(255, 255, 255, 0.35);
     border-radius: 14px;
     padding: 16px;
@@ -464,9 +428,10 @@ body {
     font-weight: 500;
 }
 
+/* Адаптация для мобильных */
 @media (max-width: 350px) {
     .weekly-day-name {
-        font-size: 14px;
+        font-size: 14px; /* Меньший размер шрифта на маленьких экранах */
     }
 }
 
@@ -603,6 +568,7 @@ body {
 
 /* Дополнительные настройки для iOS */
 @supports (-webkit-touch-callout: none) {
+    /* Стили только для iOS устройств */
     body {
         padding-top: max(env(safe-area-inset-top), 12px);
         padding-bottom: max(env(safe-area-inset-bottom), 12px);
@@ -678,8 +644,67 @@ body {
     }
 }
 
-/* Фокус клавиатуры */
+/* Улучшенная анимация появления элементов */
+.weather-card:nth-child(1) { --index: 1; }
+.weather-card:nth-child(2) { --index: 2; }
+.weather-card:nth-child(3) { --index: 3; }
+.weather-card:nth-child(4) { --index: 4; }
+
+/* Настройка фокуса для клавиатурной навигации */
 :focus-visible {
     outline: 2px solid var(--ios-blue);
     outline-offset: 2px;
+}
+
+/* Улучшенные эффекты при касании */
+@media (hover: hover) {
+    .search-button:hover {
+        background-color: #0069d9;
+    }
+    
+    .forecast-hour:hover {
+        background-color: rgba(0, 0, 0, 0.03);
+    }
+    
+    .detail-item:hover, .tip-item:hover, .weekly-day:hover {
+        transform: translateY(-2px);
+    }
+    
+    @media (prefers-color-scheme: dark) {
+        .forecast-hour:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+    }
+}
+
+/* Улучшение визуальной обратной связи */
+.search-button, .detail-item, .tip-item, .weekly-day {
+    transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Улучшение адаптивности под мобильные устройства */
+@media (max-width: 350px) {
+    .weather-main {
+        padding: 20px 16px;
+    }
+    
+    .temperature {
+        font-size: 68px;
+    }
+    
+    .city-name {
+        font-size: 24px;
+    }
+    
+    .detail-item {
+        padding: 12px 10px;
+    }
+    
+    .detail-value {
+        font-size: 16px;
+    }
+    
+    .weather-card {
+        padding: 14px;
+    }
 }
