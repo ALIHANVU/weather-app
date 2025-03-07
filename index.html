@@ -1,113 +1,123 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Погода</title>
-    <link rel="icon" type="image/svg+xml" href="images/sun-svgrepo-com (2).svg">
-    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link href="styles.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" 
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Погода</title>
+  <link rel="icon" type="image/svg+xml" href="images/sun-svgrepo-com (2).svg">
+ <link rel="stylesheet" href="watter/styles.css">
+
+  <link href="styles.css" rel="stylesheet">
 </head>
 <body>
-    <div class="ios-container">
-        <!-- Поисковая секция -->
-        <div class="search-section">
-            <div class="search-container">
-                <div class="search-icon">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                </div>
-                <input 
-                    type="text" 
-                    id="citySearch" 
-                    placeholder="Поиск"
-                    autocomplete="off"
-                >
-                <button id="searchButton" class="search-button">
-                    Найти
-                </button>
-            </div>
+  <div class="ios-container">
+    <!-- Поисковая секция -->
+    <div class="search-section">
+      <div class="search-container">
+        <div class="search-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
         </div>
-
-        <!-- Основной контент -->
-        <div id="weatherResult" class="hidden">
-            <!-- Основная информация о погоде -->
-            <div class="weather-main">
-                <div class="city-name" id="cityName">-</div>
-                <div class="temperature" id="temperature">-°</div>
-                <div class="weather-condition" id="weatherDescription">-</div>
-                <div class="temp-range">
-                    Макс.: <span id="maxTemp">-</span>° Мин.: <span id="minTemp">-</span>°
-                </div>
-            </div>
-
-            <!-- Почасовой прогноз -->
-            <div class="weather-card hourly-forecast" style="--index: 1">
-                <div class="forecast-scroll" id="forecastDays">
-                    <!-- Генерируется динамически -->
-                </div>
-            </div>
-
-            <!-- Детали погоды -->
-            <div class="weather-card weather-details" style="--index: 2">
-                <div class="details-grid">
-                    <div class="detail-item">
-                        <div class="detail-header">
-                            <span class="detail-icon">💨</span>
-                            <span class="detail-title">ВЕТЕР</span>
-                        </div>
-                        <div class="detail-value" id="windSpeed">- м/с</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-header">
-                            <span class="detail-icon">💧</span>
-                            <span class="detail-title">ВЛАЖНОСТЬ</span>
-                        </div>
-                        <div class="detail-value" id="humidity">-%</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-header">
-                            <span class="detail-icon">👁️</span>
-                            <span class="detail-title">ВИДИМОСТЬ</span>
-                        </div>
-                        <div class="detail-value" id="visibility">- км</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-header">
-                            <span class="detail-icon">🌡️</span>
-                            <span class="detail-title">ОЩУЩАЕТСЯ</span>
-                        </div>
-                        <div class="detail-value" id="feelsLike">-°</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Советы для фермеров -->
-            <div class="weather-card farmer-tips" style="--index: 3">
-                <div class="tips-header">
-                    <span class="tips-icon">🌱</span>
-                    <span class="tips-title">Советы для фермеров</span>
-                </div>
-                <div id="tipsContainer" class="tips-container">
-                    <!-- Генерируется динамически -->
-                </div>
-            </div>
-
-            <!-- Новый раздел недельного прогноза -->
-            <div class="weather-card weekly-forecast" style="--index: 4">
-                <div class="forecast-header">
-                    <span class="forecast-icon">📅</span>
-                    <span class="forecast-title">Прогноз на неделю</span>
-                </div>
-                <div id="weeklyForecastContainer" class="weekly-forecast-grid">
-                    <!-- Будет заполнено динамически через JavaScript -->
-                </div>
-            </div>
-        </div>
+        <input 
+          type="text" 
+          id="citySearch" 
+          placeholder="Поиск"
+          autocomplete="off"
+          aria-label="Введите название города">
+        <button id="searchButton" class="search-button" aria-label="Найти">
+          Найти
+        </button>
+      </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Основной контент -->
+    <div id="weatherResult" class="hidden">
+      <!-- Основная информация о погоде -->
+      <div class="weather-main">
+        <div class="city-name" id="cityName">-</div>
+        <div class="temperature" id="temperature">-°</div>
+        <div class="weather-condition" id="weatherDescription">-</div>
+        <div class="temp-range">
+          Макс.: <span id="maxTemp">-</span>° Мин.: <span id="minTemp">-</span>°
+        </div>
+      </div>
+
+      <!-- Почасовой прогноз -->
+      <div class="weather-card hourly-forecast" style="--index: 1">
+        <div class="forecast-scroll" id="forecastDays">
+          <!-- Генерируется динамически -->
+        </div>
+      </div>
+
+      <!-- Детали погоды -->
+      <div class="weather-card weather-details" style="--index: 2">
+        <div class="details-grid">
+          <div class="detail-item">
+            <div class="detail-header">
+              <span class="detail-icon" aria-hidden="true">💨</span>
+              <span class="detail-title">ВЕТЕР</span>
+            </div>
+            <div class="detail-value" id="windSpeed">- м/с</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-header">
+              <span class="detail-icon" aria-hidden="true">💧</span>
+              <span class="detail-title">ВЛАЖНОСТЬ</span>
+            </div>
+            <div class="detail-value" id="humidity">-%</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-header">
+              <span class="detail-icon" aria-hidden="true">👁️</span>
+              <span class="detail-title">ВИДИМОСТЬ</span>
+            </div>
+            <div class="detail-value" id="visibility">- км</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-header">
+              <span class="detail-icon" aria-hidden="true">🌡️</span>
+              <span class="detail-title">ОЩУЩАЕТСЯ</span>
+            </div>
+            <div class="detail-value" id="feelsLike">-°</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Фермерские советы -->
+      <div class="weather-card farmer-tips" style="--index: 3">
+        <div class="tips-header">
+          <span class="tips-icon" aria-hidden="true">🌱</span>
+          <span class="tips-title">Фермерские советы</span>
+        </div>
+        <!-- Панель фильтров -->
+        <div class="tips-categories" role="tablist">
+          <button class="tip-category active" data-category="all" role="tab" aria-selected="true">Все</button>
+          <button class="tip-category" data-category="temperature" role="tab" aria-selected="false">Температура</button>
+          <button class="tip-category" data-category="humidity" role="tab" aria-selected="false">Влажность</button>
+          <button class="tip-category" data-category="seasons" role="tab" aria-selected="false">Сезон</button>
+        </div>
+        <!-- Контейнер для советов -->
+        <div id="tipsContainer" class="tips-container" role="tabpanel">
+          <!-- Советы будут генерироваться динамически -->
+        </div>
+      </div>
+
+      <!-- Недельный прогноз -->
+      <div class="weather-card weekly-forecast" style="--index: 4">
+        <div class="forecast-header">
+          <span class="forecast-icon" aria-hidden="true">📅</span>
+          <span class="forecast-title">Прогноз на неделю</span>
+        </div>
+        <div id="weeklyForecastContainer" class="weekly-forecast-grid">
+          <!-- Заполняется динамически -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
