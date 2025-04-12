@@ -33,6 +33,9 @@ const weatherEmoji = {
     "50d": "🌫️", "50n": "🌫️"
 };
 
+// Новая переменная для хранения всех полученных данных прогноза
+let fullForecastData = null;
+
 // Загрузка советов
 async function loadFarmerTips() {
     try {
@@ -239,203 +242,6 @@ function updateHourlyForecast(forecast) {
 function updateWeeklyForecast(forecast) {
     elements.weeklyForecastContainer.innerHTML = '';
     
-    // Группировка прогноза по дням
-    const dailyForecasts = {};
-    forecast.list.forEach(item => {
-        const date = new Date(item.dt * 1000);
-        const day = date.toISOString().split('T')[0];
-        
-        if (!dailyForecasts[day]) {
-            // Получаем день недели
-            const fullDayName = getDayOfWeek(item.dt);
-            const shortDayName = fullDayName.substring(0, 3); // Первые 3 буквы
-            
-            dailyForecasts[day] = {
-                temps: [],
-                weather: [],
-                day: fullDayName,
-                shortDay: shortDayName
-            };
-        }
-        
-        dailyForecasts[day].temps.push(item.main.temp);
-        dailyForecasts[day].weather.push(item.weather[0].icon);
-    });
-    
-    // Выбираем уникальные дни и создаем карточки
-    const uniqueDays = Object.values(dailyForecasts).slice(0, 7);
-    
-    uniqueDays.forEach((dayData, index) => {
-        const avgTemp = Math.round(
-            dayData.temps.reduce((a, b) => a + b, 0) / dayData.temps.length
-        );
-        
-        // Определяем наиболее частую иконку погоды
-        const mostFrequentIcon = dayData.weather.reduce(
-            (a, b) => dayData.weather.filter(v => v === a).length >= dayData.weather.filter(v => v === b).length ? a : b
-        );
-        
-        const dayElement = document.createElement('div');
-        dayElement.className = 'weekly-day';
-        dayElement.style.animationDelay = `${index * 0.1}s`;
-        
-        // ИСПРАВЛЕНИЕ: напрямую отображаем день недели
-        dayElement.innerHTML = `
-            <div class="weekly-day-name">${dayData.day}</div>
-            <div class="weekly-day-icon">${weatherEmoji[mostFrequentIcon]}</div>
-            <div class="weekly-day-temp">${avgTemp}°</div>
-        `;
-        
-        elements.weeklyForecastContainer.appendChild(dayElement);
-    });
-}
-
-// Обновление советов
-async function updateFarmerTips(weatherData) {
-    const tips = await generateFarmerTips(weatherData);
-    elements.tipsContainer.innerHTML = '';
-    
-    tips.forEach((tip, index) => {
-        const tipElement = document.createElement('div');
-        tipElement.className = 'tip-item';
-        tipElement.style.animationDelay = `${index * 0.1}s`;
-        
-        tipElement.innerHTML = `
-            <span class="tip-icon">🌱</span>
-            <span class="tip-text">${tip}</span>
-        `;
-        
-        elements.tipsContainer.appendChild(tipElement);
-    });
-}
-
-// Показ ошибок
-function showError(message) {
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'error-notification';
-    errorDiv.textContent = message;
-    document.body.appendChild(errorDiv);
-    
-    setTimeout(() => errorDiv.remove(), 3000);
-}
-
-// Индикация загрузки
-function showLoading() {
-    const loadingDiv = document.createElement('div');
-    loadingDiv.className = 'loading-overlay';
-    loadingDiv.innerHTML = `
-        <div class="loading-spinner">
-            <div class="loading-text">Определяем ваше местоположение...</div>
-        </div>
-    `;
-    document.body.appendChild(loadingDiv);
-}
-
-function hideLoading() {
-    const loadingDiv = document.querySelector('.loading-overlay');
-    if (loadingDiv) {
-        loadingDiv.remove();
-    }
-}
-
-// Создание эффекта ripple
-function createRipple(event) {
-    const target = event.currentTarget;
-    const ripple = document.createElement('span');
-    const diameter = Math.max(target.clientWidth, target.clientHeight);
-    const radius = diameter / 2;
-
-    ripple.style.width = ripple.style.height = `${diameter}px`;
-    ripple.style.left = `${event.clientX - target.offsetLeft - radius}px`;
-    ripple.style.top = `${event.clientY - target.offsetTop - radius}px`;
-    ripple.classList.add('ripple');
-
-    target.appendChild(ripple);
-
-    setTimeout(() => ripple.remove(), 600);
-}
-
-// Основная функция обновления погоды
-async function updateWeather(city) {
-    try {
-        elements.weatherResult.classList.add('loading');
-        elements.cityName.classList.add('loading');
-        elements.temperature.classList.add('loading');
-        elements.weatherDescription.classList.add('loading');
-        
-        const data = await fetchWeatherData(city);
-        
-        updateCurrentWeather(data.weather);
-        updateHourlyForecast(data.forecast);
-        updateWeeklyForecast(data.forecast);
-        await updateFarmerTips(data.weather);
-        
-        elements.weatherResult.classList.remove('hidden');
-    } catch (error) {
-        console.error('Ошибка:', error);
-    } finally {
-        elements.weatherResult.classList.remove('loading');
-        elements.cityName.classList.remove('loading');
-        elements.temperature.classList.remove('loading');
-        elements.weatherDescription.classList.remove('loading');
-    }
-}
-
-// Обработчики событий
-let searchTimeout;
-
-elements.searchButton.addEventListener('click', () => {
-    const searchValue = elements.citySearch.value.trim();
-    if (searchValue) {
-        updateWeather(searchValue);
-    }
-});
-
-elements.citySearch.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        const searchValue = e.target.value.trim();
-        if (searchValue) {
-            clearTimeout(searchTimeout);
-            updateWeather(searchValue);
-        }
-    }
-});
-
-elements.citySearch.addEventListener('input', (e) => {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-        const searchValue = e.target.value.trim();
-        if (searchValue.length >= 2) {
-            updateWeather(searchValue);
-        }
-    }, 500);
-});
-
-// Инициализация
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        showLoading();
-        const city = await getUserLocation();
-        await updateWeather(city);
-    } catch (error) {
-        console.log('Ошибка определения местоположения:', error.message);
-        await updateWeather('Москва');
-    } finally {
-        hideLoading();
-    }
-});
-const rippleElements = document.querySelectorAll('.search-button, .tip-item');
-rippleElements.forEach(element => {
-    element.addEventListener('click', createRipple);
-});
-
-// Новая переменная для хранения всех полученных данных прогноза
-let fullForecastData = null;
-
-// Обновляем функцию обновления недельного прогноза, чтобы сделать элементы кликабельными
-function updateWeeklyForecast(forecast) {
-    elements.weeklyForecastContainer.innerHTML = '';
-    
     // Сохраняем полные данные для доступа позже
     fullForecastData = forecast;
     
@@ -491,6 +297,25 @@ function updateWeeklyForecast(forecast) {
         dayElement.addEventListener('click', () => showDayDetails(dayData.date));
         
         elements.weeklyForecastContainer.appendChild(dayElement);
+    });
+}
+
+// Обновление советов
+async function updateFarmerTips(weatherData) {
+    const tips = await generateFarmerTips(weatherData);
+    elements.tipsContainer.innerHTML = '';
+    
+    tips.forEach((tip, index) => {
+        const tipElement = document.createElement('div');
+        tipElement.className = 'tip-item';
+        tipElement.style.animationDelay = `${index * 0.1}s`;
+        
+        tipElement.innerHTML = `
+            <span class="tip-icon">🌱</span>
+            <span class="tip-text">${tip}</span>
+        `;
+        
+        elements.tipsContainer.appendChild(tipElement);
     });
 }
 
@@ -555,6 +380,35 @@ async function showDayDetails(selectedDate) {
     }
 }
 
+// Показ ошибок
+function showError(message) {
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-notification';
+    errorDiv.textContent = message;
+    document.body.appendChild(errorDiv);
+    
+    setTimeout(() => errorDiv.remove(), 3000);
+}
+
+// Индикация загрузки
+function showLoading() {
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'loading-overlay';
+    loadingDiv.innerHTML = `
+        <div class="loading-spinner">
+            <div class="loading-text">Определяем ваше местоположение...</div>
+        </div>
+    `;
+    document.body.appendChild(loadingDiv);
+}
+
+function hideLoading() {
+    const loadingDiv = document.querySelector('.loading-overlay');
+    if (loadingDiv) {
+        loadingDiv.remove();
+    }
+}
+
 // Добавляем функцию форматирования даты
 function formatDate(timestamp) {
     const date = new Date(timestamp * 1000);
@@ -564,25 +418,24 @@ function formatDate(timestamp) {
     });
 }
 
-// Также добавим CSS стиль для выделения выбранного дня
-const styleElement = document.createElement('style');
-styleElement.textContent = `
-    .selected-day {
-        background-color: rgba(0, 122, 255, 0.15) !important;
-        border: 1px solid rgba(0, 122, 255, 0.3) !important;
-        transform: scale(1.02);
-    }
-    
-    @media (prefers-color-scheme: dark) {
-        .selected-day {
-            background-color: rgba(10, 132, 255, 0.25) !important;
-            border: 1px solid rgba(10, 132, 255, 0.4) !important;
-        }
-    }
-`;
-document.head.appendChild(styleElement);
+// Создание эффекта ripple
+function createRipple(event) {
+    const target = event.currentTarget;
+    const ripple = document.createElement('span');
+    const diameter = Math.max(target.clientWidth, target.clientHeight);
+    const radius = diameter / 2;
 
-// Модифицируем основную функцию обновления погоды
+    ripple.style.width = ripple.style.height = `${diameter}px`;
+    ripple.style.left = `${event.clientX - target.offsetLeft - radius}px`;
+    ripple.style.top = `${event.clientY - target.offsetTop - radius}px`;
+    ripple.classList.add('ripple');
+
+    target.appendChild(ripple);
+
+    setTimeout(() => ripple.remove(), 600);
+}
+
+// Основная функция обновления погоды
 async function updateWeather(city) {
     try {
         elements.weatherResult.classList.add('loading');
@@ -610,3 +463,70 @@ async function updateWeather(city) {
         elements.weatherDescription.classList.remove('loading');
     }
 }
+
+// Обработчики событий
+let searchTimeout;
+
+elements.searchButton.addEventListener('click', () => {
+    const searchValue = elements.citySearch.value.trim();
+    if (searchValue) {
+        updateWeather(searchValue);
+    }
+});
+
+elements.citySearch.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        const searchValue = e.target.value.trim();
+        if (searchValue) {
+            clearTimeout(searchTimeout);
+            updateWeather(searchValue);
+        }
+    }
+});
+
+elements.citySearch.addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        const searchValue = e.target.value.trim();
+        if (searchValue.length >= 2) {
+            updateWeather(searchValue);
+        }
+    }, 500);
+});
+
+// Добавляем CSS стиль для выделения выбранного дня
+const styleElement = document.createElement('style');
+styleElement.textContent = `
+    .selected-day {
+        background-color: rgba(0, 122, 255, 0.15) !important;
+        border: 1px solid rgba(0, 122, 255, 0.3) !important;
+        transform: scale(1.02);
+    }
+    
+    @media (prefers-color-scheme: dark) {
+        .selected-day {
+            background-color: rgba(10, 132, 255, 0.25) !important;
+            border: 1px solid rgba(10, 132, 255, 0.4) !important;
+        }
+    }
+`;
+document.head.appendChild(styleElement);
+
+// Инициализация
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        showLoading();
+        const city = await getUserLocation();
+        await updateWeather(city);
+    } catch (error) {
+        console.log('Ошибка определения местоположения:', error.message);
+        await updateWeather('Москва');
+    } finally {
+        hideLoading();
+    }
+});
+
+const rippleElements = document.querySelectorAll('.search-button, .tip-item');
+rippleElements.forEach(element => {
+    element.addEventListener('click', createRipple);
+});
