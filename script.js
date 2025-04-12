@@ -428,3 +428,185 @@ const rippleElements = document.querySelectorAll('.search-button, .tip-item');
 rippleElements.forEach(element => {
     element.addEventListener('click', createRipple);
 });
+
+// Новая переменная для хранения всех полученных данных прогноза
+let fullForecastData = null;
+
+// Обновляем функцию обновления недельного прогноза, чтобы сделать элементы кликабельными
+function updateWeeklyForecast(forecast) {
+    elements.weeklyForecastContainer.innerHTML = '';
+    
+    // Сохраняем полные данные для доступа позже
+    fullForecastData = forecast;
+    
+    // Группировка прогноза по дням
+    const dailyForecasts = {};
+    forecast.list.forEach(item => {
+        const date = new Date(item.dt * 1000);
+        const day = date.toISOString().split('T')[0];
+        
+        if (!dailyForecasts[day]) {
+            const fullDayName = getDayOfWeek(item.dt);
+            const shortDayName = fullDayName.substring(0, 3);
+            
+            dailyForecasts[day] = {
+                temps: [],
+                weather: [],
+                day: fullDayName,
+                shortDay: shortDayName,
+                date: day,  // Сохраняем дату для идентификации
+                forecasts: [] // Сохраняем все прогнозы для этого дня
+            };
+        }
+        
+        dailyForecasts[day].temps.push(item.main.temp);
+        dailyForecasts[day].weather.push(item.weather[0].icon);
+        dailyForecasts[day].forecasts.push(item); // Сохраняем полные данные прогноза
+    });
+    
+    // Выбираем уникальные дни и создаем карточки
+    const uniqueDays = Object.values(dailyForecasts).slice(0, 7);
+    
+    uniqueDays.forEach((dayData, index) => {
+        const avgTemp = Math.round(
+            dayData.temps.reduce((a, b) => a + b, 0) / dayData.temps.length
+        );
+        
+        const mostFrequentIcon = dayData.weather.reduce(
+            (a, b) => dayData.weather.filter(v => v === a).length >= dayData.weather.filter(v => v === b).length ? a : b
+        );
+        
+        const dayElement = document.createElement('div');
+        dayElement.className = 'weekly-day';
+        dayElement.style.animationDelay = `${index * 0.1}s`;
+        dayElement.dataset.date = dayData.date; // Сохраняем дату как атрибут
+        
+        dayElement.innerHTML = `
+            <div class="weekly-day-name">${dayData.day}</div>
+            <div class="weekly-day-icon">${weatherEmoji[mostFrequentIcon]}</div>
+            <div class="weekly-day-temp">${avgTemp}°</div>
+        `;
+        
+        // Добавляем обработчик события клика
+        dayElement.addEventListener('click', () => showDayDetails(dayData.date));
+        
+        elements.weeklyForecastContainer.appendChild(dayElement);
+    });
+}
+
+// Новая функция для показа подробностей дня
+async function showDayDetails(selectedDate) {
+    try {
+        // Добавляем визуальное подтверждение выбора
+        const allDays = document.querySelectorAll('.weekly-day');
+        allDays.forEach(day => {
+            day.classList.remove('selected-day');
+            if (day.dataset.date === selectedDate) {
+                day.classList.add('selected-day');
+            }
+        });
+        
+        // Показываем индикатор загрузки
+        elements.weatherResult.classList.add('loading');
+        
+        // Фильтруем прогнозы только для выбранного дня
+        const dayForecasts = fullForecastData.list.filter(item => {
+            const date = new Date(item.dt * 1000);
+            const day = date.toISOString().split('T')[0];
+            return day === selectedDate;
+        });
+        
+        if (dayForecasts.length === 0) {
+            showError('Нет доступных данных для этого дня');
+            return;
+        }
+        
+        // Берем первый прогноз дня как текущую погоду
+        const selectedDayData = dayForecasts[0];
+        
+        // Создаем объект, похожий на объект текущей погоды для совместимости с существующими функциями
+        const dayWeatherData = {
+            main: selectedDayData.main,
+            weather: selectedDayData.weather,
+            name: fullForecastData.city.name + ` (${formatDate(selectedDayData.dt)})`,
+            visibility: selectedDayData.visibility,
+            wind: selectedDayData.wind
+        };
+        
+        // Создаем объект с прогнозами только для этого дня
+        const dayForecastData = {
+            city: fullForecastData.city,
+            list: dayForecasts
+        };
+        
+        // Обновляем UI выбранного дня
+        updateCurrentWeather(dayWeatherData);
+        updateHourlyForecast(dayForecastData);
+        await updateFarmerTips(dayWeatherData);
+        
+        // Прокручиваем к верху страницы для лучшего UX
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+    } catch (error) {
+        console.error('Ошибка при загрузке подробностей дня:', error);
+        showError('Не удалось загрузить данные');
+    } finally {
+        elements.weatherResult.classList.remove('loading');
+    }
+}
+
+// Добавляем функцию форматирования даты
+function formatDate(timestamp) {
+    const date = new Date(timestamp * 1000);
+    return date.toLocaleDateString('ru-RU', {
+        day: 'numeric',
+        month: 'long'
+    });
+}
+
+// Также добавим CSS стиль для выделения выбранного дня
+const styleElement = document.createElement('style');
+styleElement.textContent = `
+    .selected-day {
+        background-color: rgba(0, 122, 255, 0.15) !important;
+        border: 1px solid rgba(0, 122, 255, 0.3) !important;
+        transform: scale(1.02);
+    }
+    
+    @media (prefers-color-scheme: dark) {
+        .selected-day {
+            background-color: rgba(10, 132, 255, 0.25) !important;
+            border: 1px solid rgba(10, 132, 255, 0.4) !important;
+        }
+    }
+`;
+document.head.appendChild(styleElement);
+
+// Модифицируем основную функцию обновления погоды
+async function updateWeather(city) {
+    try {
+        elements.weatherResult.classList.add('loading');
+        elements.cityName.classList.add('loading');
+        elements.temperature.classList.add('loading');
+        elements.weatherDescription.classList.add('loading');
+        
+        const data = await fetchWeatherData(city);
+        
+        // Сохраняем данные прогноза глобально
+        fullForecastData = data.forecast;
+        
+        updateCurrentWeather(data.weather);
+        updateHourlyForecast(data.forecast);
+        updateWeeklyForecast(data.forecast);
+        await updateFarmerTips(data.weather);
+        
+        elements.weatherResult.classList.remove('hidden');
+    } catch (error) {
+        console.error('Ошибка:', error);
+    } finally {
+        elements.weatherResult.classList.remove('loading');
+        elements.cityName.classList.remove('loading');
+        elements.temperature.classList.remove('loading');
+        elements.weatherDescription.classList.remove('loading');
+    }
+}
