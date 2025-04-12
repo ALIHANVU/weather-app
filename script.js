@@ -33,9 +33,6 @@ const weatherEmoji = {
     "50d": "🌫️", "50n": "🌫️"
 };
 
-// Новая переменная для хранения всех полученных данных прогноза
-let fullForecastData = null;
-
 // Загрузка советов
 async function loadFarmerTips() {
     try {
@@ -47,19 +44,19 @@ async function loadFarmerTips() {
                 'Cache-Control': 'no-cache'
             }
         });
-        
+
         console.log('Ответ от сервера:', response);
-        
+
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(HTTP error! status: ${response.status});
         }
-        
+
         const data = await response.json();
         console.log('Советы успешно загружены:', data);
         return data;
     } catch (error) {
         console.error('Подробная ошибка загрузки советов:', error);
-        
+
         try {
             const alternativeResponse = await fetch('./farmer-tips.json');
             if (alternativeResponse.ok) {
@@ -70,7 +67,7 @@ async function loadFarmerTips() {
         } catch (altError) {
             console.error('Ошибка при попытке загрузить через альтернативный путь:', altError);
         }
-        
+
         return null;
     }
 }
@@ -118,7 +115,7 @@ function getUserLocation() {
                 try {
                     const { latitude, longitude } = position.coords;
                     const response = await fetch(
-                        `${BASE_URL}/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`
+                        ${BASE_URL}/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}
                     );
                     const data = await response.json();
                     if (data.length > 0) {
@@ -155,7 +152,7 @@ function getUserLocation() {
 // Получение данных о погоде
 async function fetchWeatherData(city) {
     try {
-        const geoUrl = `${BASE_URL}/geo/1.0/direct?q=${city}&limit=1&appid=${API_KEY}`;
+        const geoUrl = ${BASE_URL}/geo/1.0/direct?q=${city}&limit=1&appid=${API_KEY};
         const geoResponse = await fetch(geoUrl);
         const geoData = await geoResponse.json();
 
@@ -166,8 +163,8 @@ async function fetchWeatherData(city) {
         const { lat, lon } = geoData[0];
 
         const [weather, forecast] = await Promise.all([
-            fetch(`${BASE_URL}/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}`),
-            fetch(`${BASE_URL}/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}`)
+            fetch(${BASE_URL}/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}),
+            fetch(${BASE_URL}/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY})
         ]).then(responses => Promise.all(responses.map(res => res.json())));
 
         return { weather, forecast };
@@ -206,39 +203,42 @@ async function generateFarmerTips(weatherData) {
 // Обновление текущей погоды
 function updateCurrentWeather(data) {
     const { main, weather, name, visibility, wind } = data;
-    
+
     elements.cityName.textContent = name;
-    elements.temperature.textContent = `${Math.round(main.temp)}°`;
+    elements.temperature.textContent = ${Math.round(main.temp)}°;
     elements.weatherDescription.textContent = weather[0].description.charAt(0).toUpperCase() + 
                                             weather[0].description.slice(1);
-    elements.feelsLike.textContent = `${Math.round(main.feels_like)}°`;
+    elements.feelsLike.textContent = ${Math.round(main.feels_like)}°;
     elements.maxTemp.textContent = Math.round(main.temp_max);
     elements.minTemp.textContent = Math.round(main.temp_min);
-    elements.humidity.textContent = `${main.humidity}%`;
-    elements.windSpeed.textContent = `${wind.speed.toFixed(1)} м/с`;
-    elements.visibility.textContent = `${(visibility / 1000).toFixed(1)} км`;
+    elements.humidity.textContent = ${main.humidity}%;
+    elements.windSpeed.textContent = ${wind.speed.toFixed(1)} м/с;
+    elements.visibility.textContent = ${(visibility / 1000).toFixed(1)} км;
 }
 
 // Обновление почасового прогноза
 function updateHourlyForecast(forecast) {
     elements.forecastDays.innerHTML = '';
-    
+
     forecast.list.slice(0, 24).forEach((item, index) => {
         const hourlyDiv = document.createElement('div');
         hourlyDiv.className = 'forecast-hour';
-        hourlyDiv.style.animationDelay = `${index * 0.1}s`;
-        
-        hourlyDiv.innerHTML = `
+        hourlyDiv.style.animationDelay = ${index * 0.1}s;
+
+        hourlyDiv.innerHTML = 
             <div class="forecast-time">${index === 0 ? 'Сейчас' : formatTime(item.dt)}</div>
             <div class="forecast-icon">${weatherEmoji[item.weather[0].icon]}</div>
             <div class="forecast-temp">${Math.round(item.main.temp)}°</div>
-        `;
-        
+        ;
+
         elements.forecastDays.appendChild(hourlyDiv);
     });
 }
 
-// Обновление недельного прогноза
+// Новая переменная для хранения всех полученных данных прогноза
+let fullForecastData = null;
+
+// Обновляем функцию обновления недельного прогноза, чтобы сделать элементы кликабельными
 function updateWeeklyForecast(forecast) {
     elements.weeklyForecastContainer.innerHTML = '';
     
@@ -297,25 +297,6 @@ function updateWeeklyForecast(forecast) {
         dayElement.addEventListener('click', () => showDayDetails(dayData.date));
         
         elements.weeklyForecastContainer.appendChild(dayElement);
-    });
-}
-
-// Обновление советов
-async function updateFarmerTips(weatherData) {
-    const tips = await generateFarmerTips(weatherData);
-    elements.tipsContainer.innerHTML = '';
-    
-    tips.forEach((tip, index) => {
-        const tipElement = document.createElement('div');
-        tipElement.className = 'tip-item';
-        tipElement.style.animationDelay = `${index * 0.1}s`;
-        
-        tipElement.innerHTML = `
-            <span class="tip-icon">🌱</span>
-            <span class="tip-text">${tip}</span>
-        `;
-        
-        elements.tipsContainer.appendChild(tipElement);
     });
 }
 
@@ -380,13 +361,79 @@ async function showDayDetails(selectedDate) {
     }
 }
 
+// Добавляем функцию форматирования даты
+function formatDate(timestamp) {
+    const date = new Date(timestamp * 1000);
+    return date.toLocaleDateString('ru-RU', {
+        day: 'numeric',
+        month: 'long'
+    });
+}
+
+// Также добавим CSS стиль для выделения выбранного дня
+const styleElement = document.createElement('style');
+styleElement.textContent = `
+    .selected-day {
+        background-color: rgba(0, 122, 255, 0.15) !important;
+        border: 1px solid rgba(0, 122, 255, 0.3) !important;
+        transform: scale(1.02);
+    }
+    
+    @media (prefers-color-scheme: dark) {
+        .selected-day {
+            background-color: rgba(10, 132, 255, 0.25) !important;
+            border: 1px solid rgba(10, 132, 255, 0.4) !important;
+        }
+    }
+`;
+document.head.appendChild(styleElement);
+
+        // Определяем наиболее частую иконку погоды
+        const mostFrequentIcon = dayData.weather.reduce(
+            (a, b) => dayData.weather.filter(v => v === a).length >= dayData.weather.filter(v => v === b).length ? a : b
+        );
+
+        const dayElement = document.createElement('div');
+        dayElement.className = 'weekly-day';
+        dayElement.style.animationDelay = ${index * 0.1}s;
+
+        // ИСПРАВЛЕНИЕ: напрямую отображаем день недели
+        dayElement.innerHTML = 
+            <div class="weekly-day-name">${dayData.day}</div>
+            <div class="weekly-day-icon">${weatherEmoji[mostFrequentIcon]}</div>
+            <div class="weekly-day-temp">${avgTemp}°</div>
+        ;
+
+        elements.weeklyForecastContainer.appendChild(dayElement);
+    });
+}
+
+// Обновление советов
+async function updateFarmerTips(weatherData) {
+    const tips = await generateFarmerTips(weatherData);
+    elements.tipsContainer.innerHTML = '';
+
+    tips.forEach((tip, index) => {
+        const tipElement = document.createElement('div');
+        tipElement.className = 'tip-item';
+        tipElement.style.animationDelay = ${index * 0.1}s;
+
+        tipElement.innerHTML = 
+            <span class="tip-icon">🌱</span>
+            <span class="tip-text">${tip}</span>
+        ;
+
+        elements.tipsContainer.appendChild(tipElement);
+    });
+}
+
 // Показ ошибок
 function showError(message) {
     const errorDiv = document.createElement('div');
     errorDiv.className = 'error-notification';
     errorDiv.textContent = message;
     document.body.appendChild(errorDiv);
-    
+
     setTimeout(() => errorDiv.remove(), 3000);
 }
 
@@ -394,11 +441,11 @@ function showError(message) {
 function showLoading() {
     const loadingDiv = document.createElement('div');
     loadingDiv.className = 'loading-overlay';
-    loadingDiv.innerHTML = `
+    loadingDiv.innerHTML = 
         <div class="loading-spinner">
             <div class="loading-text">Определяем ваше местоположение...</div>
         </div>
-    `;
+    ;
     document.body.appendChild(loadingDiv);
 }
 
@@ -409,15 +456,6 @@ function hideLoading() {
     }
 }
 
-// Добавляем функцию форматирования даты
-function formatDate(timestamp) {
-    const date = new Date(timestamp * 1000);
-    return date.toLocaleDateString('ru-RU', {
-        day: 'numeric',
-        month: 'long'
-    });
-}
-
 // Создание эффекта ripple
 function createRipple(event) {
     const target = event.currentTarget;
@@ -425,9 +463,9 @@ function createRipple(event) {
     const diameter = Math.max(target.clientWidth, target.clientHeight);
     const radius = diameter / 2;
 
-    ripple.style.width = ripple.style.height = `${diameter}px`;
-    ripple.style.left = `${event.clientX - target.offsetLeft - radius}px`;
-    ripple.style.top = `${event.clientY - target.offsetTop - radius}px`;
+    ripple.style.width = ripple.style.height = ${diameter}px;
+    ripple.style.left = ${event.clientX - target.offsetLeft - radius}px;
+    ripple.style.top = ${event.clientY - target.offsetTop - radius}px;
     ripple.classList.add('ripple');
 
     target.appendChild(ripple);
@@ -442,17 +480,14 @@ async function updateWeather(city) {
         elements.cityName.classList.add('loading');
         elements.temperature.classList.add('loading');
         elements.weatherDescription.classList.add('loading');
-        
+
         const data = await fetchWeatherData(city);
-        
-        // Сохраняем данные прогноза глобально
-        fullForecastData = data.forecast;
-        
+
         updateCurrentWeather(data.weather);
         updateHourlyForecast(data.forecast);
         updateWeeklyForecast(data.forecast);
         await updateFarmerTips(data.weather);
-        
+
         elements.weatherResult.classList.remove('hidden');
     } catch (error) {
         console.error('Ошибка:', error);
@@ -494,24 +529,6 @@ elements.citySearch.addEventListener('input', (e) => {
     }, 500);
 });
 
-// Добавляем CSS стиль для выделения выбранного дня
-const styleElement = document.createElement('style');
-styleElement.textContent = `
-    .selected-day {
-        background-color: rgba(0, 122, 255, 0.15) !important;
-        border: 1px solid rgba(0, 122, 255, 0.3) !important;
-        transform: scale(1.02);
-    }
-    
-    @media (prefers-color-scheme: dark) {
-        .selected-day {
-            background-color: rgba(10, 132, 255, 0.25) !important;
-            border: 1px solid rgba(10, 132, 255, 0.4) !important;
-        }
-    }
-`;
-document.head.appendChild(styleElement);
-
 // Инициализация
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -525,8 +542,35 @@ document.addEventListener('DOMContentLoaded', async () => {
         hideLoading();
     }
 });
-
 const rippleElements = document.querySelectorAll('.search-button, .tip-item');
 rippleElements.forEach(element => {
     element.addEventListener('click', createRipple);
 });
+// Модифицируем основную функцию обновления погоды
+async function updateWeather(city) {
+    try {
+        elements.weatherResult.classList.add('loading');
+        elements.cityName.classList.add('loading');
+        elements.temperature.classList.add('loading');
+        elements.weatherDescription.classList.add('loading');
+        
+        const data = await fetchWeatherData(city);
+        
+        // Сохраняем данные прогноза глобально
+        fullForecastData = data.forecast;
+        
+        updateCurrentWeather(data.weather);
+        updateHourlyForecast(data.forecast);
+        updateWeeklyForecast(data.forecast);
+        await updateFarmerTips(data.weather);
+        
+        elements.weatherResult.classList.remove('hidden');
+    } catch (error) {
+        console.error('Ошибка:', error);
+    } finally {
+        elements.weatherResult.classList.remove('loading');
+        elements.cityName.classList.remove('loading');
+        elements.temperature.classList.remove('loading');
+        elements.weatherDescription.classList.remove('loading');
+    }
+}
