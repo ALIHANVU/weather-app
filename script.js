@@ -279,12 +279,14 @@ function updateWeeklyForecast(forecast) {
         dayElement.className = 'weekly-day';
         dayElement.style.animationDelay = `${index * 0.1}s`;
         
-        // ИСПРАВЛЕНИЕ: напрямую отображаем день недели
         dayElement.innerHTML = `
             <div class="weekly-day-name">${dayData.day}</div>
             <div class="weekly-day-icon">${weatherEmoji[mostFrequentIcon]}</div>
             <div class="weekly-day-temp">${avgTemp}°</div>
         `;
+        
+        // Добавляем обработчик для эффекта ripple
+        dayElement.addEventListener('click', createRipple);
         
         elements.weeklyForecastContainer.appendChild(dayElement);
     });
@@ -304,6 +306,9 @@ async function updateFarmerTips(weatherData) {
             <span class="tip-icon">🌱</span>
             <span class="tip-text">${tip}</span>
         `;
+        
+        // Добавляем обработчик для эффекта ripple
+        tipElement.addEventListener('click', createRipple);
         
         elements.tipsContainer.appendChild(tipElement);
     });
@@ -401,15 +406,7 @@ elements.citySearch.addEventListener('keypress', (e) => {
     }
 });
 
-elements.citySearch.addEventListener('input', (e) => {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-        const searchValue = e.target.value.trim();
-        if (searchValue.length >= 2) {
-            updateWeather(searchValue);
-        }
-    }, 500);
-});
+// Удалено: обработчик события input для автоматического поиска при вводе
 
 // Инициализация
 document.addEventListener('DOMContentLoaded', async () => {
@@ -419,12 +416,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         await updateWeather(city);
     } catch (error) {
         console.log('Ошибка определения местоположения:', error.message);
+        showError('Не удалось определить ваше местоположение. Показываем погоду для Москвы.');
         await updateWeather('Москва');
     } finally {
         hideLoading();
     }
 });
-const rippleElements = document.querySelectorAll('.search-button, .tip-item');
+
+// Только для статичных элементов, которые существуют при загрузке страницы
+const rippleElements = document.querySelectorAll('.search-button');
 rippleElements.forEach(element => {
     element.addEventListener('click', createRipple);
 });
