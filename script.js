@@ -58,17 +58,51 @@ async function loadFarmerTips() {
         console.error('Подробная ошибка загрузки советов:', error);
         
         try {
-            const alternativeResponse = await fetch('./farmer-tips.json');
-            if (alternativeResponse.ok) {
-                const data = await alternativeResponse.json();
-                console.log('Советы загружены через альтернативный путь:', data);
-                return data;
-            }
+            // Резервные советы, если сервер недоступен
+            const defaultTips = {
+                "temperature": {
+                    "hot": {
+                        "tips": ["Поливайте растения рано утром или вечером", "Используйте мульчу для удержания влаги"]
+                    },
+                    "moderate": {
+                        "tips": ["Идеальное время для обрезки растений", "Проверьте наличие вредителей на растениях"]
+                    },
+                    "cold": {
+                        "tips": ["Защитите растения от заморозков", "Ограничьте полив в холодную погоду"]
+                    }
+                },
+                "humidity": {
+                    "high": {
+                        "tips": ["Следите за появлением грибковых заболеваний", "Обеспечьте хорошую вентиляцию растений"]
+                    },
+                    "normal": {
+                        "tips": ["Поддерживайте регулярный полив", "Проверьте влажность почвы перед поливом"]
+                    },
+                    "low": {
+                        "tips": ["Увеличьте частоту полива", "Используйте системы капельного орошения"]
+                    }
+                },
+                "seasons": {
+                    "spring": {
+                        "tips": ["Подготовьте грядки к посадке", "Начните высаживать холодостойкие культуры"]
+                    },
+                    "summer": {
+                        "tips": ["Защитите растения от перегрева", "Собирайте урожай регулярно"]
+                    },
+                    "autumn": {
+                        "tips": ["Подготовьте сад к зиме", "Время для посадки озимых культур"]
+                    },
+                    "winter": {
+                        "tips": ["Защитите многолетние растения от мороза", "Планируйте посадки на следующий сезон"]
+                    }
+                }
+            };
+            console.log('Используем резервные советы');
+            return defaultTips;
         } catch (altError) {
-            console.error('Ошибка при попытке загрузить через альтернативный путь:', altError);
+            console.error('Ошибка при попытке использовать резервные советы:', altError);
+            return null;
         }
-        
-        return null;
     }
 }
 
@@ -96,7 +130,22 @@ function getCurrentSeason() {
     return 'winter';
 }
 
-// Получение геолокации
+// Функция для получения местоположения по IP
+async function getLocationByIP() {
+    try {
+        const response = await fetch('https://ipapi.co/json/');
+        if (!response.ok) {
+            throw new Error(`HTTP ошибка! статус: ${response.status}`);
+        }
+        const data = await response.json();
+        return data.city || 'Москва'; // Резервный город, если не удалось определить
+    } catch (error) {
+        console.error('Ошибка IP-геолокации:', error);
+        return 'Москва'; // Возвращаем город по умолчанию
+    }
+}
+
+// Получение геолокации с улучшенной обработкой ошибок
 function getUserLocation() {
     return new Promise((resolve, reject) => {
         if (!navigator.geolocation) {
@@ -114,14 +163,22 @@ function getUserLocation() {
             async (position) => {
                 try {
                     const { latitude, longitude } = position.coords;
-                    const response = await fetch(
-                        `${BASE_URL}/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`
-                    );
-                    const data = await response.json();
-                    if (data.length > 0) {
-                        resolve(data[0].name);
-                    } else {
-                        reject(new Error('Не удалось определить город'));
+                    try {
+                        const response = await fetch(
+                            `${BASE_URL}/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`
+                        );
+                        if (!response.ok) {
+                            throw new Error(`HTTP ошибка! статус: ${response.status}`);
+                        }
+                        const data = await response.json();
+                        if (data.length > 0) {
+                            resolve(data[0].name);
+                        } else {
+                            reject(new Error('Не удалось определить город'));
+                        }
+                    } catch (fetchError) {
+                        console.error('Ошибка запроса к API:', fetchError);
+                        reject(new Error('Ошибка запроса к серверу: ' + fetchError.message));
                     }
                 } catch (error) {
                     reject(error);
@@ -149,11 +206,43 @@ function getUserLocation() {
     });
 }
 
-// Получение данных о погоде
+// Кеширование данных о погоде
+function cacheWeatherData(city, data) {
+    localStorage.setItem('weatherData', JSON.stringify({
+        city,
+        data,
+        timestamp: Date.now()
+    }));
+}
+
+function getCachedWeatherData() {
+    const cached = localStorage.getItem('weatherData');
+    if (!cached) return null;
+    
+    const parsedData = JSON.parse(cached);
+    // Проверяем актуальность данных (не старше 1 часа)
+    if (Date.now() - parsedData.timestamp > 3600000) return null;
+    
+    return parsedData;
+}
+
+// Получение данных о погоде с улучшенной обработкой ошибок
 async function fetchWeatherData(city) {
     try {
-        const geoUrl = `${BASE_URL}/geo/1.0/direct?q=${city}&limit=1&appid=${API_KEY}`;
+        // Проверка кеша перед запросом
+        const cachedData = getCachedWeatherData();
+        if (cachedData && cachedData.city === city) {
+            console.log('Используем кешированные данные для', city);
+            return cachedData.data;
+        }
+
+        const geoUrl = `${BASE_URL}/geo/1.0/direct?q=${encodeURIComponent(city)}&limit=1&appid=${API_KEY}`;
         const geoResponse = await fetch(geoUrl);
+        
+        if (!geoResponse.ok) {
+            throw new Error(`Ошибка геокодирования: ${geoResponse.status}`);
+        }
+        
         const geoData = await geoResponse.json();
 
         if (!geoData.length) {
@@ -162,22 +251,44 @@ async function fetchWeatherData(city) {
 
         const { lat, lon } = geoData[0];
 
-        const [weather, forecast] = await Promise.all([
-            fetch(`${BASE_URL}/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}`),
-            fetch(`${BASE_URL}/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}`)
-        ]).then(responses => Promise.all(responses.map(res => res.json())));
-
-        return { weather, forecast };
+        const weatherUrl = `${BASE_URL}/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}`;
+        const forecastUrl = `${BASE_URL}/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}`;
+        
+        const weatherResponse = await fetch(weatherUrl);
+        const forecastResponse = await fetch(forecastUrl);
+        
+        if (!weatherResponse.ok) {
+            throw new Error(`Ошибка получения текущей погоды: ${weatherResponse.status}`);
+        }
+        
+        if (!forecastResponse.ok) {
+            throw new Error(`Ошибка получения прогноза: ${forecastResponse.status}`);
+        }
+        
+        const weather = await weatherResponse.json();
+        const forecast = await forecastResponse.json();
+        
+        const result = { weather, forecast };
+        
+        // Кешируем полученные данные
+        cacheWeatherData(city, result);
+        
+        return result;
     } catch (error) {
+        console.error('Ошибка получения данных о погоде:', error);
         showError(error.message);
         throw error;
     }
 }
 
-// Генерация советов
+// Генерация советов с улучшенной надежностью
 async function generateFarmerTips(weatherData) {
     const tips = await loadFarmerTips();
-    if (!tips) return [];
+    if (!tips) {
+        return ["Поливайте растения в соответствии с погодными условиями", 
+                "Следите за состоянием почвы", 
+                "Защищайте растения от экстремальных погодных условий"];
+    }
 
     const result = [];
     const temp = weatherData.main.temp;
@@ -202,135 +313,198 @@ async function generateFarmerTips(weatherData) {
 
 // Обновление текущей погоды
 function updateCurrentWeather(data) {
-    const { main, weather, name, visibility, wind } = data;
-    
-    elements.cityName.textContent = name;
-    elements.temperature.textContent = `${Math.round(main.temp)}°`;
-    elements.weatherDescription.textContent = weather[0].description.charAt(0).toUpperCase() + 
-                                            weather[0].description.slice(1);
-    elements.feelsLike.textContent = `${Math.round(main.feels_like)}°`;
-    elements.maxTemp.textContent = Math.round(main.temp_max);
-    elements.minTemp.textContent = Math.round(main.temp_min);
-    elements.humidity.textContent = `${main.humidity}%`;
-    elements.windSpeed.textContent = `${wind.speed.toFixed(1)} м/с`;
-    elements.visibility.textContent = `${(visibility / 1000).toFixed(1)} км`;
+    try {
+        const { main, weather, name, visibility, wind } = data;
+        
+        elements.cityName.textContent = name;
+        elements.temperature.textContent = `${Math.round(main.temp)}°`;
+        elements.weatherDescription.textContent = weather[0].description.charAt(0).toUpperCase() + 
+                                                weather[0].description.slice(1);
+        elements.feelsLike.textContent = `${Math.round(main.feels_like)}°`;
+        elements.maxTemp.textContent = Math.round(main.temp_max);
+        elements.minTemp.textContent = Math.round(main.temp_min);
+        elements.humidity.textContent = `${main.humidity}%`;
+        elements.windSpeed.textContent = `${wind.speed.toFixed(1)} м/с`;
+        elements.visibility.textContent = `${(visibility / 1000).toFixed(1)} км`;
+    } catch (error) {
+        console.error('Ошибка при обновлении текущей погоды:', error);
+        showError('Не удалось обновить информацию о погоде');
+    }
 }
 
 // Обновление почасового прогноза
 function updateHourlyForecast(forecast) {
-    elements.forecastDays.innerHTML = '';
-    
-    forecast.list.slice(0, 24).forEach((item, index) => {
-        const hourlyDiv = document.createElement('div');
-        hourlyDiv.className = 'forecast-hour';
-        hourlyDiv.style.animationDelay = `${index * 0.1}s`;
+    try {
+        elements.forecastDays.innerHTML = '';
         
-        hourlyDiv.innerHTML = `
-            <div class="forecast-time">${index === 0 ? 'Сейчас' : formatTime(item.dt)}</div>
-            <div class="forecast-icon">${weatherEmoji[item.weather[0].icon]}</div>
-            <div class="forecast-temp">${Math.round(item.main.temp)}°</div>
-        `;
+        if (!forecast || !forecast.list || !Array.isArray(forecast.list)) {
+            console.error('Неверные данные прогноза:', forecast);
+            return;
+        }
         
-        elements.forecastDays.appendChild(hourlyDiv);
-    });
+        forecast.list.slice(0, 24).forEach((item, index) => {
+            const hourlyDiv = document.createElement('div');
+            hourlyDiv.className = 'forecast-hour';
+            hourlyDiv.style.animationDelay = `${index * 0.1}s`;
+            
+            const icon = item.weather && item.weather[0] && item.weather[0].icon 
+                ? weatherEmoji[item.weather[0].icon] 
+                : "🌦️";
+            
+            hourlyDiv.innerHTML = `
+                <div class="forecast-time">${index === 0 ? 'Сейчас' : formatTime(item.dt)}</div>
+                <div class="forecast-icon">${icon}</div>
+                <div class="forecast-temp">${Math.round(item.main.temp)}°</div>
+            `;
+            
+            elements.forecastDays.appendChild(hourlyDiv);
+        });
+    } catch (error) {
+        console.error('Ошибка при обновлении почасового прогноза:', error);
+    }
 }
 
 // Обновление недельного прогноза
 function updateWeeklyForecast(forecast) {
-    elements.weeklyForecastContainer.innerHTML = '';
-    
-    // Группировка прогноза по дням
-    const dailyForecasts = {};
-    forecast.list.forEach(item => {
-        const date = new Date(item.dt * 1000);
-        const day = date.toISOString().split('T')[0];
+    try {
+        elements.weeklyForecastContainer.innerHTML = '';
         
-        if (!dailyForecasts[day]) {
-            // Получаем день недели
-            const fullDayName = getDayOfWeek(item.dt);
-            const shortDayName = fullDayName.substring(0, 3); // Первые 3 буквы
-            
-            dailyForecasts[day] = {
-                temps: [],
-                weather: [],
-                day: fullDayName,
-                shortDay: shortDayName
-            };
+        if (!forecast || !forecast.list || !Array.isArray(forecast.list)) {
+            console.error('Неверные данные прогноза для недельного обновления:', forecast);
+            return;
         }
         
-        dailyForecasts[day].temps.push(item.main.temp);
-        dailyForecasts[day].weather.push(item.weather[0].icon);
-    });
-    
-    // Выбираем уникальные дни и создаем карточки
-    const uniqueDays = Object.values(dailyForecasts).slice(0, 7);
-    
-    uniqueDays.forEach((dayData, index) => {
-        const avgTemp = Math.round(
-            dayData.temps.reduce((a, b) => a + b, 0) / dayData.temps.length
-        );
+        // Группировка прогноза по дням
+        const dailyForecasts = {};
+        forecast.list.forEach(item => {
+            const date = new Date(item.dt * 1000);
+            const day = date.toISOString().split('T')[0];
+            
+            if (!dailyForecasts[day]) {
+                // Получаем день недели
+                const fullDayName = getDayOfWeek(item.dt);
+                const shortDayName = fullDayName.substring(0, 3); // Первые 3 буквы
+                
+                dailyForecasts[day] = {
+                    temps: [],
+                    weather: [],
+                    day: fullDayName,
+                    shortDay: shortDayName
+                };
+            }
+            
+            dailyForecasts[day].temps.push(item.main.temp);
+            
+            if (item.weather && item.weather[0] && item.weather[0].icon) {
+                dailyForecasts[day].weather.push(item.weather[0].icon);
+            }
+        });
         
-        // Определяем наиболее частую иконку погоды
-        const mostFrequentIcon = dayData.weather.reduce(
-            (a, b) => dayData.weather.filter(v => v === a).length >= dayData.weather.filter(v => v === b).length ? a : b
-        );
+        // Выбираем уникальные дни и создаем карточки
+        const uniqueDays = Object.values(dailyForecasts).slice(0, 7);
         
-        const dayElement = document.createElement('div');
-        dayElement.className = 'weekly-day';
-        dayElement.style.animationDelay = `${index * 0.1}s`;
-        
-        dayElement.innerHTML = `
-            <div class="weekly-day-name">${dayData.day}</div>
-            <div class="weekly-day-icon">${weatherEmoji[mostFrequentIcon]}</div>
-            <div class="weekly-day-temp">${avgTemp}°</div>
-        `;
-        
-        // Добавляем обработчик для эффекта ripple
-        dayElement.addEventListener('click', createRipple);
-        
-        elements.weeklyForecastContainer.appendChild(dayElement);
-    });
+        uniqueDays.forEach((dayData, index) => {
+            const avgTemp = Math.round(
+                dayData.temps.reduce((a, b) => a + b, 0) / dayData.temps.length
+            );
+            
+            // Определяем наиболее частую иконку погоды
+            let mostFrequentIcon = "01d"; // Значение по умолчанию
+            if (dayData.weather && dayData.weather.length > 0) {
+                mostFrequentIcon = dayData.weather.reduce(
+                    (a, b) => dayData.weather.filter(v => v === a).length >= dayData.weather.filter(v => v === b).length ? a : b
+                );
+            }
+            
+            const dayElement = document.createElement('div');
+            dayElement.className = 'weekly-day';
+            dayElement.style.animationDelay = `${index * 0.1}s`;
+            
+            dayElement.innerHTML = `
+                <div class="weekly-day-name">${dayData.day}</div>
+                <div class="weekly-day-icon">${weatherEmoji[mostFrequentIcon]}</div>
+                <div class="weekly-day-temp">${avgTemp}°</div>
+            `;
+            
+            // Добавляем обработчик для эффекта ripple
+            dayElement.addEventListener('click', createRipple);
+            
+            elements.weeklyForecastContainer.appendChild(dayElement);
+        });
+    } catch (error) {
+        console.error('Ошибка при обновлении недельного прогноза:', error);
+    }
 }
 
-// Обновление советов
+// Обновление советов с обработкой ошибок
 async function updateFarmerTips(weatherData) {
-    const tips = await generateFarmerTips(weatherData);
-    elements.tipsContainer.innerHTML = '';
-    
-    tips.forEach((tip, index) => {
-        const tipElement = document.createElement('div');
-        tipElement.className = 'tip-item';
-        tipElement.style.animationDelay = `${index * 0.1}s`;
+    try {
+        const tips = await generateFarmerTips(weatherData);
+        elements.tipsContainer.innerHTML = '';
         
-        tipElement.innerHTML = `
-            <span class="tip-icon">🌱</span>
-            <span class="tip-text">${tip}</span>
+        tips.forEach((tip, index) => {
+            const tipElement = document.createElement('div');
+            tipElement.className = 'tip-item';
+            tipElement.style.animationDelay = `${index * 0.1}s`;
+            
+            tipElement.innerHTML = `
+                <span class="tip-icon">🌱</span>
+                <span class="tip-text">${tip}</span>
+            `;
+            
+            // Добавляем обработчик для эффекта ripple
+            tipElement.addEventListener('click', createRipple);
+            
+            elements.tipsContainer.appendChild(tipElement);
+        });
+    } catch (error) {
+        console.error('Ошибка при обновлении советов для фермеров:', error);
+        
+        // Показываем стандартные советы при ошибке
+        elements.tipsContainer.innerHTML = `
+            <div class="tip-item">
+                <span class="tip-icon">🌱</span>
+                <span class="tip-text">Следите за прогнозом погоды для планирования сельскохозяйственных работ</span>
+            </div>
+            <div class="tip-item">
+                <span class="tip-icon">🌱</span>
+                <span class="tip-text">Адаптируйте полив в соответствии с текущими погодными условиями</span>
+            </div>
         `;
-        
-        // Добавляем обработчик для эффекта ripple
-        tipElement.addEventListener('click', createRipple);
-        
-        elements.tipsContainer.appendChild(tipElement);
-    });
+    }
 }
 
-// Показ ошибок
+// Показ ошибок с улучшенным визуальным отображением
 function showError(message) {
+    // Удаляем предыдущие уведомления об ошибке
+    const existingErrors = document.querySelectorAll('.error-notification');
+    existingErrors.forEach(error => error.remove());
+    
     const errorDiv = document.createElement('div');
     errorDiv.className = 'error-notification';
     errorDiv.textContent = message;
     document.body.appendChild(errorDiv);
     
-    setTimeout(() => errorDiv.remove(), 3000);
+    // Добавляем класс для анимации появления
+    setTimeout(() => errorDiv.classList.add('show'), 10);
+    
+    // Удаляем уведомление через 5 секунд
+    setTimeout(() => {
+        errorDiv.classList.add('hide');
+        setTimeout(() => errorDiv.remove(), 300);
+    }, 5000);
 }
 
-// Индикация загрузки
-function showLoading() {
+// Индикация загрузки с сообщением
+function showLoading(message = 'Определяем ваше местоположение...') {
+    // Удаляем существующий оверлей загрузки, если он есть
+    hideLoading();
+    
     const loadingDiv = document.createElement('div');
     loadingDiv.className = 'loading-overlay';
     loadingDiv.innerHTML = `
         <div class="loading-spinner">
-            <div class="loading-text">Определяем ваше местоположение...</div>
+            <div class="loading-text">${message}</div>
         </div>
     `;
     document.body.appendChild(loadingDiv);
@@ -339,20 +513,27 @@ function showLoading() {
 function hideLoading() {
     const loadingDiv = document.querySelector('.loading-overlay');
     if (loadingDiv) {
-        loadingDiv.remove();
+        loadingDiv.classList.add('fade-out');
+        setTimeout(() => loadingDiv.remove(), 300);
     }
 }
 
 // Создание эффекта ripple
 function createRipple(event) {
     const target = event.currentTarget;
+    
+    // Удаляем существующие эффекты ripple
+    const existingRipples = target.querySelectorAll('.ripple');
+    existingRipples.forEach(ripple => ripple.remove());
+    
     const ripple = document.createElement('span');
     const diameter = Math.max(target.clientWidth, target.clientHeight);
     const radius = diameter / 2;
 
+    const rect = target.getBoundingClientRect();
     ripple.style.width = ripple.style.height = `${diameter}px`;
-    ripple.style.left = `${event.clientX - target.offsetLeft - radius}px`;
-    ripple.style.top = `${event.clientY - target.offsetTop - radius}px`;
+    ripple.style.left = `${event.clientX - rect.left - radius}px`;
+    ripple.style.top = `${event.clientY - rect.top - radius}px`;
     ripple.classList.add('ripple');
 
     target.appendChild(ripple);
@@ -360,15 +541,29 @@ function createRipple(event) {
     setTimeout(() => ripple.remove(), 600);
 }
 
-// Основная функция обновления погоды
+// Основная функция обновления погоды с улучшенной обработкой ошибок
 async function updateWeather(city) {
     try {
+        if (!city || typeof city !== 'string' || city.trim() === '') {
+            throw new Error('Необходимо указать название города');
+        }
+        
         elements.weatherResult.classList.add('loading');
         elements.cityName.classList.add('loading');
         elements.temperature.classList.add('loading');
         elements.weatherDescription.classList.add('loading');
         
-        const data = await fetchWeatherData(city);
+        showLoading(`Загружаем погоду для ${city}...`);
+        
+        const cachedData = getCachedWeatherData();
+        let data;
+        
+        if (cachedData && cachedData.city === city) {
+            console.log('Используем кешированные данные');
+            data = cachedData.data;
+        } else {
+            data = await fetchWeatherData(city);
+        }
         
         updateCurrentWeather(data.weather);
         updateHourlyForecast(data.forecast);
@@ -376,13 +571,25 @@ async function updateWeather(city) {
         await updateFarmerTips(data.weather);
         
         elements.weatherResult.classList.remove('hidden');
+        
+        // Сохраняем последний успешный город в localStorage
+        localStorage.setItem('lastCity', city);
     } catch (error) {
         console.error('Ошибка:', error);
+        showError(`Не удалось загрузить погоду для ${city}: ${error.message}`);
+        
+        // Пробуем использовать последний успешный город
+        const lastCity = localStorage.getItem('lastCity');
+        if (lastCity && lastCity !== city) {
+            showError(`Пробуем загрузить погоду для ${lastCity}`);
+            setTimeout(() => updateWeather(lastCity), 1000);
+        }
     } finally {
         elements.weatherResult.classList.remove('loading');
         elements.cityName.classList.remove('loading');
         elements.temperature.classList.remove('loading');
         elements.weatherDescription.classList.remove('loading');
+        hideLoading();
     }
 }
 
@@ -393,6 +600,8 @@ elements.searchButton.addEventListener('click', () => {
     const searchValue = elements.citySearch.value.trim();
     if (searchValue) {
         updateWeather(searchValue);
+    } else {
+        showError('Пожалуйста, введите название города');
     }
 });
 
@@ -402,29 +611,119 @@ elements.citySearch.addEventListener('keypress', (e) => {
         if (searchValue) {
             clearTimeout(searchTimeout);
             updateWeather(searchValue);
+        } else {
+            showError('Пожалуйста, введите название города');
         }
     }
 });
 
-// Удалено: обработчик события input для автоматического поиска при вводе
-
-// Инициализация
+// Инициализация с улучшенной обработкой ошибок
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        showLoading();
-        const city = await getUserLocation();
-        await updateWeather(city);
+        showLoading('Загружаем приложение...');
+        
+        // Проверяем, есть ли у нас кешированные данные или последний город
+        const cachedData = getCachedWeatherData();
+        const lastCity = localStorage.getItem('lastCity');
+        
+        if (cachedData) {
+            console.log('Используем кешированные данные для начального отображения');
+            updateCurrentWeather(cachedData.data.weather);
+            updateHourlyForecast(cachedData.data.forecast);
+            updateWeeklyForecast(cachedData.data.forecast);
+            await updateFarmerTips(cachedData.data.weather);
+            elements.weatherResult.classList.remove('hidden');
+            
+            // В фоне обновляем данные
+            fetchWeatherData(cachedData.city).catch(error => {
+                console.log('Ошибка фонового обновления:', error);
+            });
+        } else {
+            // Если нет кеша, пробуем получить местоположение пользователя
+            showLoading('Определяем ваше местоположение...');
+            
+            try {
+                const city = await getUserLocation();
+                await updateWeather(city);
+            } catch (geoError) {
+                console.log('Ошибка определения местоположения:', geoError.message);
+                
+                // Пробуем определить местоположение по IP
+                try {
+                    showLoading('Определяем местоположение по IP...');
+                    const city = await getLocationByIP();
+                    showError(`Не удалось определить местоположение по GPS. Используем данные IP: ${city}`);
+                    await updateWeather(city);
+                } catch (ipError) {
+                    console.log('Ошибка IP-геолокации:', ipError);
+                    
+                    // Пробуем использовать последний город или Москву
+                    if (lastCity) {
+                        showError(`Используем погоду для последнего города: ${lastCity}`);
+                        await updateWeather(lastCity);
+                    } else {
+                        showError('Не удалось определить местоположение. Показываем погоду для Москвы.');
+                        await updateWeather('Москва');
+                    }
+                }
+            }
+        }
     } catch (error) {
-        console.log('Ошибка определения местоположения:', error.message);
-        showError('Не удалось определить ваше местоположение. Показываем погоду для Москвы.');
-        await updateWeather('Москва');
+        console.error('Критическая ошибка инициализации:', error);
+        showError('Произошла ошибка при загрузке. Пожалуйста, обновите страницу.');
+        
+        // Последняя попытка - просто показать погоду для Москвы
+        try {
+            await updateWeather('Москва');
+        } catch (finalError) {
+            console.error('Финальная попытка не удалась:', finalError);
+            elements.weatherResult.innerHTML = `
+                <div class="error-state">
+                    <div class="error-icon">⚠️</div>
+                    <div class="error-title">Не удалось загрузить данные</div>
+                    <div class="error-message">Пожалуйста, проверьте подключение к интернету и обновите страницу</div>
+                    <button onclick="location.reload()" class="refresh-button">Обновить</button>
+                </div>
+            `;
+            elements.weatherResult.classList.remove('hidden');
+        }
     } finally {
         hideLoading();
     }
 });
 
-// Только для статичных элементов, которые существуют при загрузке страницы
+// Добавляем эффект ripple для всех статичных элементов
 const rippleElements = document.querySelectorAll('.search-button');
 rippleElements.forEach(element => {
     element.addEventListener('click', createRipple);
 });
+
+// Проверка состояния сети
+window.addEventListener('online', () => {
+    showError('Подключение к интернету восстановлено');
+    // Обновляем данные, если есть последний город
+    const lastCity = localStorage.getItem('lastCity');
+    if (lastCity) {
+        updateWeather(lastCity);
+    }
+});
+
+window.addEventListener('offline', () => {
+    showError('Отсутствует подключение к интернету. Показываем кешированные данные');
+});
+
+// Автоматическое обновление данных каждые 30 минут, если страница открыта
+setInterval(() => {
+    const lastCity = localStorage.getItem('lastCity');
+    if (lastCity && document.visibilityState === 'visible') {
+        console.log('Автоматическое обновление данных');
+        fetchWeatherData(lastCity).then(data => {
+            updateCurrentWeather(data.weather);
+            updateHourlyForecast(data.forecast);
+            updateWeeklyForecast(data.forecast);
+            updateFarmerTips(data.weather);
+        }).catch(error => {
+            console.log('Ошибка автоматического обновления:', error);
+        });
+    }
+}, 30 * 60 * 1000); // 30 минут
