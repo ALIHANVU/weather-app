@@ -1,5 +1,6 @@
 const API_KEY = 'c708426913319b328c4ff4719583d1c6';
 const BASE_URL = 'https://api.openweathermap.org';
+const DEFAULT_CITY = 'Грозный'; // Константа для города по умолчанию
 
 // DOM элементы
 const elements = {
@@ -49,6 +50,23 @@ const weatherEmoji = {
     "13d": "🌨️", "13n": "🌨️",
     "50d": "🌫️", "50n": "🌫️"
 };
+
+// Решение проблемы с $ в xman.js
+document.addEventListener('DOMContentLoaded', () => {
+    // Если $ не определен, создаем пустую функцию для предотвращения ошибок
+    if (typeof $ === 'undefined') {
+        window.$ = function() {
+            console.warn('jQuery ($) был вызван, но не загружен');
+            return {
+                ready: function(fn) { document.addEventListener('DOMContentLoaded', fn); return this; },
+                on: function() { return this; },
+                css: function() { return this; },
+                html: function() { return this; },
+                text: function() { return this; }
+            };
+        };
+    }
+});
 
 // Загрузка советов
 async function loadFarmerTips() {
@@ -158,7 +176,7 @@ async function getLocationByIP() {
         const timeoutId = setTimeout(() => {
             controller.abort(); // Отменяем fetch-запрос
             console.warn('Таймаут IP геолокации');
-            resolve('Грозный'); // Резервный город при таймауте
+            resolve(DEFAULT_CITY); // Резервный город при таймауте
         }, 3000);
 
         fetch('https://ipapi.co/json/', { signal })
@@ -170,21 +188,20 @@ async function getLocationByIP() {
             })
             .then(data => {
                 clearTimeout(timeoutId); // Очищаем таймаут при успешном получении
-                resolve(data.city || 'Грозный');
+                resolve(data.city || DEFAULT_CITY);
             })
             .catch(error => {
                 clearTimeout(timeoutId); // Очищаем таймаут при ошибке
                 if (error.name === 'AbortError') {
                     console.warn('Запрос IP-геолокации был отменен из-за таймаута');
-                    resolve('Грозный');
+                    resolve(DEFAULT_CITY);
                 } else {
                     console.error('Ошибка IP-геолокации:', error);
-                    resolve('Грозный'); // Возвращаем город по умолчанию
+                    resolve(DEFAULT_CITY); // Возвращаем город по умолчанию
                 }
             });
     });
 }
-
 // Получение геолокации с улучшенной обработкой ошибок
 function getUserLocation() {
     return new Promise((resolve, reject) => {
@@ -333,9 +350,14 @@ async function fetchWeatherData(city) {
             return cachedData.data;
         }
 
-        // Обработка особого случая для названия "Грозный"
+        // Обработка особого случая для названия города на кириллице
         // Иногда API может не распознавать кириллические названия
-        const cityForApi = city === 'Грозный' ? 'Grozny' : city;
+        let cityForApi = city;
+        if (city === DEFAULT_CITY) {
+            cityForApi = 'Grozny';
+        } else if (city === 'Москва') {
+            cityForApi = 'Moscow';
+        }
         
         const geoUrl = `${BASE_URL}/geo/1.0/direct?q=${encodeURIComponent(cityForApi)}&limit=1&appid=${API_KEY}`;
         
@@ -357,11 +379,15 @@ async function fetchWeatherData(city) {
 
         if (!geoData.length) {
             clearTimeout(timeoutId);
-            // Проверяем особый случай для Грозного
-            if (city === 'Грозный' || cityForApi === 'Grozny') {
+            // Проверяем особый случай для города по умолчанию
+            if (city === DEFAULT_CITY || cityForApi === 'Grozny') {
                 // Жесткое задание координат Грозного
                 console.log('Используем жестко заданные координаты для Грозного');
                 return fetchWeatherByCoords(43.3168, 45.6981, city);
+            } else if (city === 'Москва' || cityForApi === 'Moscow') {
+                // Жесткое задание координат Москвы (на случай, если она все еще где-то используется)
+                console.log('Используем жестко заданные координаты для Москвы');
+                return fetchWeatherByCoords(55.7558, 37.6173, DEFAULT_CITY); // Заменяем на город по умолчанию
             }
             throw new Error('Город не найден');
         }
@@ -375,15 +401,19 @@ async function fetchWeatherData(city) {
         // Проверяем, был ли запрос отменен из-за таймаута
         if (error.name === 'AbortError') {
             console.log('Запрос был отменен из-за таймаута');
-            if (city === 'Грозный') {
+            if (city === DEFAULT_CITY) {
                 console.log('Пробуем использовать жестко заданные координаты для Грозного после таймаута');
                 return fetchWeatherByCoords(43.3168, 45.6981, city);
+            } else if (city === 'Москва') {
+                // Перенаправляем на город по умолчанию при таймауте
+                return fetchWeatherByCoords(43.3168, 45.6981, DEFAULT_CITY);
             }
             throw new Error('Превышено время ожидания ответа от сервера');
         }
         throw error;
     }
 }
+
 // Новая функция для получения погоды по координатам
 async function fetchWeatherByCoords(lat, lon, cityName) {
     try {
@@ -420,8 +450,8 @@ async function fetchWeatherByCoords(lat, lon, cityName) {
         
         // Если загружаем по координатам, но название города отличается,
         // переопределяем название города для единообразия отображения
-        if (cityName === 'Грозный' && weather.name !== 'Грозный') {
-            weather.name = 'Грозный';
+        if (cityName === DEFAULT_CITY && weather.name !== DEFAULT_CITY) {
+            weather.name = DEFAULT_CITY;
         }
         
         const result = { weather, forecast };
@@ -439,7 +469,6 @@ async function fetchWeatherByCoords(lat, lon, cityName) {
         throw error;
     }
 }
-
 // Группировка данных прогноза по дням
 function groupForecastByDays(forecast) {
     const dailyForecasts = {};
@@ -585,90 +614,90 @@ async function openDayWeatherModal(dayData) {
         const avgVisibility = (dayData.visibility.reduce((a, b) => a + b, 0) / dayData.visibility.length / 1000).toFixed(1);
         const avgFeelsLike = Math.round(dayData.feelsLike.reduce((a, b) => a + b, 0) / dayData.feelsLike.length);
         
-        // Определяем наиболее частый тип погоды
-        let mostFrequentWeather = null;
-        if (dayData.weatherData && dayData.weatherData.length > 0) {
-            // Группируем погодные описания и находим самое частое
-            const weatherCounts = {};
-            dayData.weatherData.forEach(item => {
-                if (!weatherCounts[item.description]) {
-                    weatherCounts[item.description] = 0;
-                }
-                weatherCounts[item.description]++;
-            });
-            
-            let maxCount = 0;
-            for (const [description, count] of Object.entries(weatherCounts)) {
-                if (count > maxCount) {
-                    maxCount = count;
-                    mostFrequentWeather = description;
-                }
-            }
+       // Определяем наиболее частый тип погоды
+let mostFrequentWeather = null;
+if (dayData.weatherData && dayData.weatherData.length > 0) {
+    // Группируем погодные описания и находим самое частое
+    const weatherCounts = {};
+    dayData.weatherData.forEach(item => {
+        if (!weatherCounts[item.description]) {
+            weatherCounts[item.description] = 0;
         }
-        
-        // Определяем наиболее частую иконку погоды
-        let mostFrequentIcon = "01d";
-        if (dayData.weather && dayData.weather.length > 0) {
-            const iconCounts = {};
-            dayData.weather.forEach(icon => {
-                if (!iconCounts[icon]) {
-                    iconCounts[icon] = 0;
-                }
-                iconCounts[icon]++;
-            });
-            
-            let maxIconCount = 0;
-            for (const [icon, count] of Object.entries(iconCounts)) {
-                if (count > maxIconCount) {
-                    maxIconCount = count;
-                    mostFrequentIcon = icon;
-                }
-            }
+        weatherCounts[item.description]++;
+    });
+    
+    let maxCount = 0;
+    for (const [description, count] of Object.entries(weatherCounts)) {
+        if (count > maxCount) {
+            maxCount = count;
+            mostFrequentWeather = description;
         }
-        
-        // Обновляем данные в модальном окне
-        modalElements.temperature.textContent = `${avgTemp}°`;
-        modalElements.weatherDescription.textContent = mostFrequentWeather ? 
-            mostFrequentWeather.charAt(0).toUpperCase() + mostFrequentWeather.slice(1) : "-";
-        modalElements.maxTemp.textContent = maxTemp;
-        modalElements.minTemp.textContent = minTemp;
-        modalElements.humidity.textContent = `${avgHumidity}%`;
-        modalElements.windSpeed.textContent = `${avgWindSpeed} м/с`;
-        modalElements.visibility.textContent = `${avgVisibility} км`;
-        modalElements.feelsLike.textContent = `${avgFeelsLike}°`;
-        
-        // Обновляем почасовой прогноз
-        updateModalHourlyForecast(dayData.hourlyData);
-        
-        // Генерируем советы для выбранного дня
-        await updateModalFarmerTips({
-            main: { 
-                temp: avgTemp, 
-                humidity: avgHumidity, 
-                feels_like: avgFeelsLike 
-            },
-            weather: [{ 
-                description: mostFrequentWeather, 
-                icon: mostFrequentIcon 
-            }],
-            wind: { 
-                speed: avgWindSpeed 
-            },
-            visibility: avgVisibility * 1000
-        });
-        
-        // Показываем модальное окно
-        modalElements.dayModal.classList.remove('hidden');
-        document.body.classList.add('modal-open');
-        
-        // Добавляем плавное появление
-        setTimeout(() => {
-            modalElements.dayModal.classList.add('visible');
-        }, 10);
-    } catch (error) {
-        console.error('Ошибка при открытии модального окна погоды:', error);
-        showError('Не удалось загрузить детали погоды для выбранного дня');
     }
+}
+
+// Определяем наиболее частую иконку погоды
+let mostFrequentIcon = "01d";
+if (dayData.weather && dayData.weather.length > 0) {
+    const iconCounts = {};
+    dayData.weather.forEach(icon => {
+        if (!iconCounts[icon]) {
+            iconCounts[icon] = 0;
+        }
+        iconCounts[icon]++;
+    });
+    
+    let maxIconCount = 0;
+    for (const [icon, count] of Object.entries(iconCounts)) {
+        if (count > maxIconCount) {
+            maxIconCount = count;
+            mostFrequentIcon = icon;
+        }
+    }
+}
+
+// Обновляем данные в модальном окне
+modalElements.temperature.textContent = `${avgTemp}°`;
+modalElements.weatherDescription.textContent = mostFrequentWeather ? 
+    mostFrequentWeather.charAt(0).toUpperCase() + mostFrequentWeather.slice(1) : "-";
+modalElements.maxTemp.textContent = maxTemp;
+modalElements.minTemp.textContent = minTemp;
+modalElements.humidity.textContent = `${avgHumidity}%`;
+modalElements.windSpeed.textContent = `${avgWindSpeed} м/с`;
+modalElements.visibility.textContent = `${avgVisibility} км`;
+modalElements.feelsLike.textContent = `${avgFeelsLike}°`;
+
+// Обновляем почасовой прогноз
+updateModalHourlyForecast(dayData.hourlyData);
+
+// Генерируем советы для выбранного дня
+await updateModalFarmerTips({
+    main: { 
+        temp: avgTemp, 
+        humidity: avgHumidity, 
+        feels_like: avgFeelsLike 
+    },
+    weather: [{ 
+        description: mostFrequentWeather, 
+        icon: mostFrequentIcon 
+    }],
+    wind: { 
+        speed: avgWindSpeed 
+    },
+    visibility: avgVisibility * 1000
+});
+
+// Показываем модальное окно
+modalElements.dayModal.classList.remove('hidden');
+document.body.classList.add('modal-open');
+
+// Добавляем плавное появление
+setTimeout(() => {
+    modalElements.dayModal.classList.add('visible');
+}, 10);
+} catch (error) {
+    console.error('Ошибка при открытии модального окна погоды:', error);
+    showError('Не удалось загрузить детали погоды для выбранного дня');
+}
 }
 
 // Функция для обновления почасового прогноза в модальном окне
@@ -882,7 +911,7 @@ function showFallbackWeather(city) {
         weather: {
             main: { temp: 15, feels_like: 14, temp_max: 17, temp_min: 13, humidity: 70 },
             weather: [{ description: 'облачно с прояснениями', icon: '04d' }],
-            name: city || 'Грозный',
+            name: city || DEFAULT_CITY,
             visibility: 10000,
             wind: { speed: 2.5 }
         },
@@ -944,7 +973,6 @@ function showFallbackWeather(city) {
         console.error('Ошибка при отображении fallback данных:', e);
     }
 }
-
 // Индикация загрузки с сообщением
 function showLoading(message = 'Определяем ваше местоположение...') {
     // Удаляем существующий оверлей загрузки, если он есть
@@ -1022,11 +1050,21 @@ function createRipple(event) {
 
 // Функция для проверки наличия сохраненного города
 function getLastCity() {
-    return localStorage.getItem('lastLoadedCity') || null;
+    const lastCity = localStorage.getItem('lastLoadedCity');
+    // Если сохранена Москва, возвращаем null чтобы использовать новый город по умолчанию
+    if (lastCity === 'Москва') {
+        return null;
+    }
+    return lastCity || null;
 }
 
 // Улучшенная функция loadWeatherData с обработкой повторных попыток и фиксированным fallback
 async function loadWeatherData(city) {
+    // Если город Москва, заменяем на город по умолчанию
+    if (city === 'Москва') {
+        city = DEFAULT_CITY;
+    }
+    
     // Запоминаем время начала загрузки для отслеживания длительных запросов
     const startTime = Date.now();
     let fallbackUsed = false;
@@ -1056,7 +1094,7 @@ async function loadWeatherData(city) {
         
         const data = await weatherPromise;
         
-      // Очищаем глобальный таймаут, так как запрос успешно завершен
+        // Очищаем глобальный таймаут, так как запрос успешно завершен
         clearTimeout(globalTimeoutId);
         
         // Проверяем наличие всех необходимых данных
@@ -1107,10 +1145,10 @@ async function loadWeatherData(city) {
         }
         
         // Если нет кеша или кеш не сработал, пробуем город по умолчанию
-        if (city !== 'Грозный') {
+        if (city !== DEFAULT_CITY) {
             showError(`Не удалось загрузить погоду для "${city}". Загружаем для города по умолчанию.`);
-            // Рекурсивный вызов, но только если мы еще не пытались загрузить для Грозного
-            await loadWeatherData('Грозный');
+            // Рекурсивный вызов, но только если мы еще не пытались загрузить для города по умолчанию
+            await loadWeatherData(DEFAULT_CITY);
         } else {
             // Если мы уже пытались загрузить Грозный и все равно получили ошибку
             showError(`Не удалось загрузить данные о погоде: ${error.message}`);
@@ -1125,6 +1163,13 @@ async function loadWeatherData(city) {
 
 // Основная функция загрузки приложения с улучшенной обработкой отказа от геолокации
 async function initApp() {
+    // Очищаем localStorage от старых данных, где сохранена Москва
+    const lastCity = localStorage.getItem('lastLoadedCity');
+    if (lastCity === 'Москва') {
+        localStorage.removeItem('lastLoadedCity');
+        localStorage.removeItem('weatherData');
+    }
+    
     showLoading('Инициализация приложения...');
     
     try {
@@ -1151,7 +1196,7 @@ async function initApp() {
                     await loadWeatherData(city);
                 } catch (ipError) {
                     console.error('Ошибка IP геолокации:', ipError);
-                    await loadWeatherData('Грозный');
+                    await loadWeatherData(DEFAULT_CITY);
                 }
             }
             return;
@@ -1167,7 +1212,7 @@ async function initApp() {
                     await loadWeatherData(city);
                 } catch (ipError) {
                     console.error('Ошибка IP геолокации:', ipError);
-                    await loadWeatherData('Грозный');
+                    await loadWeatherData(DEFAULT_CITY);
                 }
             }
             return;
@@ -1200,16 +1245,16 @@ async function initApp() {
                     await loadWeatherData(city);
                 } catch (ipError) {
                     console.error('Ошибка определения местоположения по IP:', ipError);
-                    await loadWeatherData('Грозный');
+                    await loadWeatherData(DEFAULT_CITY);
                 }
             }
         }
     } catch (error) {
         console.error('Общая ошибка инициализации приложения:', error);
         
-        // В случае любой ошибки загружаем для Грозного
+        // В случае любой ошибки загружаем для города по умолчанию
         try {
-            await loadWeatherData('Грозный');
+            await loadWeatherData(DEFAULT_CITY);
         } catch (finalError) {
             console.error('Критическая ошибка загрузки данных:', finalError);
             showError('Не удалось загрузить погоду. Пожалуйста, проверьте подключение к интернету.');
@@ -1253,46 +1298,9 @@ function handleSearch() {
 
 // Инициализация приложения
 document.addEventListener('DOMContentLoaded', () => {
-    // Добавляем обработчики событий
-    elements.searchButton.addEventListener('click', handleSearch);
-    elements.citySearch.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
-            handleSearch();
-        }
-    });
-    
-    // Добавляем обработчик закрытия модального окна
-    modalElements.closeModal.addEventListener('click', closeDayWeatherModal);
-    
-    // Закрытие по клику вне контента модального окна
-    modalElements.dayModal.addEventListener('click', (event) => {
-        if (event.target === modalElements.dayModal) {
-            closeDayWeatherModal();
-        }
-    });
-
-    // Применяем эффект ripple ко всем интерактивным элементам
-    document.querySelectorAll('.search-button, .detail-item, .tip-item, .weekly-day').forEach(element => {
-        element.addEventListener('click', createRipple);
-    });
-
-    // Запускаем определение местоположения и загрузку погоды
-    initApp();
-});
-
-// Добавляем обработчик для обновления данных при возвращении на страницу
-window.addEventListener('focus', () => {
-    // Проверяем, когда в последний раз обновляли данные
-    const cached = getCachedWeatherData();
-    if (cached) {
-        const cacheTime = Date.now() - cached.timestamp;
-        // Обновляем данные, если кеш старше 15 минут и страница видима
-        if (cacheTime > 15 * 60 * 1000 && document.visibilityState === 'visible') {
-            if (elements.cityName.textContent && elements.cityName.textContent !== '-') {
-                loadWeatherData(elements.cityName.textContent);
-            } else if (cached.city) {
-                loadWeatherData(cached.city);
-            }
-        }
-    }
-});
+    // Решение проблемы с $ в xman.js
+    if (typeof $ === 'undefined') {
+        window.$ = function() {
+            console.warn('jQuery ($) был вызван, но не загружен');
+            return {
+                ready: function(fn)
