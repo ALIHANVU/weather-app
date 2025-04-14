@@ -708,3 +708,144 @@ body {
         padding: 14px;
     }
 }
+/* Стили для модального окна погоды на день */
+.day-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.day-modal.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.day-modal-content {
+    background-color: var(--ios-bg);
+    border-radius: var(--ios-border-radius);
+    max-width: 520px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: var(--ios-padding);
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    animation: modalSlideUp 0.3s ease-out both;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@keyframes modalSlideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.close-modal {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(0, 0, 0, 0.1);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ios-text);
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color 0.2s;
+}
+
+.close-modal:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.modal-weather-main {
+    margin-top: 10px;
+}
+
+.day-name {
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+}
+
+/* Добавляем эффект замороженного стекла для темной темы */
+@media (prefers-color-scheme: dark) {
+    .day-modal {
+        background-color: rgba(0, 0, 0, 0.7);
+    }
+    
+    .day-modal-content {
+        background-color: rgba(30, 30, 32, 0.9);
+    }
+    
+    .close-modal {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .close-modal:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+}
+
+/* Предотвращение прокрутки основного содержимого */
+body.modal-open {
+    overflow: hidden;
+}
+
+/* Адаптивность для небольших экранов */
+@media (max-width: 350px) {
+    .day-modal-content {
+        padding: 12px;
+    }
+    
+    .modal-weather-main {
+        padding: 16px;
+    }
+    
+    .day-name {
+        font-size: 22px;
+    }
+}
+
+/* Улучшение прокрутки контента модального окна */
+.day-modal-content {
+    scrollbar-width: thin;
+    scrollbar-color: var(--ios-secondary) transparent;
+}
+
+.day-modal-content::-webkit-scrollbar {
+    width: 5px;
+}
+
+.day-modal-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.day-modal-content::-webkit-scrollbar-thumb {
+    background-color: var(--ios-secondary);
+    border-radius: 10px;
+}
