@@ -1303,4 +1303,75 @@ document.addEventListener('DOMContentLoaded', () => {
         window.$ = function() {
             console.warn('jQuery ($) был вызван, но не загружен');
             return {
-                ready: function(fn)
+                ready: function(fn) { 
+                    document.addEventListener('DOMContentLoaded', fn); 
+                    return this; 
+                },
+                on: function() { return this; },
+                css: function() { return this; },
+                html: function() { return this; },
+                text: function() { return this; }
+            };
+        };
+    }
+    
+    // Очищаем localStorage от старых данных, где сохранена Москва
+    const lastCity = localStorage.getItem('lastLoadedCity');
+    if (lastCity === 'Москва') {
+        localStorage.removeItem('lastLoadedCity');
+        localStorage.removeItem('weatherData');
+    }
+
+    // Добавляем обработчики событий
+    elements.searchButton.addEventListener('click', handleSearch);
+    elements.citySearch.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            handleSearch();
+        }
+    });
+    
+    // Добавляем обработчик закрытия модального окна
+    modalElements.closeModal.addEventListener('click', closeDayWeatherModal);
+    
+    // Закрытие по клику вне контента модального окна
+    modalElements.dayModal.addEventListener('click', (event) => {
+        if (event.target === modalElements.dayModal) {
+            closeDayWeatherModal();
+        }
+    });
+
+    // Применяем эффект ripple ко всем интерактивным элементам
+    document.querySelectorAll('.search-button, .detail-item, .tip-item, .weekly-day').forEach(element => {
+        element.addEventListener('click', createRipple);
+    });
+
+    // Запускаем определение местоположения и загрузку погоды
+    initApp();
+});
+
+// Добавляем обработчик для обновления данных при возвращении на страницу
+window.addEventListener('focus', () => {
+    // Проверяем, когда в последний раз обновляли данные
+    const cached = getCachedWeatherData();
+    if (cached) {
+        const cacheTime = Date.now() - cached.timestamp;
+        // Обновляем данные, если кеш старше 15 минут и страница видима
+        if (cacheTime > 15 * 60 * 1000 && document.visibilityState === 'visible') {
+            // Проверяем на Москву
+            let cityToUpdate = elements.cityName.textContent;
+            if (cityToUpdate === 'Москва') {
+                cityToUpdate = DEFAULT_CITY;
+            } else if (cityToUpdate && cityToUpdate !== '-') {
+                // Используем текущий город
+            } else if (cached.city === 'Москва') {
+                cityToUpdate = DEFAULT_CITY;
+            } else if (cached.city) {
+                cityToUpdate = cached.city;
+            } else {
+                cityToUpdate = DEFAULT_CITY;
+            }
+            
+            loadWeatherData(cityToUpdate);
+        }
+    }
+});
