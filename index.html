@@ -107,7 +107,82 @@
             </div>
         </div>
     </div>
+<div id="dayModal" class="day-modal hidden">
+    <div class="day-modal-content">
+        <button id="closeModal" class="close-modal">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+        
+        <!-- Основная информация о погоде на день -->
+        <div class="weather-main modal-weather-main">
+            <div class="day-name" id="modalDayName">-</div>
+            <div class="temperature" id="modalTemperature">-°</div>
+            <div class="weather-condition" id="modalWeatherDescription">-</div>
+            <div class="temp-range">
+                Макс.: <span id="modalMaxTemp">-</span>° Мин.: <span id="modalMinTemp">-</span>°
+            </div>
+        </div>
 
+        <!-- Почасовой прогноз для выбранного дня -->
+        <div class="weather-card hourly-forecast" style="--index: 1">
+            <div class="forecast-header">
+                <span class="forecast-icon">🕒</span>
+                <span class="forecast-title">Прогноз на день</span>
+            </div>
+            <div class="forecast-scroll" id="modalHourlyForecast">
+                <!-- Генерируется динамически -->
+            </div>
+        </div>
+
+        <!-- Детали погоды для выбранного дня -->
+        <div class="weather-card weather-details" style="--index: 2">
+            <div class="details-grid">
+                <div class="detail-item">
+                    <div class="detail-header">
+                        <span class="detail-icon">💨</span>
+                        <span class="detail-title">ВЕТЕР</span>
+                    </div>
+                    <div class="detail-value" id="modalWindSpeed">- м/с</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-header">
+                        <span class="detail-icon">💧</span>
+                        <span class="detail-title">ВЛАЖНОСТЬ</span>
+                    </div>
+                    <div class="detail-value" id="modalHumidity">-%</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-header">
+                        <span class="detail-icon">👁️</span>
+                        <span class="detail-title">ВИДИМОСТЬ</span>
+                    </div>
+                    <div class="detail-value" id="modalVisibility">- км</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-header">
+                        <span class="detail-icon">🌡️</span>
+                        <span class="detail-title">ОЩУЩАЕТСЯ</span>
+                    </div>
+                    <div class="detail-value" id="modalFeelsLike">-°</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Советы для фермеров для выбранного дня -->
+        <div class="weather-card farmer-tips" style="--index: 3">
+            <div class="tips-header">
+                <span class="tips-icon">🌱</span>
+                <span class="tips-title">Советы для фермеров</span>
+            </div>
+            <div id="modalTipsContainer" class="tips-container">
+                <!-- Генерируется динамически -->
+            </div>
+        </div>
+    </div>
+</div>
     <script src="script.js"></script>
 </body>
 </html>
