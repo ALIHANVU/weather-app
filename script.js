@@ -20,6 +20,23 @@ const elements = {
     weeklyForecastContainer: document.querySelector('#weeklyForecastContainer')
 };
 
+// Элементы модального окна
+const modalElements = {
+    dayModal: document.querySelector('#dayModal'),
+    closeModal: document.querySelector('#closeModal'),
+    dayName: document.querySelector('#modalDayName'),
+    temperature: document.querySelector('#modalTemperature'),
+    weatherDescription: document.querySelector('#modalWeatherDescription'),
+    maxTemp: document.querySelector('#modalMaxTemp'),
+    minTemp: document.querySelector('#modalMinTemp'),
+    feelsLike: document.querySelector('#modalFeelsLike'),
+    humidity: document.querySelector('#modalHumidity'),
+    windSpeed: document.querySelector('#modalWindSpeed'),
+    visibility: document.querySelector('#modalVisibility'),
+    hourlyForecast: document.querySelector('#modalHourlyForecast'),
+    tipsContainer: document.querySelector('#modalTipsContainer')
+};
+
 // Иконки погоды
 const weatherEmoji = {
     "01d": "☀️", "01n": "🌙",
@@ -294,6 +311,53 @@ async function fetchWeatherData(city) {
     }
 }
 
+// Группировка данных прогноза по дням
+function groupForecastByDays(forecast) {
+    const dailyForecasts = {};
+    
+    forecast.list.forEach(item => {
+        const date = new Date(item.dt * 1000);
+        const day = date.toISOString().split('T')[0];
+        
+        if (!dailyForecasts[day]) {
+            const fullDayName = getDayOfWeek(item.dt);
+            const shortDayName = fullDayName.substring(0, 3);
+            
+            dailyForecasts[day] = {
+                date: day,
+                temps: [],
+                humidity: [],
+                windSpeed: [],
+                visibility: [],
+                feelsLike: [],
+                weather: [],
+                weatherData: [],
+                day: fullDayName,
+                shortDay: shortDayName
+            };
+        }
+        
+        dailyForecasts[day].temps.push(item.main.temp);
+        dailyForecasts[day].humidity.push(item.main.humidity);
+        dailyForecasts[day].windSpeed.push(item.wind.speed);
+        dailyForecasts[day].visibility.push(item.visibility);
+        dailyForecasts[day].feelsLike.push(item.main.feels_like);
+        
+        if (item.weather && item.weather[0]) {
+            dailyForecasts[day].weather.push(item.weather[0].icon);
+            dailyForecasts[day].weatherData.push(item.weather[0]);
+        }
+        
+        // Сохраняем полные данные прогноза для каждого временного промежутка
+        if (!dailyForecasts[day].hourlyData) {
+            dailyForecasts[day].hourlyData = [];
+        }
+        dailyForecasts[day].hourlyData.push(item);
+    });
+    
+    return dailyForecasts;
+}
+
 // Генерация советов с улучшенной надежностью
 async function generateFarmerTips(weatherData) {
     const tips = await loadFarmerTips();
@@ -377,6 +441,184 @@ function updateHourlyForecast(forecast) {
     }
 }
 
+// Функция для открытия модального окна с погодой на выбранный день
+async function openDayWeatherModal(dayData) {
+    try {
+        // Базовые данные о дне
+        modalElements.dayName.textContent = dayData.day;
+        
+        // Рассчитываем средние значения
+        const avgTemp = Math.round(dayData.temps.reduce((a, b) => a + b, 0) / dayData.temps.length);
+        const maxTemp = Math.round(Math.max(...dayData.temps));
+        const minTemp = Math.round(Math.min(...dayData.temps));
+        const avgHumidity = Math.round(dayData.humidity.reduce((a, b) => a + b, 0) / dayData.humidity.length);
+        const avgWindSpeed = (dayData.windSpeed.reduce((a, b) => a + b, 0) / dayData.windSpeed.length).toFixed(1);
+        const avgVisibility = (dayData.visibility.reduce((a, b) => a + b, 0) / dayData.visibility.length / 1000).toFixed(1);
+        const avgFeelsLike = Math.round(dayData.feelsLike.reduce((a, b) => a + b, 0) / dayData.feelsLike.length);
+        
+        // Определяем наиболее частый тип погоды
+        let mostFrequentWeather = null;
+        if (dayData.weatherData && dayData.weatherData.length > 0) {
+            // Группируем погодные описания и находим самое частое
+            const weatherCounts = {};
+            dayData.weatherData.forEach(item => {
+                if (!weatherCounts[item.description]) {
+                    weatherCounts[item.description] = 0;
+                }
+                weatherCounts[item.description]++;
+            });
+            
+            let maxCount = 0;
+            for (const [description, count] of Object.entries(weatherCounts)) {
+                if (count > maxCount) {
+                    maxCount = count;
+                    mostFrequentWeather = description;
+                }
+            }
+        }
+        
+        // Определяем наиболее частую иконку погоды
+        let mostFrequentIcon = "01d";
+        if (dayData.weather && dayData.weather.length > 0) {
+            const iconCounts = {};
+            dayData.weather.forEach(icon => {
+                if (!iconCounts[icon]) {
+                    iconCounts[icon] = 0;
+                }
+                iconCounts[icon]++;
+            });
+            
+            let maxIconCount = 0;
+            for (const [icon, count] of Object.entries(iconCounts)) {
+                if (count > maxIconCount) {
+                    maxIconCount = count;
+                    mostFrequentIcon = icon;
+                }
+            }
+        }
+        
+        // Обновляем данные в модальном окне
+        modalElements.temperature.textContent = `${avgTemp}°`;
+        modalElements.weatherDescription.textContent = mostFrequentWeather ? 
+            mostFrequentWeather.charAt(0).toUpperCase() + mostFrequentWeather.slice(1) : "-";
+        modalElements.maxTemp.textContent = maxTemp;
+        modalElements.minTemp.textContent = minTemp;
+        modalElements.humidity.textContent = `${avgHumidity}%`;
+        modalElements.windSpeed.textContent = `${avgWindSpeed} м/с`;
+        modalElements.visibility.textContent = `${avgVisibility} км`;
+        modalElements.feelsLike.textContent = `${avgFeelsLike}°`;
+        
+        // Обновляем почасовой прогноз
+        updateModalHourlyForecast(dayData.hourlyData);
+        
+        // Генерируем советы для выбранного дня
+        await updateModalFarmerTips({
+            main: { 
+                temp: avgTemp, 
+                humidity: avgHumidity, 
+                feels_like: avgFeelsLike 
+            },
+            weather: [{ 
+                description: mostFrequentWeather, 
+                icon: mostFrequentIcon 
+            }],
+            wind: { 
+                speed: avgWindSpeed 
+            },
+            visibility: avgVisibility * 1000
+        });
+        
+        // Показываем модальное окно
+        modalElements.dayModal.classList.remove('hidden');
+        document.body.classList.add('modal-open');
+        
+        // Добавляем плавное появление
+        setTimeout(() => {
+            modalElements.dayModal.classList.add('visible');
+        }, 10);
+    } catch (error) {
+        console.error('Ошибка при открытии модального окна погоды:', error);
+        showError('Не удалось загрузить детали погоды для выбранного дня');
+    }
+}
+
+// Функция для обновления почасового прогноза в модальном окне
+function updateModalHourlyForecast(hourlyData) {
+    modalElements.hourlyForecast.innerHTML = '';
+    
+    if (!hourlyData || !Array.isArray(hourlyData)) {
+        console.error('Неверные данные почасового прогноза для модального окна:', hourlyData);
+        return;
+    }
+    
+    hourlyData.forEach((item, index) => {
+        const hourlyDiv = document.createElement('div');
+        hourlyDiv.className = 'forecast-hour';
+        hourlyDiv.style.animationDelay = `${index * 0.1}s`;
+        
+        const icon = item.weather && item.weather[0] && item.weather[0].icon 
+            ? weatherEmoji[item.weather[0].icon] 
+            : "🌦️";
+        
+        hourlyDiv.innerHTML = `
+            <div class="forecast-time">${formatTime(item.dt)}</div>
+            <div class="forecast-icon">${icon}</div>
+            <div class="forecast-temp">${Math.round(item.main.temp)}°</div>
+        `;
+        
+        modalElements.hourlyForecast.appendChild(hourlyDiv);
+    });
+}
+
+// Функция для обновления советов для фермеров в модальном окне
+async function updateModalFarmerTips(weatherData) {
+    try {
+        const tips = await generateFarmerTips(weatherData);
+        modalElements.tipsContainer.innerHTML = '';
+        
+        tips.forEach((tip, index) => {
+            const tipElement = document.createElement('div');
+            tipElement.className = 'tip-item';
+            tipElement.style.animationDelay = `${index * 0.1}s`;
+            
+            tipElement.innerHTML = `
+                <span class="tip-icon">🌱</span>
+                <span class="tip-text">${tip}</span>
+            `;
+            
+            // Добавляем обработчик для эффекта ripple
+            tipElement.addEventListener('click', createRipple);
+            
+            modalElements.tipsContainer.appendChild(tipElement);
+        });
+    } catch (error) {
+        console.error('Ошибка при обновлении советов для фермеров в модальном окне:', error);
+        
+        // Показываем стандартные советы при ошибке
+        modalElements.tipsContainer.innerHTML = `
+            <div class="tip-item">
+                <span class="tip-icon">🌱</span>
+                <span class="tip-text">Следите за прогнозом погоды для планирования сельскохозяйственных работ</span>
+            </div>
+            <div class="tip-item">
+                <span class="tip-icon">🌱</span>
+                <span class="tip-text">Адаптируйте полив в соответствии с текущими погодными условиями</span>
+            </div>
+        `;
+    }
+}
+
+// Функция для закрытия модального окна
+function closeDayWeatherModal() {
+    modalElements.dayModal.classList.remove('visible');
+    
+    // Задержка для анимации закрытия
+    setTimeout(() => {
+        modalElements.dayModal.classList.add('hidden');
+        document.body.classList.remove('modal-open');
+    }, 300);
+}
+
 // Обновление недельного прогноза
 function updateWeeklyForecast(forecast) {
     try {
@@ -388,30 +630,7 @@ function updateWeeklyForecast(forecast) {
         }
         
         // Группировка прогноза по дням
-        const dailyForecasts = {};
-        forecast.list.forEach(item => {
-            const date = new Date(item.dt * 1000);
-            const day = date.toISOString().split('T')[0];
-            
-            if (!dailyForecasts[day]) {
-                // Получаем день недели
-                const fullDayName = getDayOfWeek(item.dt);
-                const shortDayName = fullDayName.substring(0, 3); // Первые 3 буквы
-                
-                dailyForecasts[day] = {
-                    temps: [],
-                    weather: [],
-                    day: fullDayName,
-                    shortDay: shortDayName
-                };
-            }
-            
-            dailyForecasts[day].temps.push(item.main.temp);
-            
-            if (item.weather && item.weather[0] && item.weather[0].icon) {
-                dailyForecasts[day].weather.push(item.weather[0].icon);
-            }
-        });
+        const dailyForecasts = groupForecastByDays(forecast);
         
         // Выбираем уникальные дни и создаем карточки
         const uniqueDays = Object.values(dailyForecasts).slice(0, 7);
@@ -424,14 +643,27 @@ function updateWeeklyForecast(forecast) {
             // Определяем наиболее частую иконку погоды
             let mostFrequentIcon = "01d"; // Значение по умолчанию
             if (dayData.weather && dayData.weather.length > 0) {
-                mostFrequentIcon = dayData.weather.reduce(
-                    (a, b) => dayData.weather.filter(v => v === a).length >= dayData.weather.filter(v => v === b).length ? a : b
-                );
+                const iconCounts = {};
+                dayData.weather.forEach(icon => {
+                    if (!iconCounts[icon]) {
+                        iconCounts[icon] = 0;
+                    }
+                    iconCounts[icon]++;
+                });
+                
+                let maxIconCount = 0;
+                for (const [icon, count] of Object.entries(iconCounts)) {
+                    if (count > maxIconCount) {
+                        maxIconCount = count;
+                        mostFrequentIcon = icon;
+                    }
+                }
             }
             
             const dayElement = document.createElement('div');
             dayElement.className = 'weekly-day';
             dayElement.style.animationDelay = `${index * 0.1}s`;
+            dayElement.setAttribute('data-date', dayData.date);
             
             dayElement.innerHTML = `
                 <div class="weekly-day-name">${dayData.day}</div>
@@ -441,6 +673,11 @@ function updateWeeklyForecast(forecast) {
             
             // Добавляем обработчик для эффекта ripple
             dayElement.addEventListener('click', createRipple);
+            
+            // Добавляем обработчик для открытия модального окна
+            dayElement.addEventListener('click', () => {
+                openDayWeatherModal(dayData);
+            });
             
             elements.weeklyForecastContainer.appendChild(dayElement);
         });
