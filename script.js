@@ -154,12 +154,12 @@ async function getLocationByIP() {
         const controller = new AbortController();
         const signal = controller.signal;
         
-        // Создаем таймаут для запроса
+        // Создаем таймаут для запроса - 3 секунды
         const timeoutId = setTimeout(() => {
             controller.abort(); // Отменяем fetch-запрос
             console.warn('Таймаут IP геолокации');
-            resolve('Москва'); // Резервный город при таймауте
-        }, 5000); // 5 секунд на ответ
+            resolve('Грозный'); // Резервный город при таймауте
+        }, 3000);
 
         fetch('https://ipapi.co/json/', { signal })
             .then(response => {
@@ -170,16 +170,16 @@ async function getLocationByIP() {
             })
             .then(data => {
                 clearTimeout(timeoutId); // Очищаем таймаут при успешном получении
-                resolve(data.city || 'Москва');
+                resolve(data.city || 'Грозный');
             })
             .catch(error => {
                 clearTimeout(timeoutId); // Очищаем таймаут при ошибке
                 if (error.name === 'AbortError') {
                     console.warn('Запрос IP-геолокации был отменен из-за таймаута');
-                    resolve('Москва');
+                    resolve('Грозный');
                 } else {
                     console.error('Ошибка IP-геолокации:', error);
-                    resolve('Москва'); // Возвращаем город по умолчанию
+                    resolve('Грозный'); // Возвращаем город по умолчанию
                 }
             });
     });
@@ -195,14 +195,14 @@ function getUserLocation() {
 
         const options = {
             enableHighAccuracy: false, // Изменяем на false для ускорения
-            timeout: 8000, // Уменьшаем таймаут до 8 секунд
+            timeout: 5000, // 5 секунд
             maximumAge: 60000 // Разрешаем использовать кешированные результаты до 1 минуты
         };
 
         // Создаем таймаут для всего процесса геолокации
         const timeoutId = setTimeout(() => {
             reject(new Error('Превышено время ожидания геолокации'));
-        }, 10000); // 10 секунд на весь процесс
+        }, 6000); // 6 секунд на весь процесс
 
         navigator.geolocation.getCurrentPosition(
             async (position) => {
@@ -217,7 +217,7 @@ function getUserLocation() {
                     const apiTimeoutId = setTimeout(() => {
                         controller.abort();
                         reject(new Error('Таймаут запроса к API геокодирования'));
-                    }, 5000);
+                    }, 3000); // 3 секунды
                     
                     try {
                         const response = await fetch(
@@ -333,13 +333,18 @@ async function fetchWeatherData(city) {
             return cachedData.data;
         }
 
-        const geoUrl = `${BASE_URL}/geo/1.0/direct?q=${encodeURIComponent(city)}&limit=1&appid=${API_KEY}`;
+        // Обработка особого случая для названия "Грозный"
+        // Иногда API может не распознавать кириллические названия
+        const cityForApi = city === 'Грозный' ? 'Grozny' : city;
+        
+        const geoUrl = `${BASE_URL}/geo/1.0/direct?q=${encodeURIComponent(cityForApi)}&limit=1&appid=${API_KEY}`;
         
         // Используем AbortController для контроля таймаута
         const controller = new AbortController();
         const signal = controller.signal;
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 секунд
         
+        console.log('Отправляем запрос геокодирования:', geoUrl);
         const geoResponse = await fetch(geoUrl, { signal });
         
         if (!geoResponse.ok) {
@@ -348,16 +353,51 @@ async function fetchWeatherData(city) {
         }
         
         const geoData = await geoResponse.json();
+        console.log('Получены данные геокодирования:', geoData);
 
         if (!geoData.length) {
             clearTimeout(timeoutId);
+            // Проверяем особый случай для Грозного
+            if (city === 'Грозный' || cityForApi === 'Grozny') {
+                // Жесткое задание координат Грозного
+                console.log('Используем жестко заданные координаты для Грозного');
+                return fetchWeatherByCoords(43.3168, 45.6981, city);
+            }
             throw new Error('Город не найден');
         }
 
         const { lat, lon } = geoData[0];
-
+        clearTimeout(timeoutId);
+        
+        return fetchWeatherByCoords(lat, lon, city);
+    } catch (error) {
+        console.error('Ошибка получения данных о погоде:', error);
+        // Проверяем, был ли запрос отменен из-за таймаута
+        if (error.name === 'AbortError') {
+            console.log('Запрос был отменен из-за таймаута');
+            if (city === 'Грозный') {
+                console.log('Пробуем использовать жестко заданные координаты для Грозного после таймаута');
+                return fetchWeatherByCoords(43.3168, 45.6981, city);
+            }
+            throw new Error('Превышено время ожидания ответа от сервера');
+        }
+        throw error;
+    }
+}
+// Новая функция для получения погоды по координатам
+async function fetchWeatherByCoords(lat, lon, cityName) {
+    try {
+        console.log(`Запрашиваем погоду по координатам: ${lat}, ${lon} для города ${cityName}`);
+        
+        // Используем AbortController для контроля таймаута
+        const controller = new AbortController();
+        const signal = controller.signal;
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 секунд
+        
         const weatherUrl = `${BASE_URL}/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}`;
         const forecastUrl = `${BASE_URL}/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}`;
+        
+        console.log('Запрашиваем данные о погоде и прогнозе...');
         
         // Запрашиваем одновременно текущую погоду и прогноз
         const [weatherResponse, forecastResponse] = await Promise.all([
@@ -378,17 +418,23 @@ async function fetchWeatherData(city) {
         const weather = await weatherResponse.json();
         const forecast = await forecastResponse.json();
         
+        // Если загружаем по координатам, но название города отличается,
+        // переопределяем название города для единообразия отображения
+        if (cityName === 'Грозный' && weather.name !== 'Грозный') {
+            weather.name = 'Грозный';
+        }
+        
         const result = { weather, forecast };
         
         // Кешируем полученные данные
-        cacheWeatherData(city, result);
+        cacheWeatherData(cityName, result);
         
+        console.log('Данные о погоде получены успешно');
         return result;
     } catch (error) {
-        console.error('Ошибка получения данных о погоде:', error);
-        // Проверяем, был ли запрос отменен из-за таймаута
+        console.error('Ошибка получения погоды по координатам:', error);
         if (error.name === 'AbortError') {
-            throw new Error('Превышено время ожидания ответа от сервера');
+            throw new Error('Превышено время ожидания ответа от сервера погоды');
         }
         throw error;
     }
@@ -828,10 +874,83 @@ function showError(message) {
     }, 5000);
 }
 
+// Функция для отображения минимальных данных о погоде (fallback)
+function showFallbackWeather(city) {
+    console.log('Отображаем минимальные данные о погоде для:', city);
+    
+    const fallbackData = {
+        weather: {
+            main: { temp: 15, feels_like: 14, temp_max: 17, temp_min: 13, humidity: 70 },
+            weather: [{ description: 'облачно с прояснениями', icon: '04d' }],
+            name: city || 'Грозный',
+            visibility: 10000,
+            wind: { speed: 2.5 }
+        },
+        forecast: {
+            list: Array(8).fill().map((_, index) => ({
+                dt: Math.floor(Date.now() / 1000) + index * 3600,
+                main: { temp: 15 - index % 3 },
+                weather: [{ icon: '04d' }]
+            }))
+        }
+    };
+    
+    try {
+        updateCurrentWeather(fallbackData.weather);
+        updateHourlyForecast(fallbackData.forecast);
+        
+        // Создаем минимальный недельный прогноз
+        elements.weeklyForecastContainer.innerHTML = '';
+        
+        // Получаем названия дней недели на неделю вперед
+        const days = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+        const today = new Date();
+        
+        // Создаем простую карточку для каждого дня недели
+        for (let i = 0; i < 7; i++) {
+            const date = new Date(today);
+            date.setDate(today.getDate() + i);
+            const dayName = days[date.getDay()];
+            
+            const temp = Math.round(15 - i % 5 + Math.sin(i) * 3); // Простая имитация изменения температуры
+            
+            const dayElement = document.createElement('div');
+            dayElement.className = 'weekly-day';
+            dayElement.style.animationDelay = `${i * 0.1}s`;
+            
+            dayElement.innerHTML = `
+                <div class="weekly-day-name">${dayName}</div>
+                <div class="weekly-day-icon">${weatherEmoji['04d']}</div>
+                <div class="weekly-day-temp">${temp}°</div>
+            `;
+            
+            elements.weeklyForecastContainer.appendChild(dayElement);
+        }
+        
+        // Показываем базовые советы
+        elements.tipsContainer.innerHTML = `
+            <div class="tip-item">
+                <span class="tip-icon">🌱</span>
+                <span class="tip-text">Следите за прогнозом погоды для планирования сельскохозяйственных работ</span>
+            </div>
+            <div class="tip-item">
+                <span class="tip-icon">🌱</span>
+                <span class="tip-text">Адаптируйте полив в соответствии с текущими погодными условиями</span>
+            </div>
+        `;
+        
+        elements.weatherResult.classList.remove('hidden');
+    } catch (e) {
+        console.error('Ошибка при отображении fallback данных:', e);
+    }
+}
+
 // Индикация загрузки с сообщением
 function showLoading(message = 'Определяем ваше местоположение...') {
     // Удаляем существующий оверлей загрузки, если он есть
     hideLoading();
+    
+    console.log('Показываем индикатор загрузки:', message);
     
     const loadingDiv = document.createElement('div');
     loadingDiv.className = 'loading-overlay';
@@ -848,9 +967,11 @@ function showLoading(message = 'Определяем ваше местополо
         clearTimeout(window._loadingTimeout);
     }
     
+    // Гарантируем, что индикатор загрузки исчезнет спустя заданное время
     window._loadingTimeout = setTimeout(() => {
+        console.warn('Принудительное скрытие индикатора загрузки по таймауту');
         hideLoading();
-    }, 20000); // Максимум 20 секунд показа загрузки
+    }, 12000); // 12 секунд максимум
 }
 
 function hideLoading() {
@@ -861,6 +982,7 @@ function hideLoading() {
     
     const loadingDiv = document.querySelector('.loading-overlay');
     if (loadingDiv) {
+        console.log('Скрываем индикатор загрузки');
         loadingDiv.classList.add('fade-out');
         setTimeout(() => {
             if (loadingDiv.parentNode) {
@@ -903,6 +1025,104 @@ function getLastCity() {
     return localStorage.getItem('lastLoadedCity') || null;
 }
 
+// Улучшенная функция loadWeatherData с обработкой повторных попыток и фиксированным fallback
+async function loadWeatherData(city) {
+    // Запоминаем время начала загрузки для отслеживания длительных запросов
+    const startTime = Date.now();
+    let fallbackUsed = false;
+    let globalTimeoutId;
+    
+    try {
+        showLoading(`Загружаем данные о погоде для ${city}...`);
+        
+        // Глобальный таймаут для всего процесса - 10 секунд
+        globalTimeoutId = setTimeout(() => {
+            console.warn(`Глобальный таймаут загрузки для ${city} - прошло ${(Date.now() - startTime)/1000} секунд`);
+            hideLoading();
+            showError(`Загрузка данных заняла слишком много времени. Пожалуйста, попробуйте еще раз.`);
+            
+            // В случае глобального таймаута, показываем фиксированные данные для критичного пользовательского опыта
+            showFallbackWeather(city);
+            fallbackUsed = true;
+        }, 10000);
+        
+        // Добавляем таймаут для всего процесса получения погоды - 8 секунд
+        const weatherPromise = Promise.race([
+            fetchWeatherData(city),
+            new Promise((_, reject) => 
+                setTimeout(() => reject(new Error('Время ожидания получения погоды истекло')), 8000)
+            )
+        ]);
+        
+        const data = await weatherPromise;
+        
+      // Очищаем глобальный таймаут, так как запрос успешно завершен
+        clearTimeout(globalTimeoutId);
+        
+        // Проверяем наличие всех необходимых данных
+        if (!data || !data.weather || !data.forecast) {
+            throw new Error('Получены неполные данные о погоде');
+        }
+        
+        updateCurrentWeather(data.weather);
+        updateHourlyForecast(data.forecast);
+        updateWeeklyForecast(data.forecast);
+        await updateFarmerTips(data.weather);
+        
+        // Показываем результаты
+        elements.weatherResult.classList.remove('hidden');
+        
+        // Сохраняем последний успешно загруженный город
+        localStorage.setItem('lastLoadedCity', city);
+        
+        console.log(`Данные о погоде для ${city} загружены за ${(Date.now() - startTime)/1000} секунд`);
+    } catch (error) {
+        console.error('Ошибка загрузки данных о погоде:', error);
+        
+        // Если глобальный таймаут уже сработал, не продолжаем обработку ошибки
+        if (fallbackUsed) return;
+        
+        try {
+            // Очищаем глобальный таймаут, так как запрос завершился с ошибкой
+            clearTimeout(globalTimeoutId);
+        } catch(e) {
+            // Игнорируем ошибки при очистке таймаута
+        }
+        
+        // Пробуем загрузить из кеша, если доступно
+        const cached = getCachedWeatherData();
+        if (cached) {
+            console.log('Используем кешированные данные после ошибки');
+            try {
+                updateCurrentWeather(cached.data.weather);
+                updateHourlyForecast(cached.data.forecast);
+                updateWeeklyForecast(cached.data.forecast);
+                await updateFarmerTips(cached.data.weather);
+                elements.weatherResult.classList.remove('hidden');
+                showError(`Не удалось загрузить актуальные данные. Отображены данные из кеша.`);
+                return;
+            } catch (cacheError) {
+                console.error('Ошибка при использовании кеша:', cacheError);
+            }
+        }
+        
+        // Если нет кеша или кеш не сработал, пробуем город по умолчанию
+        if (city !== 'Грозный') {
+            showError(`Не удалось загрузить погоду для "${city}". Загружаем для города по умолчанию.`);
+            // Рекурсивный вызов, но только если мы еще не пытались загрузить для Грозного
+            await loadWeatherData('Грозный');
+        } else {
+            // Если мы уже пытались загрузить Грозный и все равно получили ошибку
+            showError(`Не удалось загрузить данные о погоде: ${error.message}`);
+            
+            // Показываем заглушку с базовыми данными
+            showFallbackWeather(city);
+        }
+    } finally {
+        hideLoading();
+    }
+}
+
 // Основная функция загрузки приложения с улучшенной обработкой отказа от геолокации
 async function initApp() {
     showLoading('Инициализация приложения...');
@@ -931,7 +1151,7 @@ async function initApp() {
                     await loadWeatherData(city);
                 } catch (ipError) {
                     console.error('Ошибка IP геолокации:', ipError);
-                    await loadWeatherData('Москва');
+                    await loadWeatherData('Грозный');
                 }
             }
             return;
@@ -947,7 +1167,7 @@ async function initApp() {
                     await loadWeatherData(city);
                 } catch (ipError) {
                     console.error('Ошибка IP геолокации:', ipError);
-                    await loadWeatherData('Москва');
+                    await loadWeatherData('Грозный');
                 }
             }
             return;
@@ -963,7 +1183,7 @@ async function initApp() {
             const locationPromise = Promise.race([
                 getUserLocation(),
                 new Promise((_, reject) => 
-                    setTimeout(() => reject(new Error('Превышено время ожидания геолокации')), 10000)
+                    setTimeout(() => reject(new Error('Превышено время ожидания геолокации')), 7000)
                 )
             ]);
             
@@ -980,103 +1200,19 @@ async function initApp() {
                     await loadWeatherData(city);
                 } catch (ipError) {
                     console.error('Ошибка определения местоположения по IP:', ipError);
-                    await loadWeatherData('Москва');
+                    await loadWeatherData('Грозный');
                 }
             }
         }
     } catch (error) {
         console.error('Общая ошибка инициализации приложения:', error);
         
-        // В случае любой ошибки загружаем для Москвы
+        // В случае любой ошибки загружаем для Грозного
         try {
-            await loadWeatherData('Москва');
+            await loadWeatherData('Грозный');
         } catch (finalError) {
             console.error('Критическая ошибка загрузки данных:', finalError);
             showError('Не удалось загрузить погоду. Пожалуйста, проверьте подключение к интернету.');
-        }
-    } finally {
-        hideLoading();
-    }
-}
-
-// Функция загрузки погоды по городу
-async function loadWeatherData(city) {
-    try {
-        showLoading(`Загружаем данные о погоде для ${city}...`);
-        
-        // Добавляем таймаут для всего процесса получения погоды
-        const weatherPromise = Promise.race([
-            fetchWeatherData(city),
-            new Promise((_, reject) => 
-                setTimeout(() => reject(new Error('Время ожидания получения погоды истекло')), 15000)
-            )
-        ]);
-        
-        const data = await weatherPromise;
-        
-        // Проверяем наличие всех необходимых данных
-        if (!data || !data.weather || !data.forecast) {
-            throw new Error('Получены неполные данные о погоде');
-        }
-        
-        updateCurrentWeather(data.weather);
-        updateHourlyForecast(data.forecast);
-        updateWeeklyForecast(data.forecast);
-        await updateFarmerTips(data.weather);
-        
-        // Показываем результаты
-        elements.weatherResult.classList.remove('hidden');
-        
-        // Сохраняем последний успешно загруженный город
-        localStorage.setItem('lastLoadedCity', city);
-    } catch (error) {
-        console.error('Ошибка загрузки данных о погоде:', error);
-        
-        // Пробуем загрузить из кеша, если доступно
-        const cached = getCachedWeatherData();
-        if (cached) {
-            console.log('Используем кешированные данные после ошибки');
-            try {
-                updateCurrentWeather(cached.data.weather);
-                updateHourlyForecast(cached.data.forecast);
-                updateWeeklyForecast(cached.data.forecast);
-                await updateFarmerTips(cached.data.weather);
-                elements.weatherResult.classList.remove('hidden');
-                showError(`Не удалось загрузить актуальные данные. Отображены данные из кеша.`);
-                return;
-            } catch (cacheError) {
-                console.error('Ошибка при использовании кеша:', cacheError);
-            }
-        }
-        
-        // Если нет кеша или кеш не сработал, пробуем город по умолчанию
-        if (city !== 'Москва') {
-            showError(`Не удалось загрузить погоду для "${city}". Загружаем для города по умолчанию.`);
-            // Рекурсивный вызов, но только если мы еще не пытались загрузить для Москвы
-            await loadWeatherData('Москва');
-        } else {
-            // Если мы уже пытались загрузить Москву и все равно получили ошибку
-            showError(`Не удалось загрузить данные о погоде: ${error.message}`);
-            
-            // Показываем заглушку с базовыми данными
-            const fallbackData = {
-                weather: {
-                    main: { temp: 15, feels_like: 14, temp_max: 17, temp_min: 13, humidity: 70 },
-                    weather: [{ description: 'облачно с прояснениями', icon: '04d' }],
-                    name: 'Москва',
-                    visibility: 10000,
-                    wind: { speed: 2.5 }
-                },
-                forecast: {
-                    list: [
-                        // Минимальные данные для почасового прогноза
-                        { dt: Math.floor(Date.now() / 1000), main: { temp: 15 }, weather: [{ icon: '04d' }] }
-                    ]
-                }
-            };
-            
-            updateCurrentWeather(fallbackData.weather);
-            elements.weatherResult.classList.remove('hidden');
         }
     } finally {
         hideLoading();
