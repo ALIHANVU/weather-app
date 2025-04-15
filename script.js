@@ -693,6 +693,8 @@ function checkGeolocationPermission() {
  */
 async function fetchWeatherData(city) {
     try {
+        console.log('Запрашиваем погоду для города:', city);
+        
         // Проверка кеша перед запросом
         const cachedData = getCachedWeatherData();
         if (cachedData && cachedData.city === city) {
@@ -700,15 +702,22 @@ async function fetchWeatherData(city) {
             return cachedData.data;
         }
 
-        // Для API запроса можем преобразовать кириллицу в латиницу
+        // Проверяем, есть ли точные координаты для города
+        if (KNOWN_CITIES[city]) {
+            console.log('Используем известные координаты для:', city);
+            const { lat, lon } = KNOWN_CITIES[city];
+            return fetchWeatherByCoords(lat, lon, city);
+        }
+
+        // Для API запроса преобразуем кириллицу в латиницу, если возможно
         let cityForApi = city;
-        
-        // Используем транслитерацию для известных городов
         if (CITY_TRANSLATIONS[city]) {
             cityForApi = CITY_TRANSLATIONS[city];
+            console.log('Используем перевод города для API:', cityForApi);
         }
         
-        const geoUrl = `${BASE_URL}/geo/1.0/direct?q=${encodeURIComponent(cityForApi)}&limit=1&appid=${API_KEY}`;
+        // Создаем безопасный URL с корректной кодировкой
+        const geoUrl = `${BASE_URL}/geo/1.0/direct?q=${encodeURIComponent(cityForApi)}&limit=5&appid=${API_KEY}`;
         
         // Используем AbortController для контроля таймаута
         const controller = new AbortController();
@@ -726,20 +735,56 @@ async function fetchWeatherData(city) {
         const geoData = await geoResponse.json();
         console.log('Получены данные геокодирования:', geoData);
 
-        if (!geoData.length) {
+        if (!geoData || geoData.length === 0) {
             clearTimeout(timeoutId);
-            // Используем фиксированные координаты для известных городов если API не нашел их
-            if (KNOWN_CITIES[city]) {
-                const { lat, lon } = KNOWN_CITIES[city];
-                return fetchWeatherByCoords(lat, lon, city);
+            
+            // Пробуем запасной вариант - поиск на английском для городов с известным переводом
+            if (!CITY_TRANSLATIONS[city] && !/^[a-zA-Z\s]+$/.test(city)) {
+                // Если мы не пытались с переводом и это не английское название
+                const transliterationUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(city)}&limit=5&appid=${API_KEY}`;
+                console.log('Пробуем запрос с транслитерацией:', transliterationUrl);
+                
+                try {
+                    const transliterationResponse = await fetch(transliterationUrl, { signal });
+                    if (transliterationResponse.ok) {
+                        const transliterationData = await transliterationResponse.json();
+                        if (transliterationData && transliterationData.length > 0) {
+                            console.log('Найден город через транслитерацию:', transliterationData[0]);
+                            const { lat, lon, name } = transliterationData[0];
+                            return fetchWeatherByCoords(lat, lon, name);
+                        }
+                    }
+                } catch (transliterationError) {
+                    console.warn('Ошибка при транслитерации:', transliterationError);
+                }
             }
+            
             throw new Error('Город не найден');
         }
 
-        const { lat, lon } = geoData[0];
+        // Выбираем наиболее подходящее геоположение из результатов
+        let bestMatch = geoData[0]; // По умолчанию берем первый результат
+        
+        // Если получили несколько результатов, ищем лучшее совпадение
+        if (geoData.length > 1) {
+            // Ищем точное совпадение по имени
+            const exactMatch = geoData.find(item => 
+                item.name.toLowerCase() === city.toLowerCase() || 
+                (item.local_names && item.local_names.ru && 
+                 item.local_names.ru.toLowerCase() === city.toLowerCase())
+            );
+            
+            if (exactMatch) {
+                bestMatch = exactMatch;
+                console.log('Найдено точное совпадение по имени:', bestMatch.name);
+            }
+        }
+        
+        const { lat, lon, name } = bestMatch;
         clearTimeout(timeoutId);
         
-        return fetchWeatherByCoords(lat, lon, city);
+        console.log('Выбраны координаты:', lat, lon, 'для города:', name);
+        return fetchWeatherByCoords(lat, lon, name || city);
     } catch (error) {
         console.warn('Ошибка запроса данных о погоде:', error.message);
         
@@ -753,6 +798,7 @@ async function fetchWeatherData(city) {
         throw error;
     }
 }
+
 /**
  * Получает данные о погоде по координатам
  * @param {number} lat - Широта
@@ -770,7 +816,9 @@ async function fetchWeatherByCoords(lat, lon, cityName) {
         const weatherUrl = `${BASE_URL}/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}`;
         const forecastUrl = `${BASE_URL}/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}`;
         
-       // Отправляем параллельные запросы
+        console.log('Запрашиваем погоду по координатам:', lat, lon);
+        
+        // Отправляем параллельные запросы
         const [weatherResponse, forecastResponse] = await Promise.all([
             fetch(weatherUrl, { signal }),
             fetch(forecastUrl, { signal })
@@ -1385,7 +1433,7 @@ async function openDayWeatherModal(dayData) {
             visibility: avgVisibility * 1000
         });
         
-     // Показываем модальное окно с iOS-анимацией
+        // Показываем модальное окно с iOS-анимацией
         modalElements.dayModal.classList.remove('hidden');
         document.body.classList.add('modal-open');
         
@@ -1760,7 +1808,7 @@ function handleSearch() {
             return;
         }
         
-        // Проверка на валидные символы
+        // Проверка на валидные символы (разрешаем кириллицу, латиницу, пробелы и базовые знаки пунктуации)
         if (!/^[a-zA-Zа-яА-ЯёЁ\s\-,.]+$/.test(city)) {
             showError('Название города содержит недопустимые символы');
             return;
@@ -1991,7 +2039,7 @@ function monitorFrameRate() {
         frameCount++;
         lastFrameTime = now;
         
-        // Раз в 100 кадров проверяем производительность
+       // Раз в 100 кадров проверяем производительность
         if (frameCount >= 100) {
             const dropRate = droppedFrames / frameCount;
             
