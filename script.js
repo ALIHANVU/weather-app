@@ -8,6 +8,42 @@ const CACHE_EXPIRATION = 60 * 60 * 1000; // 1 час в миллисекунда
 const CACHE_KEY = 'weatherData';
 const LAST_CITY_KEY = 'lastLoadedCity';
 
+// iOS Animation Constants - Константы iOS анимаций
+const IOS_ANIMATIONS = {
+    // Длительности анимаций (мс)
+    DURATIONS: {
+        MICRO: 150,       // Микро-переходы (кнопки, тапы)
+        QUICK: 250,       // Быстрые переходы (смена состояний)
+        STANDARD: 350,    // Стандартные переходы (появление элементов)
+        EMPHASIZED: 500   // Акцентированные переходы (модальные окна)
+    },
+    
+    // Функции плавности (easing) - точно как в iOS 17
+    EASING: {
+        SPRING: 'cubic-bezier(0.23, 1, 0.32, 1)',      // Основная пружинная
+        BOUNCE: 'cubic-bezier(0.34, 1.56, 0.64, 1)',   // Отскок
+        STANDARD: 'cubic-bezier(0.4, 0.0, 0.22, 1)',   // Стандартная
+        EASE_OUT: 'cubic-bezier(0, 0, 0.2, 1)',        // Ease-out
+        EASE_IN: 'cubic-bezier(0.4, 0, 1, 1)'          // Ease-in
+    },
+    
+    // Задержки для последовательности (мс)
+    STAGGER: {
+        ULTRA_FAST: 20,   // Минимально заметная задержка
+        FAST: 30,         // Быстрая последовательность
+        NORMAL: 50,       // Обычная последовательность
+        SLOW: 80          // Заметная последовательность
+    },
+    
+    // Масштабы трансформации - точные значения как в iOS
+    SCALE: {
+        PRESS: 0.97,      // Масштаб при нажатии на элемент
+        ACTIVE: 1.03,     // Масштаб активного элемента
+        HOVER: 1.02,      // Масштаб при наведении (для десктопа)
+        SPRING_INITIAL: 0.95 // Начальный масштаб для пружинных анимаций
+    }
+};
+
 // Таймауты (мс)
 const TIMEOUTS = {
     API_REQUEST: 5000,          // Таймаут для запросов к API
@@ -298,10 +334,9 @@ function getCurrentSeason() {
 }
 
 /**
- * Создает эффект ripple с оптимизацией для мобильных
+ * Создает эффект ripple в стиле iOS
  * @param {Event} event - Событие клика
  */
-// Найдите текущую функцию createRipple и замените её на эту:
 function createRipple(event) {
     try {
         const target = event.currentTarget;
@@ -333,21 +368,21 @@ function createRipple(event) {
         
         // Добавляем эффект уменьшения (scale-down) для элемента
         target.style.transform = 'scale(0.97)';
-        target.style.transition = 'transform 0.15s cubic-bezier(0.4, 0, 1, 1)';
+        target.style.transition = `transform 0.15s ${IOS_ANIMATIONS.EASING.EASE_IN}`;
         
         target.appendChild(ripple);
         
         // Удаляем ripple после анимации и возвращаем элемент к нормальному размеру
         setTimeout(() => {
             target.style.transform = '';
-            target.style.transition = 'transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)';
+            target.style.transition = `transform 0.2s ${IOS_ANIMATIONS.EASING.SPRING}`;
             
             if (ripple && ripple.parentNode === target) {
                 target.removeChild(ripple);
             }
         }, 400);
     } catch (error) {
-        console.warn('Ошибка создания ripple эффекта:', error.message);
+        console.warn('Ошибка создания ripple эффекта:', error);
     }
 }
 
@@ -365,13 +400,13 @@ function showError(message) {
         errorDiv.textContent = message;
         document.body.appendChild(errorDiv);
         
-        // Добавляем класс для анимации появления
-        setTimeout(() => errorDiv.classList.add('show'), 10);
+        // Анимация уже определена в CSS, не требуется добавлять классы
         
         // Удаляем уведомление через 5 секунд
         setTimeout(() => {
-            errorDiv.classList.add('hide');
-            setTimeout(() => errorDiv.remove(), TIMEOUTS.ANIMATION);
+            if (errorDiv && errorDiv.parentNode) {
+                errorDiv.remove();
+            }
         }, 5000);
     } catch (error) {
         console.error('Ошибка отображения уведомления:', error);
@@ -478,6 +513,12 @@ function displayEmergencyWeatherData() {
         // Показываем блок результатов
         if (elements.weatherResult) {
             elements.weatherResult.classList.remove('hidden');
+            
+            // Добавляем iOS-стиль анимации
+            requestAnimationFrame(() => {
+                elements.weatherResult.style.opacity = '1';
+                elements.weatherResult.style.transform = 'translateY(0)';
+            });
         }
         
         // Заполняем базовыми данными
@@ -712,7 +753,6 @@ async function fetchWeatherData(city) {
         throw error;
     }
 }
-
 /**
  * Получает данные о погоде по координатам
  * @param {number} lat - Широта
@@ -775,7 +815,7 @@ async function loadFarmerTips() {
         // Добавляем параметр с временем для предотвращения кеширования
         const timestamp = new Date().getTime();
         const response = await Promise.race([
-            fetch(`https://alihanvu.github.io/weather-app/farmer-tips.json?${timestamp}`, {
+            fetch(`farmer-tips.json?${timestamp}`, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
@@ -970,7 +1010,7 @@ function updateCurrentWeather(data) {
 }
 
 /**
- * Обновляет почасовой прогноз
+ * Обновляет почасовой прогноз с iOS-анимациями
  * @param {Object} forecast - Данные прогноза
  */
 function updateHourlyForecast(forecast) {
@@ -994,14 +1034,7 @@ function updateHourlyForecast(forecast) {
         forecast.list.slice(0, limit).forEach((item, index) => {
             const hourlyDiv = document.createElement('div');
             hourlyDiv.className = 'forecast-hour';
-            
-            // Оптимизируем анимации на мобильных
-            if (isHighPerf) {
-                hourlyDiv.style.animationDelay = `${index * 0.1}s`;
-            } else {
-                // Группируем анимации для мобильных (по 3 элемента с одинаковой задержкой)
-                hourlyDiv.style.animationDelay = `${Math.floor(index / 3) * 0.1}s`;
-            }
+            hourlyDiv.style.setProperty('--index', index); // Для управления задержкой анимации в CSS
             
             // Определяем иконку погоды
             const icon = item.weather && item.weather[0] && item.weather[0].icon 
@@ -1014,6 +1047,9 @@ function updateHourlyForecast(forecast) {
                 <div class="forecast-temp">${Math.round(item.main.temp)}°</div>
             `;
             
+            // Добавляем обработчик для iOS-эффекта нажатия
+            hourlyDiv.addEventListener('click', createRipple);
+            
             fragment.appendChild(hourlyDiv);
         });
         
@@ -1025,7 +1061,7 @@ function updateHourlyForecast(forecast) {
 }
 
 /**
- * Обновляет недельный прогноз
+ * Обновляет недельный прогноз с iOS-анимациями
  * @param {Object} forecast - Данные прогноза
  */
 function updateWeeklyForecast(forecast) {
@@ -1072,19 +1108,10 @@ function updateWeeklyForecast(forecast) {
                     });
                 }
                 
-                // Создаем элемент для дня недели
+                // Создаем элемент для дня недели с iOS-анимацией
                 const dayElement = document.createElement('div');
                 dayElement.className = 'weekly-day';
-                
-                // Адаптируем анимации для производительности
-                if (isHighPerformanceDevice()) {
-                    dayElement.style.animationDelay = `${index * 0.1}s`;
-                } else if (index < 4) {
-                    // Для слабых устройств анимируем только первые 4 дня
-                    dayElement.style.animationDelay = `${index * 0.1}s`;
-                } else {
-                    dayElement.style.animation = 'none';
-                }
+                dayElement.style.setProperty('--day-index', index); // Для управления задержкой анимации
                 
                 dayElement.setAttribute('data-date', dayData.date);
                 
@@ -1094,7 +1121,7 @@ function updateWeeklyForecast(forecast) {
                     <div class="weekly-day-temp">${avgTemp}°</div>
                 `;
                 
-                // Добавляем обработчики событий
+                // Добавляем iOS-эффект нажатия
                 dayElement.addEventListener('click', createRipple);
                 dayElement.addEventListener('click', () => openDayWeatherModal(dayData));
                 
@@ -1112,7 +1139,7 @@ function updateWeeklyForecast(forecast) {
 }
 
 /**
- * Обновляет советы для фермеров
+ * Обновляет советы для фермеров с iOS-анимациями
  * @param {Object} weatherData - Данные о погоде
  */
 async function updateFarmerTips(weatherData) {
@@ -1128,23 +1155,14 @@ async function updateFarmerTips(weatherData) {
         tips.forEach((tip, index) => {
             const tipElement = document.createElement('div');
             tipElement.className = 'tip-item';
-            
-            // Адаптируем анимации для производительности
-            if (isHighPerformanceDevice()) {
-                tipElement.style.animationDelay = `${index * 0.1}s`;
-            } else if (index < 3) {
-                // Для слабых устройств анимируем только первые 3 совета
-                tipElement.style.animationDelay = `${index * 0.1}s`;
-            } else {
-                tipElement.style.animation = 'none';
-            }
+            tipElement.style.setProperty('--tip-index', index); // Для управления задержкой анимации
             
             tipElement.innerHTML = `
                 <span class="tip-icon">🌱</span>
                 <span class="tip-text">${tip}</span>
             `;
             
-            // Добавляем обработчик для эффекта ripple
+            // Добавляем обработчик для iOS-эффекта
             tipElement.addEventListener('click', createRipple);
             
             fragment.appendChild(tipElement);
@@ -1221,20 +1239,16 @@ function showFallbackWeather(city) {
                 
                 const dayElement = document.createElement('div');
                 dayElement.className = 'weekly-day';
-                
-                if (isHighPerformanceDevice()) {
-                    dayElement.style.animationDelay = `${i * 0.1}s`;
-                } else if (i < 4) {
-                    dayElement.style.animationDelay = `${i * 0.1}s`;
-                } else {
-                    dayElement.style.animation = 'none';
-                }
+                dayElement.style.setProperty('--day-index', i);
                 
                 dayElement.innerHTML = `
                     <div class="weekly-day-name">${dayName}</div>
                     <div class="weekly-day-icon">${weatherEmoji['04d']}</div>
                     <div class="weekly-day-temp">${temp}°</div>
                 `;
+                
+                // iOS эффект нажатия
+                dayElement.addEventListener('click', createRipple);
                 
                 fragment.appendChild(dayElement);
             }
@@ -1245,20 +1259,31 @@ function showFallbackWeather(city) {
         // Показываем базовые советы
         if (elements.tipsContainer) {
             elements.tipsContainer.innerHTML = `
-                <div class="tip-item">
+                <div class="tip-item" style="--tip-index: 0;">
                     <span class="tip-icon">🌱</span>
                     <span class="tip-text">Следите за прогнозом погоды для планирования сельскохозяйственных работ</span>
                 </div>
-                <div class="tip-item">
+                <div class="tip-item" style="--tip-index: 1;">
                     <span class="tip-icon">🌱</span>
                     <span class="tip-text">Адаптируйте полив в соответствии с текущими погодными условиями</span>
                 </div>
             `;
+            
+            // Добавляем обработчики с iOS-эффектом
+            elements.tipsContainer.querySelectorAll('.tip-item').forEach(item => {
+                item.addEventListener('click', createRipple);
+            });
         }
         
-        // Показываем блок с результатами
+        // Показываем блок с результатами с iOS-анимацией
         if (elements.weatherResult) {
             elements.weatherResult.classList.remove('hidden');
+            
+            // Добавляем анимацию в стиле iOS
+            requestAnimationFrame(() => {
+                elements.weatherResult.style.opacity = '1';
+                elements.weatherResult.style.transform = 'translateY(0)';
+            });
         }
     } catch (error) {
         console.error('Ошибка при отображении fallback данных:', error.message);
@@ -1268,7 +1293,7 @@ function showFallbackWeather(city) {
 // ===== ФУНКЦИИ МОДАЛЬНОГО ОКНА =====
 
 /**
- * Открывает модальное окно с погодой на выбранный день
+ * Открывает модальное окно с погодой на выбранный день с iOS-анимацией
  * @param {Object} dayData - Данные о погоде на день
  */
 async function openDayWeatherModal(dayData) {
@@ -1360,14 +1385,14 @@ async function openDayWeatherModal(dayData) {
             visibility: avgVisibility * 1000
         });
         
-        // Показываем модальное окно
+     // Показываем модальное окно с iOS-анимацией
         modalElements.dayModal.classList.remove('hidden');
         document.body.classList.add('modal-open');
         
-        // Добавляем плавное появление
-        setTimeout(() => {
+        // Применяем анимацию в следующем кадре для плавного запуска
+        requestAnimationFrame(() => {
             modalElements.dayModal.classList.add('visible');
-        }, 10);
+        });
     } catch (error) {
         console.warn('Ошибка при открытии модального окна:', error.message);
         showError('Не удалось загрузить детали погоды для выбранного дня');
@@ -1375,7 +1400,7 @@ async function openDayWeatherModal(dayData) {
 }
 
 /**
- * Обновляет почасовой прогноз в модальном окне
+ * Обновляет почасовой прогноз в модальном окне с iOS-анимациями
  * @param {Array} hourlyData - Данные почасового прогноза
  */
 function updateModalHourlyForecast(hourlyData) {
@@ -1398,12 +1423,9 @@ function updateModalHourlyForecast(hourlyData) {
             const hourlyDiv = document.createElement('div');
             hourlyDiv.className = 'forecast-hour';
             
-            // Адаптируем анимации
-            if (isHighPerformanceDevice()) {
-                hourlyDiv.style.animationDelay = `${index * 0.1}s`;
-            } else {
-                hourlyDiv.style.animationDelay = `${Math.min(index, 4) * 0.1}s`;
-            }
+            // iOS-стиль анимации со смещенной задержкой для модального окна
+            hourlyDiv.style.setProperty('--index', index);
+            hourlyDiv.style.setProperty('--ios-offset', '0.1s'); // Добавляем общую задержку 
             
             const icon = item.weather && item.weather[0] && item.weather[0].icon 
                 ? weatherEmoji[item.weather[0].icon] 
@@ -1415,6 +1437,9 @@ function updateModalHourlyForecast(hourlyData) {
                 <div class="forecast-temp">${Math.round(item.main.temp)}°</div>
             `;
             
+            // Добавляем iOS-эффект нажатия
+            hourlyDiv.addEventListener('click', createRipple);
+            
             fragment.appendChild(hourlyDiv);
         });
         
@@ -1425,7 +1450,7 @@ function updateModalHourlyForecast(hourlyData) {
 }
 
 /**
- * Обновляет советы в модальном окне
+ * Обновляет советы в модальном окне с iOS-анимациями
  * @param {Object} weatherData - Данные о погоде
  */
 async function updateModalFarmerTips(weatherData) {
@@ -1445,15 +1470,15 @@ async function updateModalFarmerTips(weatherData) {
             const tipElement = document.createElement('div');
             tipElement.className = 'tip-item';
             
-            // Адаптируем анимации
-            tipElement.style.animationDelay = `${index * 0.1}s`;
+            // iOS-стиль анимации со смещенной задержкой
+            tipElement.style.setProperty('--tip-index', index);
             
             tipElement.innerHTML = `
                 <span class="tip-icon">🌱</span>
                 <span class="tip-text">${tip}</span>
             `;
             
-            // Добавляем обработчик для эффекта ripple
+            // Добавляем iOS-эффект нажатия
             tipElement.addEventListener('click', createRipple);
             
             fragment.appendChild(tipElement);
@@ -1466,32 +1491,42 @@ async function updateModalFarmerTips(weatherData) {
         // Показываем стандартные советы при ошибке
         if (modalElements.tipsContainer) {
             modalElements.tipsContainer.innerHTML = `
-                <div class="tip-item">
+                <div class="tip-item" style="--tip-index: 0;">
                     <span class="tip-icon">🌱</span>
                     <span class="tip-text">Следите за прогнозом погоды для планирования сельскохозяйственных работ</span>
                 </div>
-                <div class="tip-item">
+                <div class="tip-item" style="--tip-index: 1;">
                     <span class="tip-icon">🌱</span>
                     <span class="tip-text">Адаптируйте полив в соответствии с текущими погодными условиями</span>
                 </div>
             `;
+            
+            // Добавляем iOS-эффект к стандартным советам
+            modalElements.tipsContainer.querySelectorAll('.tip-item').forEach(item => {
+                item.addEventListener('click', createRipple);
+            });
         }
     }
 }
 
 /**
- * Закрывает модальное окно
+ * Закрывает модальное окно с iOS-анимацией
  */
 function closeDayWeatherModal() {
     try {
         if (!modalElements.dayModal) return;
         
+        // Сначала удаляем класс visible для запуска анимации закрытия
         modalElements.dayModal.classList.remove('visible');
         
         // Задержка для анимации закрытия
         setTimeout(() => {
             modalElements.dayModal.classList.add('hidden');
             document.body.classList.remove('modal-open');
+            
+            // Очищаем содержимое модального окна после закрытия для оптимизации памяти
+            if (modalElements.hourlyForecast) modalElements.hourlyForecast.innerHTML = '';
+            if (modalElements.tipsContainer) modalElements.tipsContainer.innerHTML = '';
         }, TIMEOUTS.ANIMATION);
     } catch (error) {
         console.warn('Ошибка закрытия модального окна:', error.message);
@@ -1507,7 +1542,7 @@ function closeDayWeatherModal() {
 // ===== ОСНОВНЫЕ ФУНКЦИИ ПРИЛОЖЕНИЯ =====
 
 /**
- * Загружает данные о погоде
+ * Загружает данные о погоде с iOS-анимациями
  * @param {string} city - Название города
  */
 async function loadWeatherData(city) {
@@ -1543,6 +1578,16 @@ async function loadWeatherData(city) {
             throw new Error('Получены неполные данные о погоде');
         }
         
+        // Подготавливаем результаты перед показом UI (iOS-стиль)
+        // Сначала скрываем результаты, если они уже видны
+        if (elements.weatherResult && !elements.weatherResult.classList.contains('hidden')) {
+            elements.weatherResult.style.opacity = '0';
+            elements.weatherResult.style.transform = 'translateY(20px)';
+            
+            // Небольшая задержка для анимации
+            await new Promise(resolve => setTimeout(resolve, 100));
+        }
+        
         // Обновляем UI
         updateCurrentWeather(data.weather);
         updateHourlyForecast(data.forecast);
@@ -1557,9 +1602,16 @@ async function loadWeatherData(city) {
             }
         }, 10);
         
-        // Показываем результаты
+        // Показываем результаты с iOS-анимацией
         if (elements.weatherResult) {
+            // Сначала делаем видимым
             elements.weatherResult.classList.remove('hidden');
+            
+            // Затем запускаем анимацию в следующем кадре
+            requestAnimationFrame(() => {
+                elements.weatherResult.style.opacity = '1';
+                elements.weatherResult.style.transform = 'translateY(0)';
+            });
         }
         
         // Сохраняем последний успешно загруженный город
@@ -1586,6 +1638,12 @@ async function loadWeatherData(city) {
                 
                 if (elements.weatherResult) {
                     elements.weatherResult.classList.remove('hidden');
+                    
+                    // iOS-анимация
+                    requestAnimationFrame(() => {
+                        elements.weatherResult.style.opacity = '1';
+                        elements.weatherResult.style.transform = 'translateY(0)';
+                    });
                 }
                 
                 showError(`Используются сохраненные данные. ${error.message}`);
@@ -1678,7 +1736,7 @@ async function loadFreshWeatherData() {
 }
 
 /**
- * Обработчик поиска города
+ * Обработчик поиска города с iOS-эффектами
  */
 function handleSearch() {
     try {
@@ -1716,11 +1774,23 @@ function handleSearch() {
             normalizedCity = CITY_NORMALIZATIONS[city.toLowerCase()];
         }
         
-        // Загружаем данные для нормализованного города
-        loadWeatherData(normalizedCity);
+        // iOS-эффект перед поиском
+        const searchButton = elements.searchButton;
+        if (searchButton) {
+            searchButton.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                searchButton.style.transform = '';
+            }, 150);
+        }
         
-        // Убираем фокус с поля ввода
-        elements.citySearch.blur();
+        // Немного задерживаем запрос для лучшего UX
+        setTimeout(() => {
+            // Загружаем данные для нормализованного города
+            loadWeatherData(normalizedCity);
+        
+            // Убираем фокус с поля ввода
+            elements.citySearch.blur();
+        }, 100);
     } catch (error) {
         console.warn('Ошибка обработки поиска:', error.message);
         showError('Произошла ошибка при поиске. Попробуйте еще раз.');
@@ -1753,6 +1823,12 @@ async function initApp() {
             
             if (elements.weatherResult) {
                 elements.weatherResult.classList.remove('hidden');
+                
+                // iOS-анимация
+                requestAnimationFrame(() => {
+                    elements.weatherResult.style.opacity = '1';
+                    elements.weatherResult.style.transform = 'translateY(0)';
+                });
             }
             
             // Асинхронно загружаем свежие данные
@@ -1787,6 +1863,8 @@ function setupEventListeners() {
         // Поиск города
         if (elements.searchButton) {
             elements.searchButton.addEventListener('click', handleSearch);
+            // Добавляем iOS-эффект нажатия
+            elements.searchButton.addEventListener('click', createRipple);
         }
         
         if (elements.citySearch) {
@@ -1800,6 +1878,19 @@ function setupEventListeners() {
         // Модальное окно
         if (modalElements.closeModal) {
             modalElements.closeModal.addEventListener('click', closeDayWeatherModal);
+            // Добавляем iOS-эффект нажатия
+            modalElements.closeModal.addEventListener('click', (event) => {
+                const target = event.currentTarget;
+                if (!target) return;
+                
+                target.style.transform = 'scale(0.94)';
+                target.style.transition = 'transform 0.15s cubic-bezier(0.4, 0, 1, 1)';
+                
+                setTimeout(() => {
+                    target.style.transform = '';
+                    target.style.transition = 'transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)';
+                }, 150);
+            });
         }
         
         if (modalElements.dayModal) {
@@ -1810,7 +1901,7 @@ function setupEventListeners() {
             });
         }
 
-        // Эффект ripple для элементов UI
+        // Эффект ripple для интерактивных элементов UI
         document.querySelectorAll('.search-button, .detail-item, .tip-item, .weekly-day').forEach(element => {
             if (element) {
                 element.addEventListener('click', createRipple);
@@ -1879,6 +1970,7 @@ function setupOptimizedAnimations() {
 
 /**
  * Отслеживает пропущенные кадры для определения проблем с производительностью
+ * и адаптирует анимации в реальном времени
  */
 function monitorFrameRate() {
     if (!window.requestAnimationFrame) return;
@@ -1991,11 +2083,16 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         }
         
-        // Инициализируем мобильные оптимизации
+        // Инициализируем мобильные оптимизации для iOS-подобной плавности
         initMobileOptimizations();
         
         // Устанавливаем обработчики событий
         setupEventListeners();
+        
+        // Добавляем iOS-стиль интерактивности для сенсорных устройств
+        if ('ontouchstart' in window) {
+            setupIOSTouchEffects();
+        }
         
         // Запускаем приложение с небольшой задержкой
         setTimeout(() => {
@@ -2015,3 +2112,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000);
     }
 });
+
+/**
+ * Настраивает эффекты нажатий в стиле iOS для сенсорных устройств
+ */
+function setupIOSTouchEffects() {
+    // Выбираем все интерактивные элементы
+    const touchElements = document.querySelectorAll('.search-button, .detail-item, .tip-item, .weekly-day, .forecast-hour, .close-modal');
+    
+    touchElements.forEach(el => {
+        // Обработка начала касания
+        el.addEventListener('touchstart', function(e) {
+            this.style.transform = `scale(${IOS_ANIMATIONS.SCALE.PRESS})`;
+            this.style.transition = `transform ${IOS_ANIMATIONS.DURATIONS.MICRO}ms ${IOS_ANIMATIONS.EASING.EASE_IN}`;
+        }, { passive: true });
+        
+        // Обработка окончания касания
+        el.addEventListener('touchend', function() {
+            this.style.transform = '';
+            this.style.transition = `transform ${IOS_ANIMATIONS.DURATIONS.STANDARD}ms ${IOS_ANIMATIONS.EASING.SPRING}`;
+        }, { passive: true });
+        
+        // Обработка отмены касания
+        el.addEventListener('touchcancel', function() {
+            this.style.transform = '';
+            this.style.transition = `transform ${IOS_ANIMATIONS.DURATIONS.STANDARD}ms ${IOS_ANIMATIONS.EASING.SPRING}`;
+        }, { passive: true });
+    });
+}
