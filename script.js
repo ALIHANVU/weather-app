@@ -301,6 +301,7 @@ function getCurrentSeason() {
  * Создает эффект ripple с оптимизацией для мобильных
  * @param {Event} event - Событие клика
  */
+// Найдите текущую функцию createRipple и замените её на эту:
 function createRipple(event) {
     try {
         const target = event.currentTarget;
@@ -317,26 +318,36 @@ function createRipple(event) {
         // Удаляем существующие эффекты ripple
         target.querySelectorAll('.ripple').forEach(ripple => ripple.remove());
         
+        // iOS-стиль: более локализованный и сдержанный эффект
         const ripple = document.createElement('span');
-        const diameter = Math.max(target.clientWidth, target.clientHeight);
-        const radius = diameter / 2;
-
         const rect = target.getBoundingClientRect();
-        ripple.style.width = ripple.style.height = `${diameter}px`;
-        ripple.style.left = `${event.clientX - rect.left - radius}px`;
-        ripple.style.top = `${event.clientY - rect.top - radius}px`;
+        const size = Math.max(rect.width, rect.height) * 0.5; // Меньший эффект для iOS
+        
+        ripple.style.width = ripple.style.height = `${size}px`;
+        const x = event.clientX - rect.left - (size / 2);
+        const y = event.clientY - rect.top - (size / 2);
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        
         ripple.className = 'ripple';
-
+        
+        // Добавляем эффект уменьшения (scale-down) для элемента
+        target.style.transform = 'scale(0.97)';
+        target.style.transition = 'transform 0.15s cubic-bezier(0.4, 0, 1, 1)';
+        
         target.appendChild(ripple);
         
-        // Удаляем ripple после анимации
+        // Удаляем ripple после анимации и возвращаем элемент к нормальному размеру
         setTimeout(() => {
+            target.style.transform = '';
+            target.style.transition = 'transform 0.2s cubic-bezier(0.23, 1, 0.32, 1)';
+            
             if (ripple && ripple.parentNode === target) {
                 target.removeChild(ripple);
             }
-        }, 600);
+        }, 400);
     } catch (error) {
-        console.warn('Ошибка создания ripple эффекта:', error);
+        console.warn('Ошибка создания ripple эффекта:', error.message);
     }
 }
 
