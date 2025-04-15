@@ -1,16 +1,3 @@
-/**
- * Погодное приложение - оптимизированная версия
- * 
- * Основные улучшения:
- * 1. Использование строгого режима для предотвращения скрытых ошибок
- * 2. Константы вынесены в глобальную область для единой точки контроля
- * 3. Улучшенная обработка ошибок и таймауты на всех уровнях
- * 4. Проверка DOM элементов перед использованием
- * 5. Защита от зависания индикатора загрузки
- * 6. Оптимизация производительности и использования ресурсов
- * 7. Асинхронная загрузка с отображением данных из кеша
- */
-
 'use strict';
 
 // ===== ГЛОБАЛЬНЫЕ КОНСТАНТЫ =====
@@ -30,6 +17,35 @@ const TIMEOUTS = {
     LOADING_INDICATOR: 10000,   // Максимальное время отображения индикатора загрузки
     EMERGENCY: 15000,           // Аварийный таймаут для принудительного завершения загрузки
     ANIMATION: 300              // Длительность анимаций
+};
+
+// Известные города с координатами
+const KNOWN_CITIES = {
+    'Москва': { lat: 55.7558, lon: 37.6173 },
+    'Санкт-Петербург': { lat: 59.9343, lon: 30.3351 },
+    'Грозный': { lat: 43.3168, lon: 45.6981 },
+    'Казань': { lat: 55.7887, lon: 49.1221 },
+    'Нижний Новгород': { lat: 56.2965, lon: 43.9361 }
+};
+
+// Переводы городов для API
+const CITY_TRANSLATIONS = {
+    'Москва': 'Moscow',
+    'Санкт-Петербург': 'Saint Petersburg',
+    'Грозный': 'Grozny',
+    'Казань': 'Kazan',
+    'Нижний Новгород': 'Nizhny Novgorod'
+};
+
+// Нормализация названий для поиска
+const CITY_NORMALIZATIONS = {
+    'москва': 'Москва',
+    'питер': 'Санкт-Петербург',
+    'спб': 'Санкт-Петербург',
+    'санкт петербург': 'Санкт-Петербург',
+    'санкт-петербург': 'Санкт-Петербург',
+    'грозный': 'Грозный',
+    'казань': 'Казань'
 };
 
 // ===== ГЛОБАЛЬНАЯ ЗАЩИТА ОТ ЗАВИСАНИЯ =====
@@ -166,11 +182,6 @@ function getCachedWeatherData() {
             return null;
         }
         
-        // Не используем Москву из кеша
-        if (parsedData.city === 'Москва') {
-            return null;
-        }
-        
         return parsedData;
     } catch (error) {
         console.warn('Ошибка при получении данных из кеша:', error);
@@ -185,8 +196,7 @@ function getCachedWeatherData() {
 function getLastCity() {
     try {
         const lastCity = localStorage.getItem(LAST_CITY_KEY);
-        if (!lastCity || lastCity === 'Москва') return null;
-        return lastCity;
+        return lastCity || null;
     } catch (error) {
         console.warn('Ошибка при получении последнего города:', error);
         return null;
@@ -198,13 +208,6 @@ function getLastCity() {
  */
 function cleanupStorage() {
     try {
-        // Удаляем данные о Москве
-        const lastCity = localStorage.getItem(LAST_CITY_KEY);
-        if (lastCity === 'Москва') {
-            localStorage.removeItem(LAST_CITY_KEY);
-            localStorage.removeItem(CACHE_KEY);
-        }
-        
         // Проверяем валидность кеша
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
@@ -223,6 +226,26 @@ function cleanupStorage() {
 }
 
 // ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
+
+/**
+ * Определяет, поддерживает ли устройство сложные анимации
+ * @returns {boolean} true, если устройство мощное
+ */
+function isHighPerformanceDevice() {
+    // Определяем производительное устройство по:
+    // 1. Не мобильное устройство
+    // 2. Или достаточно мощный процессор (обычно на десктопе)
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // Если не мобильное - считаем высокопроизводительным
+    if (!isMobile) return true;
+    
+    // Используем базовую эвристику для определения производительности
+    // Более современные браузеры будут иметь эти возможности
+    return 'serviceWorker' in navigator && 
+           'requestIdleCallback' in window &&
+           'IntersectionObserver' in window;
+}
 
 /**
  * Форматирует время из timestamp
@@ -275,13 +298,21 @@ function getCurrentSeason() {
 }
 
 /**
- * Создает эффект ripple при клике
+ * Создает эффект ripple с оптимизацией для мобильных
  * @param {Event} event - Событие клика
  */
 function createRipple(event) {
     try {
         const target = event.currentTarget;
         if (!target) return;
+        
+        // На слабых устройствах используем более простой эффект
+        if (!isHighPerformanceDevice()) {
+            // Упрощенный эффект для слабых устройств
+            target.classList.add('simple-active');
+            setTimeout(() => target.classList.remove('simple-active'), 300);
+            return;
+        }
         
         // Удаляем существующие эффекты ripple
         target.querySelectorAll('.ripple').forEach(ripple => ripple.remove());
@@ -546,12 +577,7 @@ function getUserLocation() {
                         
                         const data = await response.json();
                         if (data.length > 0) {
-                            // Игнорируем Москву если она вернулась
-                            if (data[0].name === 'Москва') {
-                                resolve(DEFAULT_CITY);
-                            } else {
-                                resolve(data[0].name);
-                            }
+                            resolve(data[0].name);
                         } else {
                             resolve(DEFAULT_CITY);
                         }
@@ -622,20 +648,22 @@ async function fetchWeatherData(city) {
             return cachedData.data;
         }
 
-        // Обработка городов на кириллице
+        // Для API запроса можем преобразовать кириллицу в латиницу
         let cityForApi = city;
-        if (city === DEFAULT_CITY) {
-            cityForApi = 'Grozny';
-        } else if (city === 'Москва') {
-            cityForApi = 'Moscow';
+        
+        // Используем транслитерацию для известных городов
+        if (CITY_TRANSLATIONS[city]) {
+            cityForApi = CITY_TRANSLATIONS[city];
         }
         
-        // Отправляем запрос геокодирования
+        const geoUrl = `${BASE_URL}/geo/1.0/direct?q=${encodeURIComponent(cityForApi)}&limit=1&appid=${API_KEY}`;
+        
+        // Используем AbortController для контроля таймаута
         const controller = new AbortController();
         const signal = controller.signal;
         const timeoutId = setTimeout(() => controller.abort(), TIMEOUTS.API_REQUEST);
         
-        const geoUrl = `${BASE_URL}/geo/1.0/direct?q=${encodeURIComponent(cityForApi)}&limit=1&appid=${API_KEY}`;
+        console.log('Отправляем запрос геокодирования:', geoUrl);
         const geoResponse = await fetch(geoUrl, { signal });
         
         if (!geoResponse.ok) {
@@ -644,14 +672,14 @@ async function fetchWeatherData(city) {
         }
         
         const geoData = await geoResponse.json();
+        console.log('Получены данные геокодирования:', geoData);
 
         if (!geoData.length) {
             clearTimeout(timeoutId);
-            // Используем фиксированные координаты для известных городов
-            if (city === DEFAULT_CITY || cityForApi === 'Grozny') {
-                return fetchWeatherByCoords(43.3168, 45.6981, city);
-            } else if (city === 'Москва' || cityForApi === 'Moscow') {
-                return fetchWeatherByCoords(55.7558, 37.6173, DEFAULT_CITY);
+            // Используем фиксированные координаты для известных городов если API не нашел их
+            if (KNOWN_CITIES[city]) {
+                const { lat, lon } = KNOWN_CITIES[city];
+                return fetchWeatherByCoords(lat, lon, city);
             }
             throw new Error('Город не найден');
         }
@@ -665,10 +693,9 @@ async function fetchWeatherData(city) {
         
         // Если запрос был отменен, используем координаты для известных городов
         if (error.name === 'AbortError') {
-            if (city === DEFAULT_CITY) {
-                return fetchWeatherByCoords(43.3168, 45.6981, city);
-            } else if (city === 'Москва') {
-                return fetchWeatherByCoords(55.7558, 37.6173, DEFAULT_CITY);
+            if (KNOWN_CITIES[city]) {
+                const { lat, lon } = KNOWN_CITIES[city];
+                return fetchWeatherByCoords(lat, lon, city);
             }
         }
         throw error;
@@ -692,7 +719,7 @@ async function fetchWeatherByCoords(lat, lon, cityName) {
         const weatherUrl = `${BASE_URL}/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}`;
         const forecastUrl = `${BASE_URL}/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}`;
         
-        // Отправляем параллельные запросы
+       // Отправляем параллельные запросы
         const [weatherResponse, forecastResponse] = await Promise.all([
             fetch(weatherUrl, { signal }),
             fetch(forecastUrl, { signal })
@@ -711,13 +738,9 @@ async function fetchWeatherByCoords(lat, lon, cityName) {
         const weather = await weatherResponse.json();
         const forecast = await forecastResponse.json();
         
-        // Переопределяем название города при необходимости
-        if (cityName === DEFAULT_CITY && weather.name !== DEFAULT_CITY) {
-            weather.name = DEFAULT_CITY;
-        } else if (cityName === 'Москва') {
-            // Если запрашиваем Москву, всё равно заменяем на город по умолчанию
-            cityName = DEFAULT_CITY;
-            weather.name = DEFAULT_CITY;
+        // Для известных городов гарантируем правильное отображение названия
+        if (cityName && KNOWN_CITIES[cityName]) {
+            weather.name = cityName;
         }
         
         const result = { weather, forecast };
@@ -949,11 +972,25 @@ function updateHourlyForecast(forecast) {
             return;
         }
         
-        // Берем только первые 24 часа
-        forecast.list.slice(0, 24).forEach((item, index) => {
+        // Создаем DocumentFragment для оптимизации DOM операций
+        const fragment = document.createDocumentFragment();
+        
+        // Ограничиваем количество элементов для производительности
+        const isHighPerf = isHighPerformanceDevice();
+        const limit = isHighPerf ? 24 : 12;
+        
+        // Берем только первые часы
+        forecast.list.slice(0, limit).forEach((item, index) => {
             const hourlyDiv = document.createElement('div');
             hourlyDiv.className = 'forecast-hour';
-            hourlyDiv.style.animationDelay = `${index * 0.1}s`;
+            
+            // Оптимизируем анимации на мобильных
+            if (isHighPerf) {
+                hourlyDiv.style.animationDelay = `${index * 0.1}s`;
+            } else {
+                // Группируем анимации для мобильных (по 3 элемента с одинаковой задержкой)
+                hourlyDiv.style.animationDelay = `${Math.floor(index / 3) * 0.1}s`;
+            }
             
             // Определяем иконку погоды
             const icon = item.weather && item.weather[0] && item.weather[0].icon 
@@ -966,8 +1003,11 @@ function updateHourlyForecast(forecast) {
                 <div class="forecast-temp">${Math.round(item.main.temp)}°</div>
             `;
             
-            elements.forecastDays.appendChild(hourlyDiv);
+            fragment.appendChild(hourlyDiv);
         });
+        
+        // Вставляем все элементы за одну DOM операцию
+        elements.forecastDays.appendChild(fragment);
     } catch (error) {
         console.warn('Ошибка обновления почасового прогноза:', error.message);
     }
@@ -990,6 +1030,9 @@ function updateWeeklyForecast(forecast) {
         // Группируем прогноз по дням
         const dailyForecasts = groupForecastByDays(forecast);
         const uniqueDays = Object.values(dailyForecasts).slice(0, 7);
+        
+        // Создаем DocumentFragment для оптимизации DOM операций
+        const fragment = document.createDocumentFragment();
         
         uniqueDays.forEach((dayData, index) => {
             try {
@@ -1021,7 +1064,17 @@ function updateWeeklyForecast(forecast) {
                 // Создаем элемент для дня недели
                 const dayElement = document.createElement('div');
                 dayElement.className = 'weekly-day';
-                dayElement.style.animationDelay = `${index * 0.1}s`;
+                
+                // Адаптируем анимации для производительности
+                if (isHighPerformanceDevice()) {
+                    dayElement.style.animationDelay = `${index * 0.1}s`;
+                } else if (index < 4) {
+                    // Для слабых устройств анимируем только первые 4 дня
+                    dayElement.style.animationDelay = `${index * 0.1}s`;
+                } else {
+                    dayElement.style.animation = 'none';
+                }
+                
                 dayElement.setAttribute('data-date', dayData.date);
                 
                 dayElement.innerHTML = `
@@ -1034,11 +1087,14 @@ function updateWeeklyForecast(forecast) {
                 dayElement.addEventListener('click', createRipple);
                 dayElement.addEventListener('click', () => openDayWeatherModal(dayData));
                 
-                elements.weeklyForecastContainer.appendChild(dayElement);
+                fragment.appendChild(dayElement);
             } catch (dayError) {
                 console.warn('Ошибка обработки дня прогноза:', dayError.message);
             }
         });
+        
+        // Вставляем все элементы за одну DOM операцию
+        elements.weeklyForecastContainer.appendChild(fragment);
     } catch (error) {
         console.warn('Ошибка обновления недельного прогноза:', error.message);
     }
@@ -1055,10 +1111,22 @@ async function updateFarmerTips(weatherData) {
         
         const tips = await generateFarmerTips(weatherData);
         
+        // Создаем DocumentFragment для оптимизации DOM операций
+        const fragment = document.createDocumentFragment();
+        
         tips.forEach((tip, index) => {
             const tipElement = document.createElement('div');
             tipElement.className = 'tip-item';
-            tipElement.style.animationDelay = `${index * 0.1}s`;
+            
+            // Адаптируем анимации для производительности
+            if (isHighPerformanceDevice()) {
+                tipElement.style.animationDelay = `${index * 0.1}s`;
+            } else if (index < 3) {
+                // Для слабых устройств анимируем только первые 3 совета
+                tipElement.style.animationDelay = `${index * 0.1}s`;
+            } else {
+                tipElement.style.animation = 'none';
+            }
             
             tipElement.innerHTML = `
                 <span class="tip-icon">🌱</span>
@@ -1068,8 +1136,11 @@ async function updateFarmerTips(weatherData) {
             // Добавляем обработчик для эффекта ripple
             tipElement.addEventListener('click', createRipple);
             
-            elements.tipsContainer.appendChild(tipElement);
+            fragment.appendChild(tipElement);
         });
+        
+        // Вставляем все элементы за одну DOM операцию
+        elements.tipsContainer.appendChild(fragment);
     } catch (error) {
         console.warn('Ошибка обновления советов для фермеров:', error.message);
         
@@ -1125,6 +1196,9 @@ function showFallbackWeather(city) {
             const days = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
             const today = new Date();
             
+            // Создаем DocumentFragment для оптимизации DOM операций
+            const fragment = document.createDocumentFragment();
+            
             // Создаем простую карточку для каждого дня недели
             for (let i = 0; i < 7; i++) {
                 const date = new Date(today);
@@ -1136,7 +1210,14 @@ function showFallbackWeather(city) {
                 
                 const dayElement = document.createElement('div');
                 dayElement.className = 'weekly-day';
-                dayElement.style.animationDelay = `${i * 0.1}s`;
+                
+                if (isHighPerformanceDevice()) {
+                    dayElement.style.animationDelay = `${i * 0.1}s`;
+                } else if (i < 4) {
+                    dayElement.style.animationDelay = `${i * 0.1}s`;
+                } else {
+                    dayElement.style.animation = 'none';
+                }
                 
                 dayElement.innerHTML = `
                     <div class="weekly-day-name">${dayName}</div>
@@ -1144,8 +1225,10 @@ function showFallbackWeather(city) {
                     <div class="weekly-day-temp">${temp}°</div>
                 `;
                 
-                elements.weeklyForecastContainer.appendChild(dayElement);
+                fragment.appendChild(dayElement);
             }
+            
+            elements.weeklyForecastContainer.appendChild(fragment);
         }
         
         // Показываем базовые советы
@@ -1294,10 +1377,22 @@ function updateModalHourlyForecast(hourlyData) {
             return;
         }
         
-        hourlyData.forEach((item, index) => {
+        // Создаем DocumentFragment для оптимизации DOM операций
+        const fragment = document.createDocumentFragment();
+        
+        // Ограничиваем количество элементов для производительности
+        const limit = isHighPerformanceDevice() ? hourlyData.length : Math.min(hourlyData.length, 8);
+        
+        hourlyData.slice(0, limit).forEach((item, index) => {
             const hourlyDiv = document.createElement('div');
             hourlyDiv.className = 'forecast-hour';
-            hourlyDiv.style.animationDelay = `${index * 0.1}s`;
+            
+            // Адаптируем анимации
+            if (isHighPerformanceDevice()) {
+                hourlyDiv.style.animationDelay = `${index * 0.1}s`;
+            } else {
+                hourlyDiv.style.animationDelay = `${Math.min(index, 4) * 0.1}s`;
+            }
             
             const icon = item.weather && item.weather[0] && item.weather[0].icon 
                 ? weatherEmoji[item.weather[0].icon] 
@@ -1309,8 +1404,10 @@ function updateModalHourlyForecast(hourlyData) {
                 <div class="forecast-temp">${Math.round(item.main.temp)}°</div>
             `;
             
-            modalElements.hourlyForecast.appendChild(hourlyDiv);
+            fragment.appendChild(hourlyDiv);
         });
+        
+        modalElements.hourlyForecast.appendChild(fragment);
     } catch (error) {
         console.warn('Ошибка обновления почасового прогноза в модальном окне:', error.message);
     }
@@ -1327,9 +1424,17 @@ async function updateModalFarmerTips(weatherData) {
         
         const tips = await generateFarmerTips(weatherData);
         
-        tips.forEach((tip, index) => {
+        // Создаем DocumentFragment для оптимизации DOM операций
+        const fragment = document.createDocumentFragment();
+        
+        // Ограничиваем количество советов для слабых устройств
+        const limit = isHighPerformanceDevice() ? tips.length : Math.min(tips.length, 3);
+        
+        tips.slice(0, limit).forEach((tip, index) => {
             const tipElement = document.createElement('div');
             tipElement.className = 'tip-item';
+            
+            // Адаптируем анимации
             tipElement.style.animationDelay = `${index * 0.1}s`;
             
             tipElement.innerHTML = `
@@ -1340,8 +1445,10 @@ async function updateModalFarmerTips(weatherData) {
             // Добавляем обработчик для эффекта ripple
             tipElement.addEventListener('click', createRipple);
             
-            modalElements.tipsContainer.appendChild(tipElement);
+            fragment.appendChild(tipElement);
         });
+        
+        modalElements.tipsContainer.appendChild(fragment);
     } catch (error) {
         console.warn('Ошибка обновления советов в модальном окне:', error.message);
         
@@ -1393,9 +1500,9 @@ function closeDayWeatherModal() {
  * @param {string} city - Название города
  */
 async function loadWeatherData(city) {
-    // Если город Москва, заменяем на город по умолчанию
-    if (city === 'Москва') {
-        city = DEFAULT_CITY;
+    // Нормализуем название города
+    if (CITY_NORMALIZATIONS[city.toLowerCase()]) {
+        city = CITY_NORMALIZATIONS[city.toLowerCase()];
     }
     
     console.log(`Загрузка данных о погоде для ${city}`);
@@ -1425,7 +1532,7 @@ async function loadWeatherData(city) {
             throw new Error('Получены неполные данные о погоде');
         }
         
-       // Обновляем UI
+        // Обновляем UI
         updateCurrentWeather(data.weather);
         updateHourlyForecast(data.forecast);
         updateWeeklyForecast(data.forecast);
@@ -1590,7 +1697,16 @@ function handleSearch() {
             return;
         }
         
-        loadWeatherData(city);
+        // Нормализация названий городов
+        let normalizedCity = city;
+        
+        // Проверяем на известные сокращения и варианты написания
+        if (CITY_NORMALIZATIONS[city.toLowerCase()]) {
+            normalizedCity = CITY_NORMALIZATIONS[city.toLowerCase()];
+        }
+        
+        // Загружаем данные для нормализованного города
+        loadWeatherData(normalizedCity);
         
         // Убираем фокус с поля ввода
         elements.citySearch.blur();
@@ -1704,10 +1820,7 @@ function setupEventListeners() {
                     if (elements.cityName && elements.cityName.textContent && 
                         elements.cityName.textContent !== '-') {
                         cityToUpdate = elements.cityName.textContent;
-                        if (cityToUpdate === 'Москва') {
-                            cityToUpdate = DEFAULT_CITY;
-                        }
-                    } else if (cached.city && cached.city !== 'Москва') {
+                    } else if (cached.city) {
                         cityToUpdate = cached.city;
                     }
                     
@@ -1717,6 +1830,135 @@ function setupEventListeners() {
         });
     } catch (error) {
         console.warn('Ошибка установки обработчиков событий:', error.message);
+    }
+}
+
+/**
+ * Глобальная настройка анимаций в зависимости от производительности устройства
+ */
+function setupOptimizedAnimations() {
+    const highPerformance = isHighPerformanceDevice();
+    
+    // Добавляем класс к body для CSS-оптимизаций
+    document.body.classList.toggle('high-performance-device', highPerformance);
+    document.body.classList.toggle('low-performance-device', !highPerformance);
+    
+    // Для слабых устройств уменьшаем количество одновременных анимаций
+    if (!highPerformance) {
+        // Находим все элементы с анимациями и ограничиваем их
+        document.querySelectorAll('.forecast-hour, .weekly-day, .tip-item').forEach((el, index) => {
+            // Для мобильных ограничиваем количество анимаций (показываем только первые 8)
+            if (index > 8) {
+                el.style.animationDelay = '0s';
+                el.style.animation = 'none';
+            } else {
+                // Устанавливаем фиксированные задержки для упрощения
+                el.style.animationDelay = `${(index % 4) * 0.1}s`;
+            }
+        });
+        
+        // Отключаем сложные эффекты
+        document.querySelectorAll('.weather-main, .weather-card').forEach(el => {
+            el.style.backdropFilter = 'none';
+            el.style.webkitBackdropFilter = 'none';
+            el.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.1)';
+        });
+    }
+}
+
+/**
+ * Отслеживает пропущенные кадры для определения проблем с производительностью
+ */
+function monitorFrameRate() {
+    if (!window.requestAnimationFrame) return;
+    
+    let lastFrameTime = performance.now();
+    let droppedFrames = 0;
+    let frameCount = 0;
+    
+    function checkFrame() {
+        const now = performance.now();
+        const delta = now - lastFrameTime;
+        
+        // Если прошло больше 33 мс (ниже 30 fps), считаем кадр пропущенным
+        if (delta > 33) {
+            droppedFrames++;
+        }
+        
+        frameCount++;
+        lastFrameTime = now;
+        
+        // Раз в 100 кадров проверяем производительность
+        if (frameCount >= 100) {
+            const dropRate = droppedFrames / frameCount;
+            
+            // Если пропущено больше 10% кадров, считаем устройство низкопроизводительным
+            if (dropRate > 0.1 && document.body.classList.contains('high-performance-device')) {
+                console.warn('Обнаружена низкая производительность, оптимизируем анимации');
+                document.body.classList.remove('high-performance-device');
+                document.body.classList.add('low-performance-device');
+                
+                // Упрощаем анимации
+                document.querySelectorAll('.forecast-hour, .weekly-day, .tip-item').forEach(el => {
+                    el.style.willChange = 'auto';
+                    el.style.animation = 'fadeIn 0.2s forwards';
+                });
+            }
+            
+            // Сбрасываем счетчики
+            droppedFrames = 0;
+            frameCount = 0;
+        }
+        
+        // Продолжаем мониторинг
+        requestAnimationFrame(checkFrame);
+    }
+    
+    // Запускаем мониторинг
+    requestAnimationFrame(checkFrame);
+}
+
+/**
+ * Инициализирует все мобильные оптимизации
+ */
+function initMobileOptimizations() {
+    // Определяем производительность устройства и настраиваем анимации
+    setupOptimizedAnimations();
+    
+    // Запускаем мониторинг производительности
+    monitorFrameRate();
+    
+    // Добавляем CSS-классы для оптимизации рендеринга
+    document.querySelectorAll('.weather-main, .weather-card').forEach(el => {
+        el.classList.add('hardware-accelerated');
+    });
+    
+    // Оптимизируем обработку событий для слабых устройств
+    if (!isHighPerformanceDevice()) {
+        // Делегирование событий вместо множества обработчиков
+        document.addEventListener('click', (event) => {
+            // Ripple эффект
+            const rippleTarget = event.target.closest('.search-button, .detail-item, .tip-item, .weekly-day');
+            if (rippleTarget) {
+                createRipple({ currentTarget: rippleTarget });
+            }
+            
+            // Модальное окно
+            if (event.target === modalElements.dayModal) {
+                closeDayWeatherModal();
+            }
+        });
+        
+        // Throttle для обработки скролла
+        let isScrolling = false;
+        window.addEventListener('scroll', () => {
+            if (!isScrolling) {
+                isScrolling = true;
+                requestAnimationFrame(() => {
+                    isScrolling = false;
+                });
+            }
+        }, { passive: true });
     }
 }
 
@@ -1737,6 +1979,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
             };
         }
+        
+        // Инициализируем мобильные оптимизации
+        initMobileOptimizations();
         
         // Устанавливаем обработчики событий
         setupEventListeners();
