@@ -1283,7 +1283,7 @@ function showFallbackWeather(city) {
  * Открывает модальное окно с погодой на выбранный день с iOS-анимацией
  * @param {Object} dayData - Данные о погоде на день
  */
-async function openDayWeatherModal(dayData) {
+function openDayWeatherModal(dayData) {
     try {
         if (!modalElements.dayModal || !dayData) return;
         
@@ -1352,11 +1352,11 @@ async function openDayWeatherModal(dayData) {
         if (modalElements.visibility) modalElements.visibility.textContent = `${avgVisibility} км`;
         if (modalElements.feelsLike) modalElements.feelsLike.textContent = `${avgFeelsLike}°`;
         
-       // Обновляем почасовой прогноз
+        // Обновляем почасовой прогноз
         updateModalHourlyForecast(dayData.hourlyData);
         
         // Генерируем советы для выбранного дня
-        await updateModalFarmerTips({
+        updateModalFarmerTips({
             main: { 
                 temp: avgTemp, 
                 humidity: avgHumidity, 
@@ -1372,13 +1372,15 @@ async function openDayWeatherModal(dayData) {
             visibility: avgVisibility * 1000
         });
         
-        // Показываем модальное окно с iOS-анимацией
+        // Сначала покажем модальное окно (сделаем его видимым)
         modalElements.dayModal.classList.remove('hidden');
         document.body.classList.add('modal-open');
         
-        // Применяем анимацию в следующем кадре для плавного запуска
+        // Затем в следующем кадре добавим класс visible для запуска анимации
         requestAnimationFrame(() => {
-            modalElements.dayModal.classList.add('visible');
+            requestAnimationFrame(() => {
+                modalElements.dayModal.classList.add('visible');
+            });
         });
     } catch (error) {
         console.warn('Ошибка при открытии модального окна:', error.message);
@@ -1403,16 +1405,10 @@ function updateModalHourlyForecast(hourlyData) {
         // Создаем DocumentFragment для оптимизации DOM операций
         const fragment = document.createDocumentFragment();
         
-        // Ограничиваем количество элементов для производительности
-        const limit = isHighPerformanceDevice() ? hourlyData.length : Math.min(hourlyData.length, 8);
-        
-        hourlyData.slice(0, limit).forEach((item, index) => {
+        // Показываем все доступные часы
+        hourlyData.forEach((item, index) => {
             const hourlyDiv = document.createElement('div');
             hourlyDiv.className = 'forecast-hour';
-            
-            // iOS-стиль анимации со смещенной задержкой для модального окна
-            hourlyDiv.style.setProperty('--index', index);
-            hourlyDiv.style.setProperty('--ios-offset', '0.1s'); // Добавляем общую задержку 
             
             const icon = item.weather && item.weather[0] && item.weather[0].icon 
                 ? weatherEmoji[item.weather[0].icon] 
@@ -1424,8 +1420,10 @@ function updateModalHourlyForecast(hourlyData) {
                 <div class="forecast-temp">${Math.round(item.main.temp)}°</div>
             `;
             
-            // Добавляем iOS-эффект нажатия
-            hourlyDiv.addEventListener('click', createRipple);
+            // Создаем эффект появления элементов с задержкой
+            hourlyDiv.style.animation = `fadeIn 0.3s ease forwards`;
+            hourlyDiv.style.animationDelay = `${index * 0.03}s`;
+            hourlyDiv.style.opacity = '0';
             
             fragment.appendChild(hourlyDiv);
         });
@@ -1450,23 +1448,19 @@ async function updateModalFarmerTips(weatherData) {
         // Создаем DocumentFragment для оптимизации DOM операций
         const fragment = document.createDocumentFragment();
         
-        // Ограничиваем количество советов для слабых устройств
-        const limit = isHighPerformanceDevice() ? tips.length : Math.min(tips.length, 3);
-        
-        tips.slice(0, limit).forEach((tip, index) => {
+        tips.forEach((tip, index) => {
             const tipElement = document.createElement('div');
             tipElement.className = 'tip-item';
-            
-            // iOS-стиль анимации со смещенной задержкой
-            tipElement.style.setProperty('--tip-index', index);
             
             tipElement.innerHTML = `
                 <span class="tip-icon">🌱</span>
                 <span class="tip-text">${tip}</span>
             `;
             
-            // Добавляем iOS-эффект нажатия
-            tipElement.addEventListener('click', createRipple);
+            // Создаем эффект появления с задержкой
+            tipElement.style.animation = `fadeIn 0.3s ease forwards`;
+            tipElement.style.animationDelay = `${index * 0.05}s`;
+            tipElement.style.opacity = '0';
             
             fragment.appendChild(tipElement);
         });
@@ -1478,20 +1472,15 @@ async function updateModalFarmerTips(weatherData) {
         // Показываем стандартные советы при ошибке
         if (modalElements.tipsContainer) {
             modalElements.tipsContainer.innerHTML = `
-                <div class="tip-item" style="--tip-index: 0;">
+                <div class="tip-item">
                     <span class="tip-icon">🌱</span>
                     <span class="tip-text">Следите за прогнозом погоды для планирования сельскохозяйственных работ</span>
                 </div>
-                <div class="tip-item" style="--tip-index: 1;">
+                <div class="tip-item">
                     <span class="tip-icon">🌱</span>
                     <span class="tip-text">Адаптируйте полив в соответствии с текущими погодными условиями</span>
                 </div>
             `;
-            
-            // Добавляем iOS-эффект к стандартным советам
-            modalElements.tipsContainer.querySelectorAll('.tip-item').forEach(item => {
-                item.addEventListener('click', createRipple);
-            });
         }
     }
 }
@@ -1506,24 +1495,40 @@ function closeDayWeatherModal() {
         // Сначала удаляем класс visible для запуска анимации закрытия
         modalElements.dayModal.classList.remove('visible');
         
-        // Задержка для анимации закрытия
+        // Задержка для анимации закрытия, затем скрываем модальное окно полностью
         setTimeout(() => {
             modalElements.dayModal.classList.add('hidden');
             document.body.classList.remove('modal-open');
             
             // Очищаем содержимое модального окна после закрытия для оптимизации памяти
-            if (modalElements.hourlyForecast) modalElements.hourlyForecast.innerHTML = '';
-            if (modalElements.tipsContainer) modalElements.tipsContainer.innerHTML = '';
-        }, TIMEOUTS.ANIMATION);
+            setTimeout(() => {
+                if (modalElements.hourlyForecast) modalElements.hourlyForecast.innerHTML = '';
+                if (modalElements.tipsContainer) modalElements.tipsContainer.innerHTML = '';
+            }, 100);
+        }, 300); // Время должно соответствовать продолжительности CSS-анимации
     } catch (error) {
         console.warn('Ошибка закрытия модального окна:', error.message);
         
         // В случае ошибки принудительно скрываем модальное окно
         if (modalElements.dayModal) {
             modalElements.dayModal.classList.add('hidden');
+            modalElements.dayModal.classList.remove('visible');
         }
         document.body.classList.remove('modal-open');
     }
+}
+
+// Добавляем CSS-анимацию для элементов модального окна, если её нет
+if (!document.getElementById('modalAnimationStyles')) {
+    const styleEl = document.createElement('style');
+    styleEl.id = 'modalAnimationStyles';
+    styleEl.textContent = `
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    `;
+    document.head.appendChild(styleEl);
 }
 
 // ===== ОСНОВНЫЕ ФУНКЦИИ ПРИЛОЖЕНИЯ =====
