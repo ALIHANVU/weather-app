@@ -564,8 +564,6 @@ body {
     height: 100%;
     z-index: 9999;
     background-color: rgba(0, 0, 0, 0);
-    backdrop-filter: blur(0);
-    -webkit-backdrop-filter: blur(0);
     opacity: 0;
     visibility: hidden;
     display: flex;
@@ -574,11 +572,6 @@ body {
     padding: var(--ios-spacing-md);
     box-sizing: border-box;
     pointer-events: none;
-    transition: background-color 0.3s ease,
-                backdrop-filter 0.3s ease,
-                -webkit-backdrop-filter 0.3s ease,
-                opacity 0.3s ease,
-                visibility 0.3s ease;
 }
 
 .day-modal.visible {
@@ -588,6 +581,11 @@ body {
     background-color: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(var(--ios-blur-medium));
     -webkit-backdrop-filter: blur(var(--ios-blur-medium));
+    transition: background-color 0.3s ease,
+                backdrop-filter 0.3s ease,
+                -webkit-backdrop-filter 0.3s ease,
+                opacity 0.3s ease,
+                visibility 0s linear;
 }
 
 .day-modal-content {
@@ -712,7 +710,7 @@ body.modal-open {
     }
 }
 
-/* Адаптация для мобильных устройств */
+/* Адаптация для мобильных устройств - сохраняем анимации */
 @media (max-width: 375px) {
     .weather-main {
         padding: var(--ios-spacing-md);
@@ -818,23 +816,21 @@ body.modal-open {
     }
 }
 
-/* Анимации для зависающих карточек */
-@media (hover: hover) {
-    .forecast-hour:hover {
-        background-color: var(--ios-fill-quaternary);
-        transform: translateY(-2px);
-    }
-    
-    .detail-item:hover, .tip-item:hover, .weekly-day:hover {
-        background-color: var(--ios-fill-quaternary);
-        transform: translateY(-2px);
-    }
-    
-    .search-button:hover {
-        background-color: #0069d9;
-    }
-    
-    .close-modal:hover {
-        background-color: var(--ios-fill-secondary);
-    }
+/* Анимации для всех устройств */
+.forecast-hour:hover {
+    background-color: var(--ios-fill-quaternary);
+    transform: translateY(-2px);
+}
+
+.detail-item:hover, .tip-item:hover, .weekly-day:hover {
+    background-color: var(--ios-fill-quaternary);
+    transform: translateY(-2px);
+}
+
+.search-button:hover {
+    background-color: #0069d9;
+}
+
+.close-modal:hover {
+    background-color: var(--ios-fill-secondary);
 }
