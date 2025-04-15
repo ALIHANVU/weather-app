@@ -695,136 +695,77 @@ async function fetchWeatherData(city) {
     try {
         console.log('Запрашиваем погоду для города:', city);
         
-        // Проверка кеша перед запросом
-        const cachedData = getCachedWeatherData();
-        if (cachedData && cachedData.city === city) {
-            console.log('Используем кешированные данные для', city);
-            return cachedData.data;
-        }
-
-        // Всегда используем OpenWeatherMap Geo API для поиска координат города
-        // Создаем безопасный URL с корректной кодировкой
-        const geoUrl = `${BASE_URL}/geo/1.0/direct?q=${encodeURIComponent(city)}&limit=5&appid=${API_KEY}`;
+        // ВАЖНО: всегда выполняем прямой запрос к API, игнорируя кеш и локальные данные
+        // Создаем URL для прямого геокодирования
+        const geoUrl = `${BASE_URL}/geo/1.0/direct?q=${encodeURIComponent(city)}&limit=1&appid=${API_KEY}`;
         
-        // Используем AbortController для контроля таймаута
-        const controller = new AbortController();
-        const signal = controller.signal;
-        const timeoutId = setTimeout(() => controller.abort(), TIMEOUTS.API_REQUEST);
+        console.log('Отправляем запрос к Geo API:', geoUrl);
         
-        console.log('Отправляем запрос геокодирования:', geoUrl);
-        const geoResponse = await fetch(geoUrl, { signal });
+        // Прямой запрос к API геокодирования для получения координат города
+        const geoResponse = await fetch(geoUrl);
         
         if (!geoResponse.ok) {
-            clearTimeout(timeoutId);
             throw new Error(`Ошибка геокодирования: ${geoResponse.status}`);
         }
         
         const geoData = await geoResponse.json();
-        console.log('Получены данные геокодирования:', geoData);
-
+        console.log('Ответ от Geo API:', geoData);
+        
+        // Если город не найден, пробуем искать через альтернативный API
         if (!geoData || geoData.length === 0) {
-            clearTimeout(timeoutId);
-            throw new Error('Город не найден в API');
-        }
-
-        // Выбираем первый результат из API
-        const { lat, lon, name } = geoData[0];
-        clearTimeout(timeoutId);
-        
-        console.log('Выбраны координаты из API:', lat, lon, 'для города:', name);
-        return fetchWeatherByCoords(lat, lon, name || city);
-    } catch (error) {
-        console.warn('Ошибка запроса данных о погоде:', error.message);
-        
-        // Если запрос был отменен или произошла ошибка, только тогда пробуем известные города
-        if (error.name === 'AbortError' || error.message === 'Город не найден в API') {
-            if (KNOWN_CITIES[city]) {
-                console.log('Используем резервные координаты для:', city);
-                const { lat, lon } = KNOWN_CITIES[city];
-                return fetchWeatherByCoords(lat, lon, city);
+            console.log('Город не найден через основной API, пробуем прямой запрос погоды');
+            
+            // Пробуем прямой запрос текущей погоды по названию города
+            const directWeatherUrl = `${BASE_URL}/data/2.5/weather?q=${encodeURIComponent(city)}&units=metric&lang=ru&appid=${API_KEY}`;
+            
+            console.log('Отправляем прямой запрос текущей погоды:', directWeatherUrl);
+            const weatherResponse = await fetch(directWeatherUrl);
+            
+            if (!weatherResponse.ok) {
+                throw new Error(`Город не найден: ${weatherResponse.status}`);
             }
-        }
-        throw error;
-    }
-}
-
-/**
- * Обработчик поиска города с iOS-эффектами
- */
-function handleSearch() {
-    try {
-        if (!elements.citySearch) return;
-        
-        const city = elements.citySearch.value.trim();
-        if (!city) {
-            showError('Пожалуйста, введите название города');
-            return;
-        }
-        
-        // Проверка на минимальную длину города
-        if (city.length < 2) {
-            showError('Название города должно содержать минимум 2 символа');
-            return;
-        }
-        
-        // Проверка на максимальную длину города
-        if (city.length > 50) {
-            showError('Название города слишком длинное');
-            return;
+            
+            const weather = await weatherResponse.json();
+            
+            // Получаем координаты из ответа по погоде
+            const { lat, lon } = weather.coord;
+            
+            // Теперь получаем прогноз по координатам
+            const forecastUrl = `${BASE_URL}/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}`;
+            console.log('Получаем прогноз по координатам:', forecastUrl);
+            
+            const forecastResponse = await fetch(forecastUrl);
+            
+            if (!forecastResponse.ok) {
+                throw new Error(`Ошибка получения прогноза: ${forecastResponse.status}`);
+            }
+            
+            const forecast = await forecastResponse.json();
+            
+            const result = { weather, forecast };
+            
+            // Кешируем полученные данные
+            cacheWeatherData(city, result);
+            
+            return result;
         }
         
-        // iOS-эффект перед поиском
-        const searchButton = elements.searchButton;
-        if (searchButton) {
-            searchButton.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                searchButton.style.transform = '';
-            }, 150);
-        }
+        // Получаем координаты из результата геокодирования
+        const { lat, lon, name } = geoData[0];
         
-        // Показываем индикатор загрузки при поиске
-        showLoading(`Ищем город "${city}"...`);
+        console.log('Получены координаты:', lat, lon, 'для города:', name);
         
-        // Немного задерживаем запрос для лучшего UX
-        setTimeout(() => {
-            // Всегда используем прямой поиск через API, без нормализации
-            loadWeatherData(city);
-        
-            // Убираем фокус с поля ввода
-            elements.citySearch.blur();
-        }, 100);
-    } catch (error) {
-        console.warn('Ошибка обработки поиска:', error.message);
-        showError('Произошла ошибка при поиске. Попробуйте еще раз.');
-    }
-}
-
-/**
- * Получает данные о погоде по координатам
- * @param {number} lat - Широта
- * @param {number} lon - Долгота
- * @param {string} cityName - Название города
- * @returns {Promise<Object>} Данные о погоде
- */
-async function fetchWeatherByCoords(lat, lon, cityName) {
-    try {
-        // Используем AbortController для контроля таймаута
-        const controller = new AbortController();
-        const signal = controller.signal;
-        const timeoutId = setTimeout(() => controller.abort(), TIMEOUTS.API_REQUEST);
-        
+        // Теперь получаем текущую погоду и прогноз по координатам
         const weatherUrl = `${BASE_URL}/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}`;
         const forecastUrl = `${BASE_URL}/data/2.5/forecast?lat=${lat}&lon=${lon}&units=metric&lang=ru&appid=${API_KEY}`;
         
-        console.log('Запрашиваем погоду по координатам:', lat, lon);
+        console.log('Запрашиваем текущую погоду и прогноз по координатам');
         
-        // Отправляем параллельные запросы
+        // Выполняем параллельные запросы для текущей погоды и прогноза
         const [weatherResponse, forecastResponse] = await Promise.all([
-            fetch(weatherUrl, { signal }),
-            fetch(forecastUrl, { signal })
+            fetch(weatherUrl),
+            fetch(forecastUrl)
         ]);
-        
-        clearTimeout(timeoutId);
         
         if (!weatherResponse.ok) {
             throw new Error(`Ошибка получения текущей погоды: ${weatherResponse.status}`);
@@ -837,19 +778,17 @@ async function fetchWeatherByCoords(lat, lon, cityName) {
         const weather = await weatherResponse.json();
         const forecast = await forecastResponse.json();
         
-        // Для известных городов гарантируем правильное отображение названия
-        if (cityName && KNOWN_CITIES[cityName]) {
-            weather.name = cityName;
-        }
+        // Сохраняем название города из запроса пользователя
+        weather.name = name || city;
         
         const result = { weather, forecast };
         
         // Кешируем полученные данные
-        cacheWeatherData(cityName, result);
+        cacheWeatherData(city, result);
         
         return result;
     } catch (error) {
-        console.warn('Ошибка получения погоды по координатам:', error.message);
+        console.error('Ошибка получения данных о погоде:', error);
         throw error;
     }
 }
@@ -1413,7 +1352,7 @@ async function openDayWeatherModal(dayData) {
         if (modalElements.visibility) modalElements.visibility.textContent = `${avgVisibility} км`;
         if (modalElements.feelsLike) modalElements.feelsLike.textContent = `${avgFeelsLike}°`;
         
-        // Обновляем почасовой прогноз
+       // Обновляем почасовой прогноз
         updateModalHourlyForecast(dayData.hourlyData);
         
         // Генерируем советы для выбранного дня
@@ -1594,33 +1533,17 @@ function closeDayWeatherModal() {
  * @param {string} city - Название города
  */
 async function loadWeatherData(city) {
-    // Нормализуем название города
-    if (CITY_NORMALIZATIONS[city.toLowerCase()]) {
-        city = CITY_NORMALIZATIONS[city.toLowerCase()];
-    }
-    
     console.log(`Загрузка данных о погоде для ${city}`);
     const startTime = Date.now();
     
     try {
-        // Определяем, первая ли это загрузка
-        const isFirstLoad = elements.weatherResult && elements.weatherResult.classList.contains('hidden');
-        
-        // Показываем индикатор загрузки только при первой загрузке
-        if (isFirstLoad) {
+        // Показываем индикатор загрузки, если еще не показан
+        if (!document.querySelector('.loading-overlay')) {
             showLoading(`Загружаем данные о погоде для ${city}...`);
         }
         
-        // Добавляем таймаут для запроса данных
-        const weatherPromise = Promise.race([
-            fetchWeatherData(city),
-            new Promise((_, reject) => 
-                setTimeout(() => reject(new Error('Время ожидания получения погоды истекло')), 
-                TIMEOUTS.WEATHER_LOADING)
-            )
-        ]);
-        
-        const data = await weatherPromise;
+        // Запрашиваем данные о погоде для города
+        const data = await fetchWeatherData(city);
         
         if (!data || !data.weather || !data.forecast) {
             throw new Error('Получены неполные данные о погоде');
@@ -1667,49 +1590,12 @@ async function loadWeatherData(city) {
         
         console.log(`Данные о погоде для ${city} загружены за ${(Date.now() - startTime)/1000} секунд`);
     } catch (error) {
-        console.warn('Ошибка загрузки данных о погоде:', error.message);
+        console.error('Ошибка загрузки данных о погоде:', error.message);
+        showError(`Не удалось найти город "${city}". Пожалуйста, проверьте название и попробуйте снова.`);
         
-        // Проверяем, есть ли кешированные данные
-        const cached = getCachedWeatherData();
-        if (cached) {
-            console.log('Используем кешированные данные');
-            try {
-                updateCurrentWeather(cached.data.weather);
-                updateHourlyForecast(cached.data.forecast);
-                updateWeeklyForecast(cached.data.forecast);
-                
-                setTimeout(async () => {
-                    try {
-                        await updateFarmerTips(cached.data.weather);
-                    } catch (e) {}
-                }, 10);
-                
-                if (elements.weatherResult) {
-                    elements.weatherResult.classList.remove('hidden');
-                    
-                    // iOS-анимация
-                    requestAnimationFrame(() => {
-                        elements.weatherResult.style.opacity = '1';
-                        elements.weatherResult.style.transform = 'translateY(0)';
-                    });
-                }
-                
-                showError(`Используются сохраненные данные. ${error.message}`);
-                return;
-            } catch (cacheError) {
-                console.warn('Ошибка использования кеша:', cacheError.message);
-            }
-        }
-        
-        // Если нет кеша или кеш не сработал
-        if (city !== DEFAULT_CITY) {
-            showError(`Не удалось загрузить погоду для "${city}". Используем город по умолчанию.`);
-            // Рекурсивный вызов для города по умолчанию
+        // Проверяем, отображаются ли уже какие-то данные
+        if (elements.weatherResult && elements.weatherResult.classList.contains('hidden')) {
             loadWeatherData(DEFAULT_CITY);
-        } else {
-            // Если уже пытались загрузить город по умолчанию
-            showError(`Не удалось загрузить данные о погоде: ${error.message}`);
-            showFallbackWeather(city);
         }
     } finally {
         // Всегда скрываем индикатор загрузки
@@ -1790,37 +1676,22 @@ function handleSearch() {
     try {
         if (!elements.citySearch) return;
         
+        // Получаем введенное пользователем название города без модификаций
         const city = elements.citySearch.value.trim();
+        
         if (!city) {
             showError('Пожалуйста, введите название города');
             return;
         }
         
-        // Проверка на минимальную длину города
+        // Минимальная проверка ввода
         if (city.length < 2) {
             showError('Название города должно содержать минимум 2 символа');
             return;
         }
         
-        // Проверка на максимальную длину города
-        if (city.length > 50) {
-            showError('Название города слишком длинное');
-            return;
-        }
-        
-        // Проверка на валидные символы (разрешаем кириллицу, латиницу, пробелы и базовые знаки пунктуации)
-        if (!/^[a-zA-Zа-яА-ЯёЁ\s\-,.]+$/.test(city)) {
-            showError('Название города содержит недопустимые символы');
-            return;
-        }
-        
-        // Нормализация названий городов
-        let normalizedCity = city;
-        
-        // Проверяем на известные сокращения и варианты написания
-        if (CITY_NORMALIZATIONS[city.toLowerCase()]) {
-            normalizedCity = CITY_NORMALIZATIONS[city.toLowerCase()];
-        }
+        // Показываем индикатор загрузки
+        showLoading(`Ищем город "${city}"...`);
         
         // iOS-эффект перед поиском
         const searchButton = elements.searchButton;
@@ -1831,17 +1702,17 @@ function handleSearch() {
             }, 150);
         }
         
-        // Немного задерживаем запрос для лучшего UX
-        setTimeout(() => {
-            // Загружаем данные для нормализованного города
-            loadWeatherData(normalizedCity);
+        // Выполняем поиск погоды для введенного города
+        loadWeatherData(city);
         
-            // Убираем фокус с поля ввода
+        // Убираем фокус с поля ввода
+        if (elements.citySearch) {
             elements.citySearch.blur();
-        }, 100);
+        }
     } catch (error) {
-        console.warn('Ошибка обработки поиска:', error.message);
-        showError('Произошла ошибка при поиске. Попробуйте еще раз.');
+        console.error('Ошибка при обработке поиска:', error);
+        hideLoading();
+        showError('Произошла ошибка при поиске. Пожалуйста, попробуйте еще раз.');
     }
 }
 
@@ -2039,7 +1910,7 @@ function monitorFrameRate() {
         frameCount++;
         lastFrameTime = now;
         
-       // Раз в 100 кадров проверяем производительность
+        // Раз в 100 кадров проверяем производительность
         if (frameCount >= 100) {
             const dropRate = droppedFrames / frameCount;
             
