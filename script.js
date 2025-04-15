@@ -1913,64 +1913,6 @@ function handleSearch() {
 }
 
 /**
- * Инициализация приложения
- */
-async function initApp() {
-    console.log('Инициализация приложения');
-    
-    try {
-        // Очищаем хранилище от устаревших данных
-        cleanupStorage();
-        
-        // Проверяем кеш - если есть, показываем данные сразу
-        const cached = getCachedWeatherData();
-        if (cached) {
-            console.log('Найден кеш, отображаем сохраненные данные');
-            updateCurrentWeather(cached.data.weather);
-            updateHourlyForecast(cached.data.forecast);
-            updateWeeklyForecast(cached.data.forecast);
-            
-            setTimeout(async () => {
-                try {
-                    await updateFarmerTips(cached.data.weather);
-                } catch (e) {}
-            }, 10);
-            
-            if (elements.weatherResult) {
-                elements.weatherResult.classList.remove('hidden');
-                
-                // iOS-анимация
-                requestAnimationFrame(() => {
-                    elements.weatherResult.style.opacity = '1';
-                    elements.weatherResult.style.transform = 'translateY(0)';
-                });
-            }
-            
-            // Асинхронно загружаем свежие данные
-            setTimeout(() => {
-                loadFreshWeatherData();
-            }, 500);
-            
-            return;
-        }
-        
-        // Если нет кеша, начинаем с отображения данных для города по умолчанию
-        console.log('Нет кешированных данных, отображаем базовую информацию');
-        showFallbackWeather(DEFAULT_CITY);
-        
-        // Затем асинхронно загружаем актуальные данные
-        setTimeout(() => {
-            loadFreshWeatherData();
-        }, 500);
-    } catch (error) {
-        console.warn('Ошибка инициализации приложения:', error.message);
-        
-        // В крайнем случае, показываем минимальные данные
-        showFallbackWeather(DEFAULT_CITY);
-    }
-}
-
-/**
  * Инициализация обработчиков событий
  */
 function setupEventListeners() {
@@ -2023,29 +1965,34 @@ function setupEventListeners() {
             }
         });
         
-      // Обновление при возвращении на страницу
-window.addEventListener('focus', () => {
-    // Проверяем актуальность кеша
-    const cached = getCachedWeatherData();
-    if (cached) {
-        const cacheTime = Date.now() - cached.timestamp;
-        // Обновляем данные, если кеш старше 15 минут и страница видима
-        if (cacheTime > 15 * 60 * 1000 && document.visibilityState === 'visible') {
-            let cityToUpdate = DEFAULT_CITY;
-            
-            // Определяем город для обновления
-            if (elements.cityName && elements.cityName.textContent && 
-                elements.cityName.textContent !== '-') {
-                cityToUpdate = elements.cityName.textContent;
-            } else if (cached.city) {
-                cityToUpdate = cached.city;
+        // Обновление при возвращении на страницу
+        window.addEventListener('focus', () => {
+            // Проверяем актуальность кеша
+            const cached = getCachedWeatherData();
+            if (cached) {
+                const cacheTime = Date.now() - cached.timestamp;
+                // Обновляем данные, если кеш старше 15 минут и страница видима
+                if (cacheTime > 15 * 60 * 1000 && document.visibilityState === 'visible') {
+                    let cityToUpdate = DEFAULT_CITY;
+                    
+                    // Определяем город для обновления
+                    if (elements.cityName && elements.cityName.textContent && 
+                        elements.cityName.textContent !== '-') {
+                        cityToUpdate = elements.cityName.textContent;
+                    } else if (cached.city) {
+                        cityToUpdate = cached.city;
+                    }
+                    
+                    loadWeatherData(cityToUpdate);
+                }
             }
-            
-            loadWeatherData(cityToUpdate);
-        }
+        });
+    } catch (error) {
+        console.warn('Ошибка установки обработчиков событий:', error.message);
     }
-});
-        /**
+}
+
+/**
  * Глобальная настройка анимаций в зависимости от производительности устройства
  */
 function setupOptimizedAnimations() {
