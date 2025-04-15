@@ -2,60 +2,106 @@
    Создано для максимального сходства с нативным iOS интерфейсом */
 
 :root {
-    /* Цветовая палитра iOS 17 */
-    --ios-bg: #f5f5f7;
-    --ios-card-bg: rgba(255, 255, 255, 0.72);
-    --ios-card-bg-blur: rgba(255, 255, 255, 0.58);
-    --ios-text: #1d1d1f;
-    --ios-secondary: #86868b;
+    /* Точные цвета iOS 17 Light Mode */
+    --ios-bg: #f2f2f6;
+    --ios-elevated-bg: #ffffff;
+    --ios-card-bg: rgba(255, 255, 255, 0.8);
+    --ios-card-bg-blur: rgba(255, 255, 255, 0.65);
+    --ios-grouped-bg: #f2f2f7;
+    --ios-text-primary: #000000;
+    --ios-text-secondary: #8e8e93;
+    --ios-text-tertiary: #aeaeb2;
+    --ios-separator: rgba(60, 60, 67, 0.29);
+    --ios-opaque-separator: #c6c6c8;
     --ios-blue: #007aff;
-    --ios-red: #ff3b30;
-    --ios-green: #34c759;
-    --ios-yellow: #ffcc00;
-    --ios-orange: #ff9500;
+    --ios-indigo: #5856d6;
     --ios-purple: #af52de;
+    --ios-pink: #ff2d55;
+    --ios-red: #ff3b30;
+    --ios-orange: #ff9500;
+    --ios-yellow: #ffcc00;
+    --ios-green: #34c759;
+    --ios-mint: #00c7be;
+    --ios-teal: #30b0c7;
+    --ios-cyan: #32ade6;
+    --ios-gray: #8e8e93;
+    --ios-gray2: #aeaeb2;
+    --ios-gray3: #c7c7cc;
+    --ios-gray4: #d1d1d6;
+    --ios-gray5: #e5e5ea;
+    --ios-gray6: #f2f2f7;
     
-    /* Типографика iOS San Francisco */
+    /* Специальные цвета Light Mode */
+    --ios-fill-quarternary: rgba(116, 116, 128, 0.08);
+    --ios-fill-tertiary: rgba(118, 118, 128, 0.12);
+    --ios-fill-secondary: rgba(120, 120, 128, 0.16);
+    --ios-fill-primary: rgba(120, 120, 128,.2);
+    --ios-label-quarternary: rgba(60, 60, 67, 0.18);
+    --ios-label-tertiary: rgba(60, 60, 67, 0.3);
+    --ios-label-secondary: rgba(60, 60, 67, 0.6);
+    --ios-label-primary: rgba(0, 0, 0, 0.87);
+    
+    /* Типографика iOS San Francisco Pro */
     --ios-font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'SF Pro', 'Helvetica Neue', Arial, sans-serif;
     --ios-font-rounded: -apple-system, BlinkMacSystemFont, 'SF Pro Rounded', 'SF Pro Text', 'SF Pro', 'Helvetica Neue', Arial, sans-serif;
+    --ios-font-mono: -apple-system-monospaced, 'SF Mono', SFMono-Regular, ui-monospace, Menlo, monospace;
     
     /* Радиусы скругления iOS 17 */
+    --ios-radius-xs: 6px;
     --ios-radius-small: 8px;
     --ios-radius-medium: 12px;
     --ios-radius-large: 16px;
     --ios-radius-xl: 20px;
-    --ios-radius-pill: 9999px;
+    --ios-radius-pill: 100px;
+    --ios-radius-circle: 50%;
     
     /* Тени в стиле iOS 17 */
+    --ios-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
     --ios-shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.08);
-    --ios-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --ios-shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.12);
+    --ios-shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
+    --ios-shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.16);
+    --ios-shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.18);
     
     /* Размытие iOS 17 */
-    --ios-blur-sm: 10px;
-    --ios-blur-md: 20px;
-    --ios-blur-lg: 40px;
+    --ios-blur-thin: 5px;
+    --ios-blur-light: 10px;
+    --ios-blur-regular: 20px;
+    --ios-blur-thick: 30px;
+    --ios-blur-heavy: 50px;
     
-    /* iOS 17 Spring Physics Parameters */
-    --ios-spring-duration: 0.4s;
-    --ios-spring-easing: cubic-bezier(0.23, 1, 0.32, 1);
-    --ios-bounce-easing: cubic-bezier(0.34, 1.56, 0.64, 1);
-    --ios-standard-easing: cubic-bezier(0.4, 0.0, 0.22, 1);
-    --ios-ease-out: cubic-bezier(0, 0, 0.2, 1);
-    --ios-ease-in: cubic-bezier(0.4, 0, 1, 1);
+    /* iOS 17 Spring Physics - точно как в iOS 17 */
+    --ios-spring-duration-short: 0.32s;
+    --ios-spring-duration-medium: 0.4s;
+    --ios-spring-duration-long: 0.5s;
+    --ios-spring-easing: cubic-bezier(0.33, 1, 0.68, 1); /* iOS 17 Spring Curve */
+    --ios-bounce-easing: cubic-bezier(0.175, 0.885, 0.32, 1.275); /* iOS 17 Bounce */
+    --ios-standard-easing: cubic-bezier(0.25, 0.1, 0.25, 1); /* iOS 17 Standard */
+    --ios-ease-out: cubic-bezier(0, 0, 0.2, 1); /* iOS 17 Ease Out */
+    --ios-ease-in: cubic-bezier(0.4, 0, 1, 1); /* iOS 17 Ease In */
+    --ios-ease-in-out: cubic-bezier(0.42, 0, 0.58, 1); /* iOS 17 Ease In Out */
     
     /* Длительности анимаций iOS 17 */
     --ios-duration-micro: 0.15s;
     --ios-duration-quick: 0.25s;
     --ios-duration-standard: 0.35s;
     --ios-duration-emphasized: 0.5s;
+    --ios-duration-long: 0.7s;
     
     /* Отступы iOS 17 */
+    --ios-spacing-2xs: 2px;
     --ios-spacing-xs: 4px;
     --ios-spacing-sm: 8px;
     --ios-spacing-md: 16px;
     --ios-spacing-lg: 24px;
     --ios-spacing-xl: 32px;
+    --ios-spacing-2xl: 48px;
+    
+    /* iOS 17 translucent overlay значения */
+    --ios-translucent-light: rgba(242, 242, 247, 0.8);
+    --ios-translucent-ultra-thin: rgba(255, 255, 255, 0.4);
+    --ios-translucent-thin: rgba(255, 255, 255, 0.65);
+    --ios-translucent-regular: rgba(255, 255, 255, 0.8);
+    --ios-translucent-thick: rgba(255, 255, 255, 0.9);
 }
 
 /* Сброс и базовые стили */
@@ -77,15 +123,18 @@ html {
 body {
     font-family: var(--ios-font);
     background-color: var(--ios-bg);
-    color: var(--ios-text);
-    line-height: 1.4;
+    color: var(--ios-text-primary);
+    line-height: 1.35;
     font-weight: 400;
+    letter-spacing: -0.01em;
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
     overflow-x: hidden;
     height: 100%;
-    /* Более легкий градиент как в iOS 17 */
-    background-image: linear-gradient(180deg, rgba(189, 222, 255, 0.12) 0%, rgba(255, 255, 255, 0) 100%);
+    /* Более точный iOS 17 градиент для фона */
+    background-image: linear-gradient(180deg, rgba(189, 222, 255, 0.08) 0%, rgba(255, 255, 255, 0) 100%);
     background-attachment: fixed;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* Основной контейнер в стиле iOS 17 */
@@ -105,48 +154,48 @@ body {
     background-color: transparent;
     padding-top: 12px;
     padding-bottom: 12px;
-    backdrop-filter: blur(var(--ios-blur-md));
-    -webkit-backdrop-filter: blur(var(--ios-blur-md));
+    backdrop-filter: blur(var(--ios-blur-regular)) saturate(180%);
+    -webkit-backdrop-filter: blur(var(--ios-blur-regular)) saturate(180%);
 }
 
 .search-container {
     position: relative;
     display: flex;
-    background-color: rgba(118, 118, 128, 0.12);
+    background-color: var(--ios-fill-tertiary);
     border-radius: var(--ios-radius-pill);
     overflow: hidden;
-    transition: box-shadow var(--ios-duration-quick) var(--ios-standard-easing),
-                background-color var(--ios-duration-quick) var(--ios-standard-easing);
-    height: 38px;
+    transition: box-shadow var(--ios-duration-quick) var(--ios-spring-easing),
+                background-color var(--ios-duration-quick) var(--ios-spring-easing);
+    height: 36px;
 }
 
 .search-container:focus-within {
-    box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.5);
-    background-color: rgba(118, 118, 128, 0.08);
+    box-shadow: 0 0 0 2px var(--ios-blue);
+    background-color: var(--ios-fill-quarternary);
 }
 
 .search-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--ios-secondary);
-    padding-left: 12px;
+    color: var(--ios-text-secondary);
+    padding-left: 10px;
 }
 
 #citySearch {
     flex: 1;
-    height: 38px;
+    height: 36px;
     border: none;
     background: transparent;
-    padding: 0 12px;
+    padding: 0 10px;
     font-size: 17px;
-    color: var(--ios-text);
+    color: var(--ios-text-primary);
     font-family: var(--ios-font);
     font-weight: 400;
 }
 
 #citySearch::placeholder {
-    color: var(--ios-secondary);
+    color: var(--ios-text-secondary);
 }
 
 #citySearch:focus {
@@ -157,7 +206,7 @@ body {
     border: none;
     background-color: var(--ios-blue);
     color: white;
-    padding: 0 16px;
+    padding: 0 15px;
     font-weight: 600;
     font-size: 15px;
     cursor: pointer;
@@ -200,24 +249,28 @@ body {
     padding: var(--ios-spacing-lg);
     margin-bottom: var(--ios-spacing-md);
     background-color: var(--ios-card-bg);
-    border-radius: var(--ios-radius-large);
+    border-radius: 20px;
     box-shadow: var(--ios-shadow-md);
-    backdrop-filter: blur(var(--ios-blur-md));
-    -webkit-backdrop-filter: blur(var(--ios-blur-md));
-    animation: iosCardAppear var(--ios-duration-standard) var(--ios-spring-easing) forwards;
+    backdrop-filter: blur(var(--ios-blur-regular)) saturate(180%);
+    -webkit-backdrop-filter: blur(var(--ios-blur-regular)) saturate(180%);
     text-align: center;
     position: relative;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 0.5px solid rgba(255, 255, 255, 0.3);
     will-change: transform, opacity;
     opacity: 0;
     transform: scale(0.97) translateY(10px);
+    animation: iosCardAppear var(--ios-spring-duration-medium) var(--ios-spring-easing) forwards;
 }
 
+/* iOS 17 style анимации для всех компонентов */
 @keyframes iosCardAppear {
     0% {
         opacity: 0;
         transform: scale(0.97) translateY(10px);
+    }
+    40% {
+        opacity: 1;
     }
     100% {
         opacity: 1;
@@ -244,7 +297,7 @@ body {
 
 .weather-condition {
     font-size: 19px;
-    color: var(--ios-text);
+    color: var(--ios-text-primary);
     margin-bottom: var(--ios-spacing-sm);
     font-weight: 500;
     transition: all 0.6s var(--ios-spring-easing);
@@ -252,24 +305,24 @@ body {
 
 .temp-range {
     font-size: 15px;
-    color: var(--ios-secondary);
+    color: var(--ios-text-secondary);
     font-weight: 400;
 }
 
 /* Карточки погоды в стиле iOS 17 */
 .weather-card {
     background-color: var(--ios-card-bg-blur);
-    border-radius: var(--ios-radius-large);
+    border-radius: 18px;
     margin-bottom: var(--ios-spacing-md);
     padding: var(--ios-spacing-md);
     box-shadow: var(--ios-shadow-sm);
-    backdrop-filter: blur(var(--ios-blur-md));
-    -webkit-backdrop-filter: blur(var(--ios-blur-md));
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(var(--ios-blur-regular)) saturate(180%);
+    -webkit-backdrop-filter: blur(var(--ios-blur-regular)) saturate(180%);
+    border: 0.5px solid rgba(255, 255, 255, 0.2);
     opacity: 0;
     transform: translateY(20px);
-    animation: iosCardSequenceIn var(--ios-duration-standard) forwards;
-    animation-delay: calc(var(--index) * 0.06s);
+    animation: iosCardSequenceIn var(--ios-spring-duration-medium) forwards;
+    animation-delay: calc(var(--index) * 0.05s);
     will-change: transform, opacity;
 }
 
@@ -277,6 +330,9 @@ body {
     0% {
         opacity: 0;
         transform: translateY(20px);
+    }
+    60% {
+        opacity: 1;
     }
     100% {
         opacity: 1;
@@ -617,18 +673,18 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(240, 240, 247, 0.7);
+    background-color: var(--ios-translucent-light);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    animation: iosLoadFadeIn 0.3s var(--ios-ease-out);
-    backdrop-filter: blur(var(--ios-blur-sm));
-    -webkit-backdrop-filter: blur(var(--ios-blur-sm));
+    animation: iosLoadFadeIn 0.4s var(--ios-spring-easing);
+    backdrop-filter: blur(var(--ios-blur-light)) saturate(180%);
+    -webkit-backdrop-filter: blur(var(--ios-blur-light)) saturate(180%);
 }
 
 .loading-overlay.fade-out {
-    animation: iosLoadFadeOut 0.25s var(--ios-ease-in) forwards;
+    animation: iosLoadFadeOut 0.3s var(--ios-ease-in) forwards;
 }
 
 @keyframes iosLoadFadeIn {
@@ -638,17 +694,17 @@ body {
         background-color: rgba(240, 240, 247, 0);
     }
     to {
-        backdrop-filter: blur(var(--ios-blur-sm));
-        -webkit-backdrop-filter: blur(var(--ios-blur-sm));
-        background-color: rgba(240, 240, 247, 0.7);
+        backdrop-filter: blur(var(--ios-blur-light)) saturate(180%);
+        -webkit-backdrop-filter: blur(var(--ios-blur-light)) saturate(180%);
+        background-color: var(--ios-translucent-light);
     }
 }
 
 @keyframes iosLoadFadeOut {
     from {
         opacity: 1;
-        backdrop-filter: blur(var(--ios-blur-sm));
-        -webkit-backdrop-filter: blur(var(--ios-blur-sm));
+        backdrop-filter: blur(var(--ios-blur-light)) saturate(180%);
+        -webkit-backdrop-filter: blur(var(--ios-blur-light)) saturate(180%);
     }
     to {
         opacity: 0;
@@ -683,7 +739,7 @@ body {
 .loading-text {
     font-size: 16px;
     font-weight: 500;
-    color: var(--ios-text);
+    color: var(--ios-text-primary);
     text-align: center;
     max-width: 260px;
 }
@@ -837,75 +893,146 @@ body {
 /* Поддержка темного режима в стиле iOS 17 */
 @media (prefers-color-scheme: dark) {
     :root {
+        /* Точные цвета iOS 17 Dark Mode */
         --ios-bg: #000000;
-        --ios-card-bg: rgba(30, 30, 32, 0.75);
-        --ios-card-bg-blur: rgba(30, 30, 32, 0.65);
-        --ios-text: #ffffff;
-        --ios-secondary: #98989d;
+        --ios-elevated-bg: #1c1c1e;
+        --ios-card-bg: rgba(28, 28, 30, 0.8);
+        --ios-card-bg-blur: rgba(28, 28, 30, 0.7);
+        --ios-grouped-bg: #1c1c1e;
+        --ios-text-primary: #ffffff;
+        --ios-text-secondary: #ebebf5;
+        --ios-text-tertiary: #ebebf599;
+        --ios-separator: rgba(84, 84, 88, 0.65);
+        --ios-opaque-separator: #38383a;
+        --ios-blue: #0a84ff;
+        --ios-indigo: #5e5ce6;
+        --ios-purple: #bf5af2;
+        --ios-pink: #ff375f;
+        --ios-red: #ff453a;
+        --ios-orange: #ff9f0a;
+        --ios-yellow: #ffd60a;
+        --ios-green: #30d158;
+        --ios-mint: #66d4cf;
+        --ios-teal: #40c8e0;
+        --ios-cyan: #64d2ff;
+        --ios-gray: #8e8e93;
+        --ios-gray2: #636366;
+        --ios-gray3: #48484a;
+        --ios-gray4: #3a3a3c;
+        --ios-gray5: #2c2c2e;
+        --ios-gray6: #1c1c1e;
+        
+        /* Специальные цвета Dark Mode */
+        --ios-fill-quarternary: rgba(116, 116, 128, 0.18);
+        --ios-fill-tertiary: rgba(118, 118, 128, 0.24);
+        --ios-fill-secondary: rgba(99, 99, 102, 0.36);
+        --ios-fill-primary: rgba(120, 120, 128, 0.36);
+        --ios-label-quarternary: rgba(235, 235, 245, 0.16);
+        --ios-label-tertiary: rgba(235, 235, 245, 0.3);
+        --ios-label-secondary: rgba(235, 235, 245, 0.6);
+        --ios-label-primary: rgba(255, 255, 255, 0.92);
+        
+        /* iOS 17 translucent overlay dark values */
+        --ios-translucent-dark: rgba(0, 0, 0, 0.8);
+        --ios-translucent-ultra-thin-dark: rgba(30, 30, 30, 0.4);
+        --ios-translucent-thin-dark: rgba(30, 30, 30, 0.65);
+        --ios-translucent-regular-dark: rgba(30, 30, 30, 0.8);
+        --ios-translucent-thick-dark: rgba(30, 30, 30, 0.9);
     }
     
     body {
-        background-image: linear-gradient(180deg, rgba(0, 64, 128, 0.08) 0%, rgba(0, 0, 0, 0) 100%);
+        background-color: var(--ios-bg);
+        color: var(--ios-text-primary);
+        background-image: linear-gradient(180deg, rgba(20, 45, 75, 0.05) 0%, rgba(0, 0, 0, 0) 100%);
+    }
+    
+    .city-name {
+        color: var(--ios-text-primary);
+    }
+    
+    .temperature {
+        color: var(--ios-text-primary);
+    }
+    
+    .weather-condition {
+        color: var(--ios-text-primary);
+    }
+    
+    .weather-main {
+        background-color: var(--ios-card-bg);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+    
+    .weather-card {
+        background-color: var(--ios-card-bg-blur);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
     }
     
     .search-container {
-        background-color: rgba(44, 44, 46, 0.8);
+        background-color: var(--ios-fill-tertiary);
+    }
+    
+    #citySearch {
+        color: var(--ios-text-primary);
+    }
+    
+    #citySearch::placeholder {
+        color: var(--ios-text-tertiary);
     }
     
     .detail-item, .tip-item, .weekly-day {
-        background-color: rgba(44, 44, 46, 0.5);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background-color: var(--ios-fill-tertiary);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+    }
+    
+    .detail-title, .forecast-time {
+        color: var(--ios-text-tertiary);
+    }
+    
+    .temp-range {
+        color: var(--ios-text-tertiary);
+    }
+    
+    .detail-value, .forecast-temp, .weekly-day-temp, .weekly-day-name {
+        color: var(--ios-text-primary);
     }
     
     .forecast-hour:active {
         background-color: rgba(255, 255, 255, 0.1);
     }
     
-    .loading-overlay {
-        background-color: rgba(28, 28, 30, 0.7);
+    .forecast-hour:hover {
+        background-color: rgba(255, 255, 255, 0.06);
     }
     
-    .weather-main {
-        border: 1px solid rgba(255, 255, 255, 0.1);
+    .detail-item:hover, .tip-item:hover, .weekly-day:hover {
+        background-color: var(--ios-fill-secondary);
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    }
+    
+    .detail-item:active, .tip-item:active, .weekly-day:active {
+        background-color: var(--ios-fill-tertiary);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+    
+    .loading-overlay {
+        background-color: var(--ios-translucent-dark);
     }
     
     @keyframes iosLoadFadeIn {
         from {
             backdrop-filter: blur(0);
             -webkit-backdrop-filter: blur(0);
-            background-color: rgba(28, 28, 30, 0);
+            background-color: rgba(0, 0, 0, 0);
         }
         to {
-            backdrop-filter: blur(var(--ios-blur-sm));
-            -webkit-backdrop-filter: blur(var(--ios-blur-sm));
-            background-color: rgba(28, 28, 30, 0.7);
+            backdrop-filter: blur(var(--ios-blur-light));
+            -webkit-backdrop-filter: blur(var(--ios-blur-light));
+            background-color: var(--ios-translucent-dark);
         }
-    }
-    
-    /* Улучшение контраста в темном режиме */
-    .detail-title, .forecast-time {
-        color: rgba(235, 235, 245, 0.6);
-    }
-    
-    .temp-range {
-        color: rgba(235, 235, 245, 0.6);
-    }
-    
-    /* Улучшенные тени для темного режима */
-    .weather-main, .weather-card {
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-    }
-    
-    .detail-item, .tip-item, .weekly-day {
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    }
-    
-    .detail-item:hover, .tip-item:hover, .weekly-day:hover {
-        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
-    }
-    
-    .detail-item:active, .tip-item:active, .weekly-day:active {
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
     }
     
     /* Ripple эффект в темном режиме */
@@ -915,17 +1042,18 @@ body {
     
     /* Модальное окно в темном режиме */
     .day-modal.visible {
-        background-color: rgba(0, 0, 0, 0.6);
+        background-color: rgba(0, 0, 0, 0.7);
     }
     
     .day-modal-content {
-        background-color: var(--ios-bg);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background-color: var(--ios-elevated-bg);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
     }
     
     .close-modal {
         background: rgba(255, 255, 255, 0.1);
-        color: var(--ios-text);
+        color: var(--ios-text-primary);
     }
     
     .close-modal:hover, .close-modal:active {
@@ -934,11 +1062,24 @@ body {
     
     /* Кнопка поиска в темном режиме */
     .search-button {
-        background-color: #0a84ff;
+        background-color: var(--ios-blue);
     }
     
     .search-button:active {
-        background-color: #0075e0;
+        background-color: #0070e0;
+    }
+    
+    .search-button:hover {
+        background-color: #3a9bff;
+    }
+    
+    /* Скроллбар в темном режиме */
+    ::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(255, 255, 255, 0.3);
     }
 }
 
@@ -1035,59 +1176,11 @@ body {
     }
 }
 
-/* Стили для модального окна погоды на день в стиле iOS 17 */
-.day-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity var(--ios-duration-quick) var(--ios-ease-out),
-                visibility var(--ios-duration-quick) var(--ios-ease-out),
-                backdrop-filter var(--ios-duration-standard) linear,
-                -webkit-backdrop-filter var(--ios-duration-standard) linear;
-    backdrop-filter: blur(0);
-    -webkit-backdrop-filter: blur(0);
-    padding: 20px;
-    box-sizing: border-box;
-}
 
-.day-modal.visible {
-    opacity: 1;
-    visibility: visible;
-    backdrop-filter: blur(var(--ios-blur-sm));
-    -webkit-backdrop-filter: blur(var(--ios-blur-sm));
-    background-color: rgba(0, 0, 0, 0.4);
-    transition: opacity 0.2s var(--ios-ease-out),
-                visibility 0.2s var(--ios-ease-out),
-                backdrop-filter 0.3s linear,
-                -webkit-backdrop-filter 0.3s linear,
-                background-color 0.3s var(--ios-ease-out);
-}
-
-.day-modal-content {
-    background-color: var(--ios-bg);
-    border-radius: var(--ios-radius-large);
-    max-width: 520px;
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    padding: var(--ios-spacing-md);
-    position: relative;
-    box-shadow: var(--ios-shadow-lg);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transform: translateY(30px) scale(0.95);
-    opacity: 0;
-    transition: transform var(--ios-duration-standard) var(--ios-spring-easing),
-                opacity var(--ios-duration-standard) var(--ios-ease-out);
     will-change: transform, opacity;
+    transform-origin: center bottom;
+    transition: transform var(--ios-spring-duration-medium) var(--ios-spring-easing),
+                opacity var(--ios-duration-standard) var(--ios-ease-out);
 }
 
 .day-modal.visible .day-modal-content {
@@ -1107,28 +1200,28 @@ body {
     position: absolute;
     top: 12px;
     right: 12px;
-    background: rgba(0, 0, 0, 0.1);
+    background: var(--ios-fill-tertiary);
     border: none;
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--ios-text);
+    color: var(--ios-text-primary);
     cursor: pointer;
     z-index: 10;
-    transition: background-color 0.15s var(--ios-ease-out), 
+    transition: background-color 0.15s var(--ios-ease-out),
                 transform 0.15s var(--ios-ease-out);
 }
 
 .close-modal:active {
-    transform: scale(0.94);
-    background-color: rgba(0, 0, 0, 0.15);
+    transform: scale(0.92);
+    background-color: var(--ios-fill-secondary);
 }
 
 .close-modal:hover {
-    background: rgba(0, 0, 0, 0.2);
+    background: var(--ios-fill-secondary);
 }
 
 .modal-weather-main {
