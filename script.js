@@ -2255,5 +2255,6 @@ el.addEventListener('touchcancel', function() {
    this.style.transform = '';
    this.style.transition = `transform ${IOS_ANIMATIONS.DURATIONS.STANDARD}ms ${IOS_ANIMATIONS.EASING.SPRING}`;
 }, { passive: true });
-        });
+        
+  });
 }
