@@ -702,22 +702,9 @@ async function fetchWeatherData(city) {
             return cachedData.data;
         }
 
-        // Проверяем, есть ли точные координаты для города
-        if (KNOWN_CITIES[city]) {
-            console.log('Используем известные координаты для:', city);
-            const { lat, lon } = KNOWN_CITIES[city];
-            return fetchWeatherByCoords(lat, lon, city);
-        }
-
-        // Для API запроса преобразуем кириллицу в латиницу, если возможно
-        let cityForApi = city;
-        if (CITY_TRANSLATIONS[city]) {
-            cityForApi = CITY_TRANSLATIONS[city];
-            console.log('Используем перевод города для API:', cityForApi);
-        }
-        
+        // Всегда используем OpenWeatherMap Geo API для поиска координат города
         // Создаем безопасный URL с корректной кодировкой
-        const geoUrl = `${BASE_URL}/geo/1.0/direct?q=${encodeURIComponent(cityForApi)}&limit=5&appid=${API_KEY}`;
+        const geoUrl = `${BASE_URL}/geo/1.0/direct?q=${encodeURIComponent(city)}&limit=5&appid=${API_KEY}`;
         
         // Используем AbortController для контроля таймаута
         const controller = new AbortController();
@@ -737,65 +724,78 @@ async function fetchWeatherData(city) {
 
         if (!geoData || geoData.length === 0) {
             clearTimeout(timeoutId);
-            
-            // Пробуем запасной вариант - поиск на английском для городов с известным переводом
-            if (!CITY_TRANSLATIONS[city] && !/^[a-zA-Z\s]+$/.test(city)) {
-                // Если мы не пытались с переводом и это не английское название
-                const transliterationUrl = `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(city)}&limit=5&appid=${API_KEY}`;
-                console.log('Пробуем запрос с транслитерацией:', transliterationUrl);
-                
-                try {
-                    const transliterationResponse = await fetch(transliterationUrl, { signal });
-                    if (transliterationResponse.ok) {
-                        const transliterationData = await transliterationResponse.json();
-                        if (transliterationData && transliterationData.length > 0) {
-                            console.log('Найден город через транслитерацию:', transliterationData[0]);
-                            const { lat, lon, name } = transliterationData[0];
-                            return fetchWeatherByCoords(lat, lon, name);
-                        }
-                    }
-                } catch (transliterationError) {
-                    console.warn('Ошибка при транслитерации:', transliterationError);
-                }
-            }
-            
-            throw new Error('Город не найден');
+            throw new Error('Город не найден в API');
         }
 
-        // Выбираем наиболее подходящее геоположение из результатов
-        let bestMatch = geoData[0]; // По умолчанию берем первый результат
-        
-        // Если получили несколько результатов, ищем лучшее совпадение
-        if (geoData.length > 1) {
-            // Ищем точное совпадение по имени
-            const exactMatch = geoData.find(item => 
-                item.name.toLowerCase() === city.toLowerCase() || 
-                (item.local_names && item.local_names.ru && 
-                 item.local_names.ru.toLowerCase() === city.toLowerCase())
-            );
-            
-            if (exactMatch) {
-                bestMatch = exactMatch;
-                console.log('Найдено точное совпадение по имени:', bestMatch.name);
-            }
-        }
-        
-        const { lat, lon, name } = bestMatch;
+        // Выбираем первый результат из API
+        const { lat, lon, name } = geoData[0];
         clearTimeout(timeoutId);
         
-        console.log('Выбраны координаты:', lat, lon, 'для города:', name);
+        console.log('Выбраны координаты из API:', lat, lon, 'для города:', name);
         return fetchWeatherByCoords(lat, lon, name || city);
     } catch (error) {
         console.warn('Ошибка запроса данных о погоде:', error.message);
         
-        // Если запрос был отменен, используем координаты для известных городов
-        if (error.name === 'AbortError') {
+        // Если запрос был отменен или произошла ошибка, только тогда пробуем известные города
+        if (error.name === 'AbortError' || error.message === 'Город не найден в API') {
             if (KNOWN_CITIES[city]) {
+                console.log('Используем резервные координаты для:', city);
                 const { lat, lon } = KNOWN_CITIES[city];
                 return fetchWeatherByCoords(lat, lon, city);
             }
         }
         throw error;
+    }
+}
+
+/**
+ * Обработчик поиска города с iOS-эффектами
+ */
+function handleSearch() {
+    try {
+        if (!elements.citySearch) return;
+        
+        const city = elements.citySearch.value.trim();
+        if (!city) {
+            showError('Пожалуйста, введите название города');
+            return;
+        }
+        
+        // Проверка на минимальную длину города
+        if (city.length < 2) {
+            showError('Название города должно содержать минимум 2 символа');
+            return;
+        }
+        
+        // Проверка на максимальную длину города
+        if (city.length > 50) {
+            showError('Название города слишком длинное');
+            return;
+        }
+        
+        // iOS-эффект перед поиском
+        const searchButton = elements.searchButton;
+        if (searchButton) {
+            searchButton.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                searchButton.style.transform = '';
+            }, 150);
+        }
+        
+        // Показываем индикатор загрузки при поиске
+        showLoading(`Ищем город "${city}"...`);
+        
+        // Немного задерживаем запрос для лучшего UX
+        setTimeout(() => {
+            // Всегда используем прямой поиск через API, без нормализации
+            loadWeatherData(city);
+        
+            // Убираем фокус с поля ввода
+            elements.citySearch.blur();
+        }, 100);
+    } catch (error) {
+        console.warn('Ошибка обработки поиска:', error.message);
+        showError('Произошла ошибка при поиске. Попробуйте еще раз.');
     }
 }
 
