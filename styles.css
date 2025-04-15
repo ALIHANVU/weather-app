@@ -1,38 +1,61 @@
-/* Основные переменные iOS */
+/* iOS Design System - iOS 17 style
+   Создано для максимального сходства с нативным iOS интерфейсом */
+
 :root {
-    --ios-bg: #f2f2f7;
-    --ios-card-bg: rgba(255, 255, 255, 0.8);
-    --ios-card-bg-blur: rgba(255, 255, 255, 0.65);
-    --ios-text: #1c1c1e;
-    --ios-secondary: #6e6e73;
+    /* Цветовая палитра iOS 17 */
+    --ios-bg: #f5f5f7;
+    --ios-card-bg: rgba(255, 255, 255, 0.72);
+    --ios-card-bg-blur: rgba(255, 255, 255, 0.58);
+    --ios-text: #1d1d1f;
+    --ios-secondary: #86868b;
     --ios-blue: #007aff;
-    --ios-border-radius: 16px;
-    --ios-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    --ios-padding: 16px;
-    --ios-transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-    --ios-font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', sans-serif;
+    --ios-red: #ff3b30;
+    --ios-green: #34c759;
+    --ios-yellow: #ffcc00;
+    --ios-orange: #ff9500;
+    --ios-purple: #af52de;
     
-    /* iOS 17 Spring Physics Constants */
+    /* Типографика iOS San Francisco */
+    --ios-font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'SF Pro', 'Helvetica Neue', Arial, sans-serif;
+    --ios-font-rounded: -apple-system, BlinkMacSystemFont, 'SF Pro Rounded', 'SF Pro Text', 'SF Pro', 'Helvetica Neue', Arial, sans-serif;
+    
+    /* Радиусы скругления iOS 17 */
+    --ios-radius-small: 8px;
+    --ios-radius-medium: 12px;
+    --ios-radius-large: 16px;
+    --ios-radius-xl: 20px;
+    --ios-radius-pill: 9999px;
+    
+    /* Тени в стиле iOS 17 */
+    --ios-shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.08);
+    --ios-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --ios-shadow-lg: 0 8px 20px rgba(0, 0, 0, 0.12);
+    
+    /* Размытие iOS 17 */
+    --ios-blur-sm: 10px;
+    --ios-blur-md: 20px;
+    --ios-blur-lg: 40px;
+    
+    /* iOS 17 Spring Physics Parameters */
     --ios-spring-duration: 0.4s;
-    --ios-spring-easing: cubic-bezier(0.23, 1, 0.32, 1); /* Точная кривая iOS 17 */
-    --ios-bounce-easing: cubic-bezier(0.34, 1.56, 0.64, 1); /* Пружинный эффект */
-    --ios-standard-easing: cubic-bezier(0.4, 0.0, 0.22, 1); /* Стандартная кривая iOS */
-    --ios-ease-out: cubic-bezier(0, 0, 0.2, 1); /* iOS ease-out */
-    --ios-ease-in: cubic-bezier(0.4, 0, 1, 1); /* iOS ease-in */
+    --ios-spring-easing: cubic-bezier(0.23, 1, 0.32, 1);
+    --ios-bounce-easing: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ios-standard-easing: cubic-bezier(0.4, 0.0, 0.22, 1);
+    --ios-ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --ios-ease-in: cubic-bezier(0.4, 0, 1, 1);
     
-    /* iOS Animation Durations */
-    --ios-duration-micro: 0.15s; /* Микро-переходы */
-    --ios-duration-quick: 0.25s; /* Быстрые переходы */
-    --ios-duration-standard: 0.35s; /* Стандартные переходы */
-    --ios-duration-emphasized: 0.5s; /* Акцентированные переходы */
+    /* Длительности анимаций iOS 17 */
+    --ios-duration-micro: 0.15s;
+    --ios-duration-quick: 0.25s;
+    --ios-duration-standard: 0.35s;
+    --ios-duration-emphasized: 0.5s;
     
-    /* iOS Blur и Backdrop Filter значения */
-    --ios-blur-light: 15px;
-    --ios-blur-medium: 30px;
-    --ios-blur-heavy: 60px;
-    
-    /* iOS Card Style */
-    --ios-card-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+    /* Отступы iOS 17 */
+    --ios-spacing-xs: 4px;
+    --ios-spacing-sm: 8px;
+    --ios-spacing-md: 16px;
+    --ios-spacing-lg: 24px;
+    --ios-spacing-xl: 32px;
 }
 
 /* Сброс и базовые стили */
@@ -48,6 +71,7 @@
 html {
     font-size: 16px;
     height: 100%;
+    overflow-x: hidden;
 }
 
 body {
@@ -59,18 +83,20 @@ body {
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
     overflow-x: hidden;
     height: 100%;
-    background-image: linear-gradient(180deg, rgba(189, 222, 255, 0.15) 0%, rgba(255, 255, 255, 0) 100%);
+    /* Более легкий градиент как в iOS 17 */
+    background-image: linear-gradient(180deg, rgba(189, 222, 255, 0.12) 0%, rgba(255, 255, 255, 0) 100%);
     background-attachment: fixed;
 }
 
-/* Основной контейнер */
+/* Основной контейнер в стиле iOS 17 */
 .ios-container {
     max-width: 520px;
     margin: 0 auto;
-    padding: 16px;
+    padding: var(--ios-spacing-md);
+    position: relative;
 }
 
-/* Поисковая секция */
+/* Поисковая секция в стиле iOS 17 */
 .search-section {
     margin-bottom: 20px;
     position: sticky;
@@ -79,15 +105,15 @@ body {
     background-color: transparent;
     padding-top: 12px;
     padding-bottom: 12px;
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(var(--ios-blur-md));
+    -webkit-backdrop-filter: blur(var(--ios-blur-md));
 }
 
 .search-container {
     position: relative;
     display: flex;
     background-color: rgba(118, 118, 128, 0.12);
-    border-radius: 10px;
+    border-radius: var(--ios-radius-pill);
     overflow: hidden;
     transition: box-shadow var(--ios-duration-quick) var(--ios-standard-easing),
                 background-color var(--ios-duration-quick) var(--ios-standard-easing);
@@ -95,19 +121,8 @@ body {
 }
 
 .search-container:focus-within {
-    animation: iosSearchFocus 0.3s var(--ios-spring-easing) forwards;
-}
-
-@keyframes iosSearchFocus {
-    0% {
-        box-shadow: 0 0 0 0 rgba(0, 122, 255, 0);
-    }
-    40% {
-        box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
-    }
-    100% {
-        box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.8);
-    }
+    box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.5);
+    background-color: rgba(118, 118, 128, 0.08);
 }
 
 .search-icon {
@@ -159,7 +174,7 @@ body {
     transform: scale(0.96);
 }
 
-/* Эффект ripple */
+/* iOS 17 ripple эффект */
 .ripple {
     position: absolute;
     border-radius: 50%;
@@ -180,20 +195,20 @@ body {
     }
 }
 
-/* Основная информация о погоде */
+/* Основная информация о погоде в стиле iOS 17 */
 .weather-main {
-    padding: 24px;
-    margin-bottom: 16px;
+    padding: var(--ios-spacing-lg);
+    margin-bottom: var(--ios-spacing-md);
     background-color: var(--ios-card-bg);
-    border-radius: var(--ios-border-radius);
-    box-shadow: var(--ios-card-shadow);
-    backdrop-filter: blur(var(--ios-blur-medium));
-    -webkit-backdrop-filter: blur(var(--ios-blur-medium));
+    border-radius: var(--ios-radius-large);
+    box-shadow: var(--ios-shadow-md);
+    backdrop-filter: blur(var(--ios-blur-md));
+    -webkit-backdrop-filter: blur(var(--ios-blur-md));
     animation: iosCardAppear var(--ios-duration-standard) var(--ios-spring-easing) forwards;
     text-align: center;
     position: relative;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     will-change: transform, opacity;
     opacity: 0;
     transform: scale(0.97) translateY(10px);
@@ -211,9 +226,9 @@ body {
 }
 
 .city-name {
-    font-size: 26px;
+    font-size: 28px;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: var(--ios-spacing-sm);
     letter-spacing: -0.5px;
     transition: all 0.6s var(--ios-spring-easing);
 }
@@ -222,15 +237,15 @@ body {
     font-size: 76px;
     font-weight: 200;
     line-height: 1;
-    margin-bottom: 8px;
+    margin-bottom: var(--ios-spacing-sm);
     letter-spacing: -1.5px;
     transition: all 0.6s var(--ios-spring-easing);
 }
 
 .weather-condition {
-    font-size: 18px;
+    font-size: 19px;
     color: var(--ios-text);
-    margin-bottom: 8px;
+    margin-bottom: var(--ios-spacing-sm);
     font-weight: 500;
     transition: all 0.6s var(--ios-spring-easing);
 }
@@ -241,15 +256,15 @@ body {
     font-weight: 400;
 }
 
-/* Карточки погоды */
+/* Карточки погоды в стиле iOS 17 */
 .weather-card {
     background-color: var(--ios-card-bg-blur);
-    border-radius: var(--ios-border-radius);
-    margin-bottom: 16px;
-    padding: var(--ios-padding);
-    box-shadow: var(--ios-card-shadow);
-    backdrop-filter: blur(var(--ios-blur-medium));
-    -webkit-backdrop-filter: blur(var(--ios-blur-medium));
+    border-radius: var(--ios-radius-large);
+    margin-bottom: var(--ios-spacing-md);
+    padding: var(--ios-spacing-md);
+    box-shadow: var(--ios-shadow-sm);
+    backdrop-filter: blur(var(--ios-blur-md));
+    -webkit-backdrop-filter: blur(var(--ios-blur-md));
     border: 1px solid rgba(255, 255, 255, 0.25);
     opacity: 0;
     transform: translateY(20px);
@@ -269,7 +284,7 @@ body {
     }
 }
 
-/* Почасовой прогноз */
+/* Почасовой прогноз в стиле iOS 17 */
 .hourly-forecast {
     overflow: hidden;
 }
@@ -277,7 +292,7 @@ body {
 .forecast-scroll {
     display: flex;
     overflow-x: auto;
-    padding: 8px 0 12px 0;
+    padding: var(--ios-spacing-sm) 0 var(--ios-spacing-md) 0;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE и Edge */
@@ -295,12 +310,14 @@ body {
     margin: 0 12px;
     min-width: 56px;
     padding: 12px 8px;
-    border-radius: 14px;
+    border-radius: var(--ios-radius-medium);
     opacity: 0;
     transform: translateY(15px);
     animation: iosHourlyItemIn var(--ios-duration-standard) var(--ios-spring-easing) forwards;
     animation-delay: calc(var(--ios-offset, 0) + (0.03s * var(--index, 0)));
     will-change: transform, opacity;
+    transition: background-color 0.15s var(--ios-ease-out), 
+                transform 0.2s var(--ios-spring-easing);
 }
 
 .forecast-hour:first-child {
@@ -344,14 +361,14 @@ body {
 .forecast-time {
     font-size: 15px;
     color: var(--ios-secondary);
-    margin-bottom: 8px;
+    margin-bottom: var(--ios-spacing-sm);
     white-space: nowrap;
     font-weight: 500;
 }
 
 .forecast-icon {
     font-size: 24px;
-    margin-bottom: 8px;
+    margin-bottom: var(--ios-spacing-sm);
 }
 
 .forecast-temp {
@@ -359,7 +376,7 @@ body {
     font-weight: 600;
 }
 
-/* Детали погоды */
+/* Детали погоды в стиле iOS 17 */
 .details-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -380,7 +397,7 @@ body {
 
 .detail-item {
     background-color: rgba(255, 255, 255, 0.35);
-    border-radius: 14px;
+    border-radius: var(--ios-radius-medium);
     padding: 14px;
     display: flex;
     flex-direction: column;
@@ -389,7 +406,7 @@ body {
                 background-color var(--ios-duration-micro) var(--ios-standard-easing);
     will-change: transform, opacity;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    box-shadow: var(--ios-shadow-sm);
     opacity: 0;
     transform: translateY(10px);
     animation: iosDetailItemIn var(--ios-duration-standard) var(--ios-spring-easing) forwards;
@@ -421,11 +438,11 @@ body {
 .detail-header {
     display: flex;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: var(--ios-spacing-sm);
 }
 
 .detail-icon {
-    margin-right: 8px;
+    margin-right: var(--ios-spacing-sm);
     font-size: 16px;
 }
 
@@ -441,7 +458,7 @@ body {
     font-weight: 600;
 }
 
-/* Советы для фермеров */
+/* Советы для фермеров в стиле iOS 17 */
 .tips-header, .forecast-header {
     display: flex;
     align-items: center;
@@ -454,7 +471,7 @@ body {
 }
 
 .tips-title, .forecast-title {
-    font-size: 17px;
+    font-size: 18px;
     font-weight: 600;
     letter-spacing: -0.3px;
 }
@@ -467,14 +484,14 @@ body {
 
 .tip-item {
     background-color: rgba(255, 255, 255, 0.35);
-    border-radius: 14px;
+    border-radius: var(--ios-radius-medium);
     padding: 14px;
     display: flex;
     align-items: flex-start;
     position: relative;
     overflow: hidden;
     will-change: transform, opacity;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--ios-shadow-sm);
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: transform var(--ios-duration-micro) var(--ios-standard-easing),
                 box-shadow var(--ios-duration-micro) var(--ios-standard-easing),
@@ -520,7 +537,7 @@ body {
     line-height: 1.5;
 }
 
-/* Стили для недельного прогноза */
+/* Стили для недельного прогноза в стиле iOS 17 */
 .weekly-forecast-grid {
     display: grid;
     gap: 10px;
@@ -528,13 +545,13 @@ body {
 
 .weekly-day {
     display: grid;
-    grid-template-columns: 2fr 1fr 1fr; /* Увеличиваем размер колонки с днём недели */
+    grid-template-columns: 2fr 1fr 1fr;
     background-color: rgba(255, 255, 255, 0.35);
-    border-radius: 14px;
+    border-radius: var(--ios-radius-medium);
     padding: 16px;
     align-items: center;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--ios-shadow-sm);
     will-change: transform, opacity;
     transition: transform var(--ios-duration-micro) var(--ios-standard-easing),
                 box-shadow var(--ios-duration-micro) var(--ios-standard-easing),
@@ -573,7 +590,7 @@ body {
 /* Адаптация для мобильных */
 @media (max-width: 350px) {
     .weekly-day-name {
-        font-size: 14px; /* Меньший размер шрифта на маленьких экранах */
+        font-size: 14px;
     }
 }
 
@@ -593,7 +610,7 @@ body {
     text-align: right;
 }
 
-/* Индикация загрузки */
+/* Индикация загрузки в стиле iOS 17 */
 .loading-overlay {
     position: fixed;
     top: 0;
@@ -606,8 +623,8 @@ body {
     align-items: center;
     z-index: 1000;
     animation: iosLoadFadeIn 0.3s var(--ios-ease-out);
-    backdrop-filter: blur(var(--ios-blur-light));
-    -webkit-backdrop-filter: blur(var(--ios-blur-light));
+    backdrop-filter: blur(var(--ios-blur-sm));
+    -webkit-backdrop-filter: blur(var(--ios-blur-sm));
 }
 
 .loading-overlay.fade-out {
@@ -621,8 +638,8 @@ body {
         background-color: rgba(240, 240, 247, 0);
     }
     to {
-        backdrop-filter: blur(var(--ios-blur-light));
-        -webkit-backdrop-filter: blur(var(--ios-blur-light));
+        backdrop-filter: blur(var(--ios-blur-sm));
+        -webkit-backdrop-filter: blur(var(--ios-blur-sm));
         background-color: rgba(240, 240, 247, 0.7);
     }
 }
@@ -630,8 +647,8 @@ body {
 @keyframes iosLoadFadeOut {
     from {
         opacity: 1;
-        backdrop-filter: blur(var(--ios-blur-light));
-        -webkit-backdrop-filter: blur(var(--ios-blur-light));
+        backdrop-filter: blur(var(--ios-blur-sm));
+        -webkit-backdrop-filter: blur(var(--ios-blur-sm));
     }
     to {
         opacity: 0;
@@ -671,13 +688,13 @@ body {
     max-width: 260px;
 }
 
-/* Ошибки */
+/* Уведомления об ошибках в стиле iOS 17 */
 .error-notification {
     position: fixed;
     top: max(env(safe-area-inset-top, 20px), 40px);
     left: 50%;
     transform: translateX(-50%);
-    background-color: #ff3b30;
+    background-color: var(--ios-red);
     color: white;
     padding: 12px 20px;
     border-radius: 12px;
@@ -717,7 +734,7 @@ body {
     }
 }
 
-/* Состояния загрузки */
+/* Состояния загрузки в стиле iOS 17 */
 .loading {
     position: relative;
     overflow: hidden;
@@ -754,7 +771,7 @@ body {
     display: none;
 }
 
-/* Переходы между страницами */
+/* Анимации перехода между страницами в стиле iOS 17 */
 #weatherResult {
     opacity: 0;
     transform: translateY(20px);
@@ -793,7 +810,7 @@ body {
     }
     
     .weather-main {
-        padding: 30px;
+        padding: 32px;
     }
     
     .temperature {
@@ -801,26 +818,34 @@ body {
     }
     
     .weather-condition {
-        font-size: 20px;
+        font-size: 22px;
     }
     
     .weather-card {
         padding: 24px;
     }
+    
+    .detail-item {
+        padding: 16px;
+    }
+    
+    .weekly-day {
+        padding: 18px;
+    }
 }
 
-/* Поддержка темного режима */
+/* Поддержка темного режима в стиле iOS 17 */
 @media (prefers-color-scheme: dark) {
     :root {
         --ios-bg: #000000;
-        --ios-card-bg: rgba(30, 30, 32, 0.8);
+        --ios-card-bg: rgba(30, 30, 32, 0.75);
         --ios-card-bg-blur: rgba(30, 30, 32, 0.65);
         --ios-text: #ffffff;
         --ios-secondary: #98989d;
     }
     
     body {
-        background-image: linear-gradient(180deg, rgba(0, 64, 128, 0.1) 0%, rgba(0, 0, 0, 0) 100%);
+        background-image: linear-gradient(180deg, rgba(0, 64, 128, 0.08) 0%, rgba(0, 0, 0, 0) 100%);
     }
     
     .search-container {
@@ -851,8 +876,8 @@ body {
             background-color: rgba(28, 28, 30, 0);
         }
         to {
-            backdrop-filter: blur(var(--ios-blur-light));
-            -webkit-backdrop-filter: blur(var(--ios-blur-light));
+            backdrop-filter: blur(var(--ios-blur-sm));
+            -webkit-backdrop-filter: blur(var(--ios-blur-sm));
             background-color: rgba(28, 28, 30, 0.7);
         }
     }
@@ -907,27 +932,7 @@ body {
         background: rgba(255, 255, 255, 0.2);
     }
     
-    /* Скроллбар в темном режиме */
-    ::-webkit-scrollbar-thumb {
-        background-color: rgba(255, 255, 255, 0.2);
-    }
-    
-    ::-webkit-scrollbar-thumb:hover {
-        background-color: rgba(255, 255, 255, 0.3);
-    }
-    
-    /* Эффекты наведения в темном режиме */
-    @media (hover: hover) {
-        .forecast-hour:hover {
-            background-color: rgba(255, 255, 255, 0.08);
-        }
-        
-        .search-button:hover {
-            background-color: #0077e6;
-        }
-    }
-    
-    /* Улучшенные цвета элементов для темного режима */
+    /* Кнопка поиска в темном режиме */
     .search-button {
         background-color: #0a84ff;
     }
@@ -935,40 +940,13 @@ body {
     .search-button:active {
         background-color: #0075e0;
     }
-    
-    /* Улучшение видимости для loadingText в темном режиме */
-    .loading-text {
-        color: rgba(255, 255, 255, 0.9);
-    }
-    
-    /* Иконки и детали в темном режиме */ 
-    .detail-value, .forecast-temp, .weekly-day-temp {
-        color: #fff;
-    }
-    
-    /* iOS-стиль для темной темы - увеличенная прозрачность */
-    .weather-card {
-        background-color: rgba(30, 30, 32, 0.75);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-    }
-    
-    /* Специальные анимации для темного режима */
-    @keyframes iosHapticTouchDark {
-        0% {
-            transform: scale(0);
-            opacity: 0.3;
-        }
-        100% {
-            transform: scale(1.5);
-            opacity: 0;
-        }
-    }
 }
 
-/* Улучшенные эффекты при касании */
+/* Улучшенные эффекты при касании в стиле iOS 17 */
 @media (hover: hover) {
     .search-button:hover {
         background-color: #0069d9;
+        transform: translateZ(0);
     }
     
     .forecast-hour:hover {
@@ -994,7 +972,7 @@ body {
     }
 }
 
-/* Настройка фокуса для клавиатурной навигации */
+/* Настройка фокуса для клавиатурной навигации в стиле iOS 17 */
 :focus-visible {
     outline: 2px solid var(--ios-blue);
     outline-offset: 2px;
@@ -1006,7 +984,7 @@ body {
 .weather-card:nth-child(3) { --index: 3; }
 .weather-card:nth-child(4) { --index: 4; }
 
-/* Улучшенные эффекты при касании */
+/* Упрощенные эффекты при касании для слабых устройств */
 .simple-active {
     animation: iosActivePress 0.3s var(--ios-spring-easing);
 }
@@ -1057,7 +1035,7 @@ body {
     }
 }
 
-/* Стили для модального окна погоды на день */
+/* Стили для модального окна погоды на день в стиле iOS 17 */
 .day-modal {
     position: fixed;
     top: 0;
@@ -1084,8 +1062,8 @@ body {
 .day-modal.visible {
     opacity: 1;
     visibility: visible;
-    backdrop-filter: blur(var(--ios-blur-light));
-    -webkit-backdrop-filter: blur(var(--ios-blur-light));
+    backdrop-filter: blur(var(--ios-blur-sm));
+    -webkit-backdrop-filter: blur(var(--ios-blur-sm));
     background-color: rgba(0, 0, 0, 0.4);
     transition: opacity 0.2s var(--ios-ease-out),
                 visibility 0.2s var(--ios-ease-out),
@@ -1096,14 +1074,14 @@ body {
 
 .day-modal-content {
     background-color: var(--ios-bg);
-    border-radius: var(--ios-border-radius);
+    border-radius: var(--ios-radius-large);
     max-width: 520px;
     width: 100%;
     max-height: 90vh;
     overflow-y: auto;
-    padding: var(--ios-padding);
+    padding: var(--ios-spacing-md);
     position: relative;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--ios-shadow-lg);
     border: 1px solid rgba(255, 255, 255, 0.1);
     transform: translateY(30px) scale(0.95);
     opacity: 0;
@@ -1117,7 +1095,7 @@ body {
     opacity: 1;
 }
 
-/* Анимация закрытия модального окна */
+/* Анимация закрытия модального окна в стиле iOS 17 */
 .day-modal:not(.visible) .day-modal-content {
     transform: translateY(10px) scale(0.96);
     opacity: 0;
@@ -1164,10 +1142,11 @@ body {
     letter-spacing: -0.5px;
 }
 
-/* Улучшение прокрутки контента модального окна */
+/* Улучшение прокрутки контента модального окна в стиле iOS 17 */
 .day-modal-content {
     scrollbar-width: thin;
     scrollbar-color: var(--ios-secondary) transparent;
+    -webkit-overflow-scrolling: touch;
 }
 
 .day-modal-content::-webkit-scrollbar {
@@ -1183,22 +1162,113 @@ body {
     border-radius: 10px;
 }
 
-/* Предотвращение прокрутки основного содержимого */
+/* Предотвращение прокрутки основного содержимого при открытом модальном окне */
 body.modal-open {
     overflow: hidden;
 }
 
-/* Адаптивность для небольших экранов */
-@media (max-width: 350px) {
-    .day-modal-content {
-        padding: 12px;
+/* iOS 17 стиль скрытых полос прокрутки */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Hardware acceleration для плавных анимаций iOS */
+.hardware-accelerated {
+    transform: translateZ(0);
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+/* iOS 17 тактильный эффект при нажатии */
+@keyframes iosTactileFeedback {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.97);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Улучшенная компактность для больших форм-факторов */
+@media (min-width: 960px) {
+    .ios-container {
+        max-width: 800px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 24px;
+        align-items: start;
     }
     
-    .modal-weather-main {
-        padding: 16px;
+    .search-section {
+        grid-column: 1 / 3;
     }
     
-    .day-name {
-        font-size: 22px;
+    .weather-main {
+        grid-column: 1 / 3;
+    }
+}
+
+/* iOS 17 специфичные оптимизации для улучшения производительности */
+.low-performance-device .weather-card,
+.low-performance-device .weather-main {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+/* Закругленные углы для верхней карточки в стиле iOS 17 */
+.weather-card:first-of-type {
+    border-top-left-radius: var(--ios-radius-xl);
+    border-top-right-radius: var(--ios-radius-xl);
+}
+
+/* Специальный эффект нажатия кнопки в стиле iOS 17 */
+@keyframes iosButtonPress {
+    0% {
+        transform: scale(1);
+    }
+    40% {
+        transform: scale(0.96);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Устранение мерцания текста при анимациях в iOS */
+.city-name, .temperature, .weather-condition {
+    -webkit-font-smoothing: subpixel-antialiased;
+    transform: translateZ(0);
+}
+
+/* Современные фильтры размытия для iOS 17 */
+@supports ((-webkit-backdrop-filter: blur(20px)) or (backdrop-filter: blur(20px))) {
+    .weather-main, .weather-card {
+        backdrop-filter: blur(var(--ios-blur-md)) saturate(180%);
+        -webkit-backdrop-filter: blur(var(--ios-blur-md)) saturate(180%);
+    }
+    
+    .search-section {
+        backdrop-filter: blur(var(--ios-blur-md)) saturate(180%);
+        -webkit-backdrop-filter: blur(var(--ios-blur-md)) saturate(180%);
     }
 }
