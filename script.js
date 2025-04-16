@@ -2074,3 +2074,171 @@ function setupIOSTouchEffects() {
         }, { passive: true });
     });
 }
+/**
+ * Добавляет индикатор экстремальной температуры для прогноза на неделю
+ * Интегрируется с существующим кодом для отображения предупреждений
+ */
+
+// Константы для пороговых значений температуры (в градусах Цельсия)
+const PLANT_TEMPERATURE_THRESHOLDS = {
+  TOO_COLD: 0,  // Слишком холодно для большинства растений (заморозки)
+  TOO_HOT: 30   // Слишком жарко для большинства растений (тепловой стресс)
+};
+
+// SVG для предупреждающего индикатора (минималистичный треугольник с восклицательным знаком)
+const TEMPERATURE_WARNING_ICON = `
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+  <line x1="12" y1="9" x2="12" y2="13"></line>
+  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+</svg>
+`;
+
+/**
+ * Проверяет, является ли температура экстремальной для растений
+ * @param {number} temperature - Температура в градусах Цельсия
+ * @returns {boolean} true, если температура экстремальная
+ */
+function isExtremeTemperatureForPlants(temperature) {
+  return temperature <= PLANT_TEMPERATURE_THRESHOLDS.TOO_COLD || 
+         temperature >= PLANT_TEMPERATURE_THRESHOLDS.TOO_HOT;
+}
+
+/**
+ * Применяет индикатор экстремальной температуры к прогнозу на неделю
+ */
+function applyTemperatureWarningIndicators() {
+  // Находим все элементы с дневным прогнозом
+  const weeklyForecastItems = document.querySelectorAll('.weekly-day');
+  
+  weeklyForecastItems.forEach(dayItem => {
+    // Находим элемент с температурой
+    const tempElement = dayItem.querySelector('.weekly-day-temp');
+    if (!tempElement) return;
+    
+    // Извлекаем температуру из текста
+    const tempText = tempElement.textContent;
+    const temperature = parseInt(tempText);
+    
+    // Если нельзя извлечь температуру или она не экстремальная, пропускаем
+    if (isNaN(temperature) || !isExtremeTemperatureForPlants(temperature)) return;
+    
+    // Проверяем, есть ли уже индикатор
+    if (dayItem.querySelector('.temperature-warning-indicator')) return;
+    
+    // Создаем индикатор
+    const warningIndicator = document.createElement('div');
+    warningIndicator.className = 'temperature-warning-indicator';
+    warningIndicator.innerHTML = TEMPERATURE_WARNING_ICON;
+    
+    // Добавляем title для подсказки
+    warningIndicator.title = temperature <= PLANT_TEMPERATURE_THRESHOLDS.TOO_COLD 
+      ? 'Возможны заморозки - защитите растения!' 
+      : 'Экстремальная жара - растениям требуется дополнительный полив и тень!';
+    
+    // Добавляем индикатор к элементу с температурой
+    tempElement.appendChild(warningIndicator);
+  });
+}
+
+/**
+ * Применяет индикатор экстремальной температуры к модальному окну дня
+ */
+function applyTemperatureWarningIndicatorsToModal() {
+  // Находим элемент с температурой в модальном окне
+  const modalTempElement = document.getElementById('modalTemperature');
+  if (!modalTempElement) return;
+  
+  // Извлекаем температуру из текста
+  const tempText = modalTempElement.textContent;
+  const temperature = parseInt(tempText);
+  
+  // Если нельзя извлечь температуру или она не экстремальная, удаляем существующий индикатор
+  if (isNaN(temperature) || !isExtremeTemperatureForPlants(temperature)) {
+    const existingIndicator = document.querySelector('.modal-weather-main .temperature-warning-indicator');
+    if (existingIndicator) existingIndicator.remove();
+    return;
+  }
+  
+  // Проверяем, есть ли уже индикатор
+  if (document.querySelector('.modal-weather-main .temperature-warning-indicator')) return;
+  
+  // Создаем индикатор
+  const warningIndicator = document.createElement('div');
+  warningIndicator.className = 'temperature-warning-indicator modal-warning';
+  warningIndicator.innerHTML = TEMPERATURE_WARNING_ICON;
+  
+  // Добавляем title для подсказки
+  warningIndicator.title = temperature <= PLANT_TEMPERATURE_THRESHOLDS.TOO_COLD 
+    ? 'Возможны заморозки - защитите растения!' 
+    : 'Экстремальная жара - растениям требуется дополнительный полив и тень!';
+  
+  // Добавляем индикатор к заголовку модального окна
+  const modalWeatherMain = document.querySelector('.modal-weather-main');
+  if (modalWeatherMain) {
+    modalWeatherMain.appendChild(warningIndicator);
+  }
+}
+
+/**
+ * Инициализация функционала предупреждений о температуре
+ */
+function initTemperatureWarnings() {
+  // Наблюдаем за изменениями в DOM для автоматического добавления индикаторов
+  const observer = new MutationObserver(mutations => {
+    const shouldCheckForecast = mutations.some(mutation => {
+      // Проверяем, добавлены ли новые узлы или изменились атрибуты
+      return mutation.addedNodes.length > 0 || 
+             (mutation.type === 'attributes' && mutation.attributeName === 'class');
+    });
+    
+    if (shouldCheckForecast) {
+      // Применяем индикаторы к прогнозу на неделю
+      applyTemperatureWarningIndicators();
+      
+      // Если модальное окно открыто, применяем индикаторы и к нему
+      const modalVisible = document.querySelector('.day-modal.visible');
+      if (modalVisible) {
+        applyTemperatureWarningIndicatorsToModal();
+      }
+    }
+  });
+  
+  // Наблюдаем за всем документом на случай динамических обновлений
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['class']
+  });
+  
+  // Добавляем обработчик события открытия модального окна
+  document.addEventListener('click', event => {
+    // Проверяем, кликнул ли пользователь по дню недели
+    const weeklyDay = event.target.closest('.weekly-day');
+    if (weeklyDay) {
+      // Добавляем небольшую задержку, чтобы модальное окно успело открыться
+      setTimeout(() => {
+        applyTemperatureWarningIndicatorsToModal();
+      }, 300);
+    }
+  });
+  
+  // Применяем индикаторы сразу при загрузке страницы
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(applyTemperatureWarningIndicators, 500);
+  });
+  
+  // Также применяем при обновлении данных о погоде
+  // Перехватываем функцию обновления недельного прогноза
+  const originalUpdateWeeklyForecast = window.updateWeeklyForecast;
+  if (originalUpdateWeeklyForecast) {
+    window.updateWeeklyForecast = function(...args) {
+      originalUpdateWeeklyForecast.apply(this, args);
+      setTimeout(applyTemperatureWarningIndicators, 100);
+    };
+  }
+}
+
+// Запускаем инициализацию
+initTemperatureWarnings();
