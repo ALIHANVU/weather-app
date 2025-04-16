@@ -1287,6 +1287,8 @@ function openDayWeatherModal(dayData) {
     try {
         if (!modalElements.dayModal || !dayData) return;
         
+        // Сначала подготовим все данные и создадим контент перед показом модального окна
+        
         // Базовые данные о дне
         if (modalElements.dayName) modalElements.dayName.textContent = dayData.day;
         
@@ -1352,35 +1354,53 @@ function openDayWeatherModal(dayData) {
         if (modalElements.visibility) modalElements.visibility.textContent = `${avgVisibility} км`;
         if (modalElements.feelsLike) modalElements.feelsLike.textContent = `${avgFeelsLike}°`;
         
-        // Обновляем почасовой прогноз
-        updateModalHourlyForecast(dayData.hourlyData);
+        // Асинхронно подготавливаем данные для почасового прогноза и советов
+        const hourlyForecastHTML = prepareModalHourlyForecast(dayData.hourlyData);
         
-        // Генерируем советы для выбранного дня
-        updateModalFarmerTips({
-            main: { 
-                temp: avgTemp, 
-                humidity: avgHumidity, 
-                feels_like: avgFeelsLike 
-            },
-            weather: [{ 
-                description: mostFrequentWeather, 
-                icon: mostFrequentIcon 
-            }],
-            wind: { 
-                speed: avgWindSpeed 
-            },
-            visibility: avgVisibility * 1000
-        });
+        // Подготавливаем заглушки для советов, которые будем загружать позже
+        if (modalElements.hourlyForecast) modalElements.hourlyForecast.innerHTML = hourlyForecastHTML;
         
-        // Сначала покажем модальное окно (сделаем его видимым)
+        // Создаем заглушки для советов, чтобы зарезервировать место
+        if (modalElements.tipsContainer) {
+            modalElements.tipsContainer.innerHTML = `
+                <div class="tip-item placeholder" style="height: 60px; opacity: 0.5;">
+                    <span class="tip-icon">🌱</span>
+                    <span class="tip-text">Загрузка советов...</span>
+                </div>
+                <div class="tip-item placeholder" style="height: 60px; opacity: 0.5;">
+                    <span class="tip-icon">🌱</span>
+                    <span class="tip-text">Загрузка советов...</span>
+                </div>
+            `;
+        }
+        
+        // Сначала показываем модальное окно со всем предварительно загруженным контентом
         modalElements.dayModal.classList.remove('hidden');
         document.body.classList.add('modal-open');
         
-        // Затем в следующем кадре добавим класс visible для запуска анимации
+        // Запускаем анимацию открытия
         requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                modalElements.dayModal.classList.add('visible');
-            });
+            modalElements.dayModal.classList.add('visible');
+            
+            // После полного открытия модального окна загружаем советы
+            setTimeout(() => {
+                // Теперь загружаем настоящие советы
+                updateModalFarmerTips({
+                    main: { 
+                        temp: avgTemp, 
+                        humidity: avgHumidity, 
+                        feels_like: avgFeelsLike 
+                    },
+                    weather: [{ 
+                        description: mostFrequentWeather, 
+                        icon: mostFrequentIcon 
+                    }],
+                    wind: { 
+                        speed: avgWindSpeed 
+                    },
+                    visibility: avgVisibility * 1000
+                });
+            }, 500); // Даем анимации открытия завершиться
         });
     } catch (error) {
         console.warn('Ошибка при открытии модального окна:', error.message);
@@ -1389,48 +1409,36 @@ function openDayWeatherModal(dayData) {
 }
 
 /**
- * Обновляет почасовой прогноз в модальном окне с iOS-анимациями
+ * Подготавливает HTML для почасового прогноза
  * @param {Array} hourlyData - Данные почасового прогноза
+ * @returns {string} HTML разметка
  */
-function updateModalHourlyForecast(hourlyData) {
+function prepareModalHourlyForecast(hourlyData) {
     try {
-        if (!modalElements.hourlyForecast) return;
-        modalElements.hourlyForecast.innerHTML = '';
-        
         if (!hourlyData || !Array.isArray(hourlyData)) {
-            console.warn('Неверные данные почасового прогноза для модального окна:', hourlyData);
-            return;
+            return '<div class="no-data">Нет данных о почасовом прогнозе</div>';
         }
         
-        // Создаем DocumentFragment для оптимизации DOM операций
-        const fragment = document.createDocumentFragment();
+        let html = '';
         
-        // Показываем все доступные часы
         hourlyData.forEach((item, index) => {
-            const hourlyDiv = document.createElement('div');
-            hourlyDiv.className = 'forecast-hour';
-            
             const icon = item.weather && item.weather[0] && item.weather[0].icon 
                 ? weatherEmoji[item.weather[0].icon] 
                 : "🌦️";
             
-            hourlyDiv.innerHTML = `
-                <div class="forecast-time">${formatTime(item.dt)}</div>
-                <div class="forecast-icon">${icon}</div>
-                <div class="forecast-temp">${Math.round(item.main.temp)}°</div>
+            html += `
+                <div class="forecast-hour">
+                    <div class="forecast-time">${formatTime(item.dt)}</div>
+                    <div class="forecast-icon">${icon}</div>
+                    <div class="forecast-temp">${Math.round(item.main.temp)}°</div>
+                </div>
             `;
-            
-            // Создаем эффект появления элементов с задержкой
-            hourlyDiv.style.animation = `fadeIn 0.3s ease forwards`;
-            hourlyDiv.style.animationDelay = `${index * 0.03}s`;
-            hourlyDiv.style.opacity = '0';
-            
-            fragment.appendChild(hourlyDiv);
         });
         
-        modalElements.hourlyForecast.appendChild(fragment);
+        return html;
     } catch (error) {
-        console.warn('Ошибка обновления почасового прогноза в модальном окне:', error.message);
+        console.warn('Ошибка подготовки HTML для почасового прогноза:', error.message);
+        return '<div class="error">Ошибка загрузки прогноза</div>';
     }
 }
 
@@ -1441,31 +1449,35 @@ function updateModalHourlyForecast(hourlyData) {
 async function updateModalFarmerTips(weatherData) {
     try {
         if (!modalElements.tipsContainer) return;
-        modalElements.tipsContainer.innerHTML = '';
         
         const tips = await generateFarmerTips(weatherData);
         
-        // Создаем DocumentFragment для оптимизации DOM операций
-        const fragment = document.createDocumentFragment();
+        // Применяем плавный переход
+        modalElements.tipsContainer.style.transition = 'opacity 0.2s ease';
+        modalElements.tipsContainer.style.opacity = '0';
         
-        tips.forEach((tip, index) => {
-            const tipElement = document.createElement('div');
-            tipElement.className = 'tip-item';
+        // Ждем завершения анимации исчезновения
+        setTimeout(() => {
+            // Создаем HTML для советов
+            let html = '';
             
-            tipElement.innerHTML = `
-                <span class="tip-icon">🌱</span>
-                <span class="tip-text">${tip}</span>
-            `;
+            tips.forEach((tip) => {
+                html += `
+                    <div class="tip-item">
+                        <span class="tip-icon">🌱</span>
+                        <span class="tip-text">${tip}</span>
+                    </div>
+                `;
+            });
             
-            // Создаем эффект появления с задержкой
-            tipElement.style.animation = `fadeIn 0.3s ease forwards`;
-            tipElement.style.animationDelay = `${index * 0.05}s`;
-            tipElement.style.opacity = '0';
+            // Обновляем содержимое
+            modalElements.tipsContainer.innerHTML = html;
             
-            fragment.appendChild(tipElement);
-        });
-        
-        modalElements.tipsContainer.appendChild(fragment);
+            // Показываем с плавной анимацией
+            setTimeout(() => {
+                modalElements.tipsContainer.style.opacity = '1';
+            }, 50);
+        }, 200);
     } catch (error) {
         console.warn('Ошибка обновления советов в модальном окне:', error.message);
         
@@ -1500,11 +1512,9 @@ function closeDayWeatherModal() {
             modalElements.dayModal.classList.add('hidden');
             document.body.classList.remove('modal-open');
             
-            // Очищаем содержимое модального окна после закрытия для оптимизации памяти
-            setTimeout(() => {
-                if (modalElements.hourlyForecast) modalElements.hourlyForecast.innerHTML = '';
-                if (modalElements.tipsContainer) modalElements.tipsContainer.innerHTML = '';
-            }, 100);
+            // Очищаем содержимое модального окна после закрытия
+            if (modalElements.hourlyForecast) modalElements.hourlyForecast.innerHTML = '';
+            if (modalElements.tipsContainer) modalElements.tipsContainer.innerHTML = '';
         }, 300); // Время должно соответствовать продолжительности CSS-анимации
     } catch (error) {
         console.warn('Ошибка закрытия модального окна:', error.message);
@@ -1516,19 +1526,6 @@ function closeDayWeatherModal() {
         }
         document.body.classList.remove('modal-open');
     }
-}
-
-// Добавляем CSS-анимацию для элементов модального окна, если её нет
-if (!document.getElementById('modalAnimationStyles')) {
-    const styleEl = document.createElement('style');
-    styleEl.id = 'modalAnimationStyles';
-    styleEl.textContent = `
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    `;
-    document.head.appendChild(styleEl);
 }
 
 // ===== ОСНОВНЫЕ ФУНКЦИИ ПРИЛОЖЕНИЯ =====
