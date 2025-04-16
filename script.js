@@ -335,6 +335,7 @@ function getCurrentSeason() {
 
 /**
  * Создает эффект ripple в стиле iOS
+ * Исправленная версия, которая не вызывает исчезновение элементов
  * @param {Event} event - Событие клика
  */
 function createRipple(event) {
@@ -351,7 +352,17 @@ function createRipple(event) {
         }
         
         // Удаляем существующие эффекты ripple
-        target.querySelectorAll('.ripple').forEach(ripple => ripple.remove());
+        const existingRipples = target.querySelectorAll('.ripple');
+        existingRipples.forEach(ripple => {
+            // Вместо удаления, просто делаем прозрачными
+            ripple.style.opacity = '0';
+            // Удаляем только после завершения анимации и только если элемент все еще существует
+            setTimeout(() => {
+                if (ripple && ripple.parentNode === target) {
+                    ripple.remove();
+                }
+            }, 600);
+        });
         
         // iOS-стиль: более локализованный и сдержанный эффект
         const ripple = document.createElement('span');
@@ -372,13 +383,15 @@ function createRipple(event) {
         
         target.appendChild(ripple);
         
-        // Удаляем ripple после анимации и возвращаем элемент к нормальному размеру
+        // Возвращаем элемент к нормальному размеру, но не удаляем ripple
         setTimeout(() => {
             target.style.transform = '';
             target.style.transition = `transform 0.2s ${IOS_ANIMATIONS.EASING.SPRING}`;
             
+            // Не удаляем ripple, вместо этого делаем его прозрачным
             if (ripple && ripple.parentNode === target) {
-                target.removeChild(ripple);
+                ripple.style.opacity = '0';
+                ripple.style.transition = 'opacity 0.4s ease-out';
             }
         }, 400);
     } catch (error) {
