@@ -1,376 +1,126 @@
 {
-  "temperature": {
-    "hot": {
-      "min": 25,
-      "icon": "sun.max",
-      "title": "Жаркая погода",
-      "tips": [
-        {
-          "text": "Поливайте растения рано утром или после захода солнца",
-          "icon": "drop.fill",
-          "priority": "high",
-          "color": "blue"
-        },
-        {
-          "text": "Используйте мульчу для сохранения влаги в почве",
-          "icon": "leaf.fill",
-          "priority": "medium",
-          "color": "brown"
-        },
-        {
-          "text": "Обеспечьте временное затенение для чувствительных растений",
-          "icon": "sun.and.horizon.fill",
-          "priority": "medium",
-          "color": "orange"
-        },
-        {
-          "text": "Молодые саженцы требуют более частого полива",
-          "icon": "drop.triangle.fill",
-          "priority": "high",
-          "color": "teal"
-        },
-        {
-          "text": "Регулярно проверяйте растения на признаки теплового стресса",
-          "icon": "exclamationmark.triangle.fill",
-          "priority": "high",
-          "color": "red"
-        }
-      ]
+  "tips": {
+    "temperature": {
+      "hot": {
+        "min": 25,
+        "tips": [
+          { "text": "Полив растений рекомендуется рано утром или вечером", "icon": "thermometer.sun" },
+          { "text": "Используйте мульчирование для сохранения влаги", "icon": "drop.fill" },
+          { "text": "Обеспечьте дополнительную тень для растений", "icon": "sun.max.fill" },
+          { "text": "Увеличьте частоту полива молодых растений", "icon": "wind" },
+          { "text": "Следите за признаками теплового стресса", "icon": "exclamationmark.triangle.fill" },
+          { "text": "Защищайте молодые саженцы от прямых солнечных лучей", "icon": "sun.max.fill" },
+          { "text": "Используйте полив капельным методом для экономии воды", "icon": "drop.fill" }
+        ]
+      },
+      "moderate": {
+        "min": 15,
+        "max": 24,
+        "tips": [
+          { "text": "Оптимальное время для большинства работ", "icon": "wrench.and.screwdriver.fill" },
+          { "text": "Хорошие условия для опыления растений", "icon": "leaf.fill" },
+          { "text": "Подходящее время для внесения удобрений", "icon": "bolt.fill" },
+          { "text": "Можно проводить обработку почвы", "icon": "gobackward" },
+          { "text": "Благоприятное время для посадки", "icon": "leaf.arrow.circlepath" },
+          { "text": "Планируйте полив с учетом ожидаемой облачности", "icon": "cloud.fill" },
+          { "text": "Проводите обрезку для улучшения воздухообмена", "icon": "scissors" }
+        ]
+      },
+      "cold": {
+        "max": 14,
+        "tips": [
+          { "text": "Защитите растения от заморозков", "icon": "snowflake" },
+          { "text": "Проверьте системы обогрева", "icon": "flame.fill" },
+          { "text": "Ограничьте полив во избежание переохлаждения", "icon": "drop" },
+          { "text": "Укройте чувствительные культуры", "icon": "shield.fill" },
+          { "text": "Отложите посадку теплолюбивых растений", "icon": "clock.fill" },
+          { "text": "Используйте специальные укрывные материалы", "icon": "cloud.snow.fill" },
+          { "text": "Следите за прогнозом и подготавливайте укрытия заранее", "icon": "calendar" }
+        ]
+      }
     },
-    "moderate": {
-      "min": 15,
-      "max": 24,
-      "icon": "sun.min",
-      "title": "Умеренная погода",
-      "tips": [
-        {
-          "text": "Идеальное время для большинства садовых работ",
-          "icon": "checkmark.circle.fill",
-          "priority": "medium",
-          "color": "green"
-        },
-        {
-          "text": "Благоприятные условия для опыления растений",
-          "icon": "flower.fill",
-          "priority": "medium",
-          "color": "pink"
-        },
-        {
-          "text": "Оптимальный период для внесения удобрений",
-          "icon": "plusminus.circle.fill",
-          "priority": "medium",
-          "color": "blue"
-        },
-        {
-          "text": "Подходящее время для обработки почвы",
-          "icon": "square.and.pencil",
-          "priority": "medium",
-          "color": "brown"
-        },
-        {
-          "text": "Хорошие условия для посадки новых растений",
-          "icon": "arrow.down.circle.fill",
-          "priority": "high",
-          "color": "green"
-        }
-      ]
+    "humidity": {
+      "high": {
+        "min": 70,
+        "tips": [
+          { "text": "Следите за появлением грибковых заболеваний", "icon": "ant.fill" },
+          { "text": "Обеспечьте хорошую вентиляцию", "icon": "wind" },
+          { "text": "Избегайте полива листьев растений", "icon": "nosign" },
+          { "text": "Используйте фунгициды при необходимости", "icon": "cross.fill" },
+          { "text": "Проверяйте растения на наличие плесени", "icon": "magnifyingglass" },
+          { "text": "Регулярно очищайте посадочные зоны от опавших листьев", "icon": "trash.fill" }
+        ]
+      },
+      "normal": {
+        "min": 40,
+        "max": 69,
+        "tips": [
+          { "text": "Оптимальные условия для растений", "icon": "checkmark.seal.fill" },
+          { "text": "Можно проводить плановые работы", "icon": "doc.plaintext" },
+          { "text": "Хорошее время для обработки растений", "icon": "leaf.fill" },
+          { "text": "Благоприятные условия для роста", "icon": "sunrise.fill" },
+          { "text": "Проводите регулярный уход", "icon": "wrench.fill" },
+          { "text": "Следите за влажностью почвы и корректируйте полив", "icon": "drop.fill" },
+          { "text": "Поддерживайте равномерное распределение влаги", "icon": "equalizer" }
+        ]
+      },
+      "low": {
+        "max": 39,
+        "tips": [
+          { "text": "Увеличьте частоту полива", "icon": "drop.fill" },
+          { "text": "Используйте мульчирование почвы", "icon": "scalemass" },
+          { "text": "Создайте микроклимат для растений", "icon": "wind" },
+          { "text": "Следите за признаками засухи", "icon": "sun.max.fill" },
+          { "text": "Организуйте дополнительное увлажнение", "icon": "drop" },
+          { "text": "Установите системы капельного орошения", "icon": "drop.fill" }
+        ]
+      }
     },
-    "cold": {
-      "max": 14,
-      "icon": "thermometer.snowflake",
-      "title": "Холодная погода",
-      "tips": [
-        {
-          "text": "Защитите чувствительные растения от заморозков",
-          "icon": "shield.fill",
-          "priority": "high",
-          "color": "blue"
-        },
-        {
-          "text": "Убедитесь, что системы обогрева теплиц работают правильно",
-          "icon": "flame.fill",
-          "priority": "high",
-          "color": "orange"
-        },
-        {
-          "text": "Сократите полив, чтобы избежать переохлаждения корней",
-          "icon": "drop.fill",
-          "priority": "medium",
-          "color": "teal"
-        },
-        {
-          "text": "Используйте укрывной материал для защиты растений",
-          "icon": "shield.lefthalf.fill",
-          "priority": "high",
-          "color": "gray"
-        },
-        {
-          "text": "Отложите посадку теплолюбивых культур",
-          "icon": "calendar.badge.clock",
-          "priority": "medium",
-          "color": "red"
-        }
-      ]
-    }
-  },
-  "humidity": {
-    "high": {
-      "min": 70,
-      "icon": "humidity.fill",
-      "title": "Высокая влажность",
-      "tips": [
-        {
-          "text": "Повышенный риск грибковых заболеваний, проверяйте растения",
-          "icon": "exclamationmark.shield.fill",
-          "priority": "high",
-          "color": "red"
-        },
-        {
-          "text": "Обеспечьте хорошую циркуляцию воздуха вокруг растений",
-          "icon": "wind",
-          "priority": "high",
-          "color": "blue"
-        },
-        {
-          "text": "Избегайте дополнительного увлажнения листьев",
-          "icon": "hand.raised.slash.fill",
-          "priority": "medium",
-          "color": "teal"
-        },
-        {
-          "text": "Рассмотрите применение фунгицидов для защиты растений",
-          "icon": "spray.fill",
-          "priority": "medium",
-          "color": "green"
-        },
-        {
-          "text": "Удаляйте загнившие части растений немедленно",
-          "icon": "trash.fill",
-          "priority": "high",
-          "color": "red"
-        }
-      ]
-    },
-    "normal": {
-      "min": 40,
-      "max": 69,
-      "icon": "humidity",
-      "title": "Нормальная влажность",
-      "tips": [
-        {
-          "text": "Оптимальные условия для большинства растений",
-          "icon": "checkmark.seal.fill",
-          "priority": "low",
-          "color": "green"
-        },
-        {
-          "text": "Поддерживайте регулярный график полива",
-          "icon": "calendar.circle.fill",
-          "priority": "medium",
-          "color": "blue"
-        },
-        {
-          "text": "Благоприятное время для обработки растений от вредителей",
-          "icon": "ant.fill",
-          "priority": "medium",
-          "color": "orange"
-        },
-        {
-          "text": "Проводите регулярный мониторинг состояния растений",
-          "icon": "eyes.fill",
-          "priority": "medium",
-          "color": "gray"
-        },
-        {
-          "text": "Хорошие условия для внекорневых подкормок",
-          "icon": "leaf.arrow.triangle.circlepath",
-          "priority": "medium",
-          "color": "green"
-        }
-      ]
-    },
-    "low": {
-      "max": 39,
-      "icon": "humidity.low",
-      "title": "Низкая влажность",
-      "tips": [
-        {
-          "text": "Увеличьте частоту полива растений",
-          "icon": "drop.fill",
-          "priority": "high",
-          "color": "blue"
-        },
-        {
-          "text": "Используйте мульчирование для удержания влаги",
-          "icon": "leaf.fill",
-          "priority": "high",
-          "color": "brown"
-        },
-        {
-          "text": "Создайте микроклимат для чувствительных растений",
-          "icon": "bubble.right.fill",
-          "priority": "medium",
-          "color": "teal"
-        },
-        {
-          "text": "Следите за признаками обезвоживания растений",
-          "icon": "waveform.path.ecg",
-          "priority": "high",
-          "color": "orange"
-        },
-        {
-          "text": "Рассмотрите использование увлажнителей в теплицах",
-          "icon": "humidifier.and.droplets.fill",
-          "priority": "medium",
-          "color": "blue"
-        }
-      ]
-    }
-  },
-  "seasons": {
-    "spring": {
-      "icon": "leaf.fill",
-      "title": "Весенний сезон",
-      "tips": [
-        {
-          "text": "Подготовьте почву к новому сезону посадок",
-          "icon": "square.and.pencil",
-          "priority": "high",
-          "color": "brown"
-        },
-        {
-          "text": "Проверьте и настройте системы полива",
-          "icon": "drop.fill",
-          "priority": "high",
-          "color": "blue"
-        },
-        {
-          "text": "Внесите основное удобрение перед посадкой",
-          "icon": "plus.circle.fill",
-          "priority": "high",
-          "color": "green"
-        },
-        {
-          "text": "Проведите санитарную обрезку растений",
-          "icon": "scissors",
-          "priority": "medium",
-          "color": "gray"
-        },
-        {
-          "text": "Начните профилактическую обработку от болезней",
-          "icon": "shield.fill",
-          "priority": "medium",
-          "color": "teal"
-        }
-      ]
-    },
-    "summer": {
-      "icon": "sun.max.fill",
-      "title": "Летний сезон",
-      "tips": [
-        {
-          "text": "Обеспечьте регулярный полив в утренние или вечерние часы",
-          "icon": "drop.fill",
-          "priority": "high",
-          "color": "blue"
-        },
-        {
-          "text": "Регулярно удаляйте сорняки, конкурирующие за влагу",
-          "icon": "xmark.bin.fill",
-          "priority": "medium",
-          "color": "green"
-        },
-        {
-          "text": "Проводите мониторинг вредителей, активных в летний период",
-          "icon": "ant.fill",
-          "priority": "high",
-          "color": "orange"
-        },
-        {
-          "text": "При необходимости создавайте тень для растений",
-          "icon": "cloud.sun.fill",
-          "priority": "medium",
-          "color": "gray"
-        },
-        {
-          "text": "Своевременно собирайте созревший урожай",
-          "icon": "basket.fill",
-          "priority": "high",
-          "color": "green"
-        }
-      ]
-    },
-    "autumn": {
-      "icon": "leaf.arrow.triangle.circlepath",
-      "title": "Осенний сезон",
-      "tips": [
-        {
-          "text": "Подготовьте многолетние растения к зимнему периоду",
-          "icon": "snow",
-          "priority": "high",
-          "color": "blue"
-        },
-        {
-          "text": "Соберите и сохраните семена для следующего сезона",
-          "icon": "doc.text.fill",
-          "priority": "medium",
-          "color": "orange"
-        },
-        {
-          "text": "Проведите осеннюю обрезку деревьев и кустарников",
-          "icon": "scissors",
-          "priority": "high",
-          "color": "gray"
-        },
-        {
-          "text": "Замульчируйте приствольные круги для защиты корней",
-          "icon": "circle.dashed",
-          "priority": "high",
-          "color": "brown"
-        },
-        {
-          "text": "Очистите участок от растительных остатков",
-          "icon": "trash.fill",
-          "priority": "medium",
-          "color": "gray"
-        }
-      ]
-    },
-    "winter": {
-      "icon": "snowflake",
-      "title": "Зимний сезон",
-      "tips": [
-        {
-          "text": "Регулярно проверяйте укрытия зимующих растений",
-          "icon": "eye.fill",
-          "priority": "high",
-          "color": "blue"
-        },
-        {
-          "text": "Следите за высотой снежного покрова возле растений",
-          "icon": "cloud.snow.fill",
-          "priority": "medium",
-          "color": "teal"
-        },
-        {
-          "text": "Контролируйте температуру в зимних теплицах",
-          "icon": "thermometer",
-          "priority": "high",
-          "color": "red"
-        },
-        {
-          "text": "Проводите снегозадержание для защиты корневой системы",
-          "icon": "snow",
-          "priority": "medium",
-          "color": "blue"
-        },
-        {
-          "text": "Защищайте растения от грызунов и других вредителей",
-          "icon": "shield.lefthalf.fill",
-          "priority": "high",
-          "color": "gray"
-        }
-      ]
+    "seasons": {
+      "spring": {
+        "tips": [
+          { "text": "Подготовьте почву к посадке", "icon": "leaf.arrow.circlepath" },
+          { "text": "Проверьте системы полива", "icon": "drop.fill" },
+          { "text": "Внесите удобрения", "icon": "pills.fill" },
+          { "text": "Проведите обрезку растений", "icon": "scissors" },
+          { "text": "Начните профилактику болезней", "icon": "stethoscope" },
+          { "text": "Планируйте посевы с учетом долготы дня", "icon": "sunrise.fill" },
+          { "text": "Подготовьте оборудование для весеннего ухода", "icon": "wrench.fill" }
+        ]
+      },
+      "summer": {
+        "tips": [
+          { "text": "Регулярно поливайте растения", "icon": "drop.fill" },
+          { "text": "Проводите прополку сорняков", "icon": "trash.fill" },
+          { "text": "Следите за вредителями", "icon": "ant.fill" },
+          { "text": "Обеспечьте затенение при необходимости", "icon": "sun.max.fill" },
+          { "text": "Собирайте созревший урожай", "icon": "leaf.fill" },
+          { "text": "Регулярно рыхлите почву", "icon": "figure.walk" },
+          { "text": "Проводите дополнительное внесение удобрений", "icon": "bolt.fill" }
+        ]
+      },
+      "autumn": {
+        "tips": [
+          { "text": "Подготовьте растения к зиме", "icon": "cloud.drizzle.fill" },
+          { "text": "Соберите семена для следующего сезона", "icon": "seedling.fill" },
+          { "text": "Проведите санитарную обрезку", "icon": "scissors" },
+          { "text": "Замульчируйте приствольные круги", "icon": "square.grid.2x2.fill" },
+          { "text": "Уберите растительные остатки", "icon": "trash.fill" },
+          { "text": "Подготовьте удобрения для осеннего периода", "icon": "pills.fill" },
+          { "text": "Планируйте подготовку к зимнему периоду", "icon": "calendar" }
+        ]
+      },
+      "winter": {
+        "tips": [
+          { "text": "Проверяйте укрытия растений", "icon": "house.fill" },
+          { "text": "Следите за снеговым покровом", "icon": "snowflake" },
+          { "text": "Контролируйте температуру в теплицах", "icon": "thermometer" },
+          { "text": "Проводите снегозадержание", "icon": "snow" },
+          { "text": "Защищайте от грызунов", "icon": "hare.fill" },
+          { "text": "Регулярно проверяйте систему обогрева", "icon": "flame.fill" },
+          { "text": "Следите за влажностью воздуха внутри теплицы", "icon": "wind" }
+        ]
+      }
     }
   }
 }
