@@ -1111,157 +1111,58 @@ body {
     animation: iOSShimmer 1.5s infinite linear;
 }
 
-/* Динамические индикаторы в стиле iOS */
-.ios-indicator-pill {
+/* Стили для минималистичных иконок */
+.minimalist-icon {
     display: flex;
-    margin: 8px auto;
-    justify-content: center;
-}
-
-.ios-indicator-pill > span {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background-color: var(--ios-gray3);
-    margin: 0 2px;
-}
-
-.ios-indicator-pill > span.active {
-    background-color: var(--ios-blue);
-    width: 12px;
-    border-radius: 3px;
-}
-
-/* Эффекты для текущей погоды - анимация в стиле iOS Weather App */
-.weather-condition {
-    position: relative;
-}
-
-.weather-condition::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 2px;
-    background-color: var(--ios-blue);
-    transition: width 0.3s var(--ios-ease-decelerate);
-    opacity: 0;
-}
-
-.weather-main:hover .weather-condition::after {
-    width: 40px;
-    opacity: 1;
-}
-
-/* Добавление нативных iOS-подсказок */
-.ios-tooltip {
-    position: absolute;
-    background-color: var(--ios-elevated-bg);
-    border-radius: var(--ios-radius-md);
-    padding: 8px 12px;
-    font-size: var(--ios-font-size-subheadline);
-    box-shadow: var(--ios-shadow-md);
-    z-index: 100;
-    opacity: 0;
-    transform: translateY(5px);
-    transition: opacity 0.2s var(--ios-ease-decelerate),
-                transform 0.2s var(--ios-bounce);
-    pointer-events: none;
-}
-
-.ios-tooltip.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* Дополнительные эффекты для улучшения аутентичности iOS */
-.ios-depth-effect {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05),
-                0 10px 25px rgba(0, 0, 0, 0.1);
-    transform: translateZ(0);
-}
-
-/* iOS перетаскивание - имитация физики iOS */
-.ios-drag-effect {
-    touch-action: none;
-    position: relative;
-    z-index: 1;
-    transition: transform 0.3s var(--ios-spring);
-    will-change: transform;
-}
-
-.ios-drag-effect:active {
-    transition: none;
-    cursor: grabbing;
-}
-
-/* Добавление инерции как в iOS */
-.ios-momentum-scroll {
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-}
-
-/* iOS форма аутентификации */
-.ios-button {
-    display: flex;
-    justify-content: center;
     align-items: center;
-    height: 44px;
-    padding: 0 20px;
-    background-color: var(--ios-blue);
-    color: white;
-    border-radius: var(--ios-radius-pill);
-    font-size: var(--ios-font-size-body);
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s var(--ios-ease-decelerate),
-                transform 0.2s var(--ios-ease-decelerate);
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    color: var(--ios-text-secondary);
+    transition: color 0.2s var(--ios-ease-standard);
 }
 
-.ios-button:active {
-    transform: scale(0.97);
-    background-color: #006eee;
+.detail-header .minimalist-icon {
+    margin-right: 8px;
 }
 
-.ios-button.secondary {
-    background-color: var(--ios-fill-tertiary);
+.tip-item .minimalist-icon {
+    margin-right: 10px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.tips-header .minimalist-icon,
+.forecast-header .minimalist-icon {
+    margin-right: 10px;
+    width: 20px;
+    height: 20px;
+}
+
+.detail-item:hover .minimalist-icon,
+.tip-item:hover .minimalist-icon {
     color: var(--ios-blue);
 }
 
-.ios-button.secondary:active {
-    background-color: var(--ios-fill-secondary);
+.minimalist-icon svg {
+    width: 100%;
+    height: 100%;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
-/* Дополнительный эффект iOS - появление с боковой стороны (slide-in) */
-@keyframes iOSSlideInRight {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
+@media (prefers-color-scheme: dark) {
+    .minimalist-icon {
+        color: rgba(235, 235, 245, 0.6);
     }
-    to {
-        transform: translateX(0);
-        opacity: 1;
+    
+    .detail-item:hover .minimalist-icon,
+    .tip-item:hover .minimalist-icon {
+        color: var(--ios-blue);
     }
-}
-
-@keyframes iOSSlideInLeft {
-    from {
-        transform: translateX(-100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-/* Импульсный эффект для элементов (pulse) */
-.ios-pulse {
-    animation: iOSPulse 2s var(--ios-ease-standard) infinite;
 }
 
 /* Эффект Ripple для кликов - исправленный */
