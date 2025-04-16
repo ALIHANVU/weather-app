@@ -7,56 +7,6 @@
     <link rel="icon" type="image/svg+xml" href="images/sun-svgrepo-com (2).svg">
     <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="styles.css" rel="stylesheet">
-    <style id="minimalist-icon-styles">
-        /* Стили для минималистичных иконок */
-        .minimalist-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 18px;
-            height: 18px;
-            color: var(--ios-text-secondary);
-            transition: color 0.2s var(--ios-ease-standard);
-        }
-        
-        .detail-header .minimalist-icon {
-            margin-right: 8px;
-        }
-        
-        .tip-item .minimalist-icon {
-            margin-right: 10px;
-            margin-top: 2px;
-            flex-shrink: 0;
-        }
-        
-        .tips-header .minimalist-icon,
-        .forecast-header .minimalist-icon {
-            margin-right: 10px;
-            width: 20px;
-            height: 20px;
-        }
-        
-        .detail-item:hover .minimalist-icon,
-        .tip-item:hover .minimalist-icon {
-            color: var(--ios-blue);
-        }
-        
-        .minimalist-icon svg {
-            width: 100%;
-            height: 100%;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 1.5;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-        
-        @media (prefers-color-scheme: dark) {
-            .minimalist-icon {
-                color: rgba(235, 235, 245, 0.6);
-            }
-        }
-    </style>
 </head>
 <body>
     <div class="ios-container">
@@ -69,7 +19,13 @@
                         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     </svg>
                 </div>
-                <input 
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html><input 
                     type="text" 
                     id="citySearch" 
                     placeholder="Поиск"
@@ -85,18 +41,57 @@
         <div id="weatherResult" class="hidden">
             <!-- Основная информация о погоде -->
             <div class="weather-main">
-                <div class="city-name" id="cityName">-</div>
-                <div class="temperature" id="temperature">-°</div>
-                <div class="weather-condition" id="weatherDescription">-</div>
+                <div class="city-name" id="cityName">Москва</div>
+                <div class="temperature" id="temperature">24°</div>
+                <div class="weather-condition" id="weatherDescription">Ясно</div>
                 <div class="temp-range">
-                    Макс.: <span id="maxTemp">-</span>° Мин.: <span id="minTemp">-</span>°
+                    Макс.: <span id="maxTemp">26</span>° Мин.: <span id="minTemp">19</span>°
                 </div>
             </div>
 
             <!-- Почасовой прогноз -->
             <div class="weather-card hourly-forecast" style="--index: 1">
                 <div class="forecast-scroll" id="forecastDays">
-                    <!-- Генерируется динамически -->
+                    <div class="forecast-hour">
+                        <div class="forecast-time">Сейчас</div>
+                        <div class="forecast-icon">☀️</div>
+                        <div class="forecast-temp">24°</div>
+                    </div>
+                    <div class="forecast-hour">
+                        <div class="forecast-time">13:00</div>
+                        <div class="forecast-icon">☀️</div>
+                        <div class="forecast-temp">25°</div>
+                    </div>
+                    <div class="forecast-hour">
+                        <div class="forecast-time">14:00</div>
+                        <div class="forecast-icon">⛅</div>
+                        <div class="forecast-temp">26°</div>
+                    </div>
+                    <div class="forecast-hour">
+                        <div class="forecast-time">15:00</div>
+                        <div class="forecast-icon">⛅</div>
+                        <div class="forecast-temp">25°</div>
+                    </div>
+                    <div class="forecast-hour">
+                        <div class="forecast-time">16:00</div>
+                        <div class="forecast-icon">☁️</div>
+                        <div class="forecast-temp">24°</div>
+                    </div>
+                    <div class="forecast-hour">
+                        <div class="forecast-time">17:00</div>
+                        <div class="forecast-icon">☁️</div>
+                        <div class="forecast-temp">23°</div>
+                    </div>
+                    <div class="forecast-hour">
+                        <div class="forecast-time">18:00</div>
+                        <div class="forecast-icon">⛅</div>
+                        <div class="forecast-temp">22°</div>
+                    </div>
+                    <div class="forecast-hour">
+                        <div class="forecast-time">19:00</div>
+                        <div class="forecast-icon">⛅</div>
+                        <div class="forecast-temp">21°</div>
+                    </div>
                 </div>
             </div>
 
@@ -114,7 +109,7 @@
                             </span>
                             <span class="detail-title">ВЕТЕР</span>
                         </div>
-                        <div class="detail-value" id="windSpeed">- м/с</div>
+                        <div class="detail-value" id="windSpeed">2.5 м/с</div>
                     </div>
                     <div class="detail-item">
                         <div class="detail-header">
@@ -128,7 +123,7 @@
                             </span>
                             <span class="detail-title">ВЛАЖНОСТЬ</span>
                         </div>
-                        <div class="detail-value" id="humidity">-%</div>
+                        <div class="detail-value" id="humidity">45%</div>
                     </div>
                     <div class="detail-item">
                         <div class="detail-header">
@@ -142,7 +137,7 @@
                             </span>
                             <span class="detail-title">ВИДИМОСТЬ</span>
                         </div>
-                        <div class="detail-value" id="visibility">- км</div>
+                        <div class="detail-value" id="visibility">10.0 км</div>
                     </div>
                     <div class="detail-item">
                         <div class="detail-header">
@@ -156,25 +151,158 @@
                             </span>
                             <span class="detail-title">ОЩУЩАЕТСЯ</span>
                         </div>
-                        <div class="detail-value" id="feelsLike">-°</div>
+                        <div class="detail-value" id="feelsLike">25°</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Советы для фермеров -->
+            <!-- Советы для фермеров (обновленная версия) -->
             <div class="weather-card farmer-tips" style="--index: 3">
                 <div class="tips-header">
                     <span class="tips-icon">
-                        <span class="minimalist-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 2L7 7.5M12 2L17 7.5M12 2V6M7 7.5C3 8.5 3 12 3 13C3 14 3.5 18 8 19M7 7.5L8 6.5M17 7.5C21 8.5 21 12 21 13C21 14 20.5 18 16 19M17 7.5L16 6.5M8 19C10 19.5 14 19.5 16 19M8 19L7.5 20.5L12 22L16.5 20.5L16 19"/>
-                            </svg>
-                        </span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2L7 7.5M12 2L17 7.5M12 2V6M7 7.5C3 8.5 3 12 3 13C3 14 3.5 18 8 19M7 7.5L8 6.5M17 7.5C21 8.5 21 12 21 13C21 14 20.5 18 16 19M17 7.5L16 6.5M8 19C10 19.5 14 19.5 16 19M8 19L7.5 20.5L12 22L16.5 20.5L16 19"/>
+                        </svg>
                     </span>
                     <span class="tips-title">Советы для фермеров</span>
                 </div>
+                
                 <div id="tipsContainer" class="tips-container">
-                    <!-- Генерируется динамически -->
+                    <!-- Категория температуры -->
+                    <div class="tips-category">
+                        <div class="tips-category-title">
+                            <div class="tips-category-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="5"/>
+                                    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                                </svg>
+                            </div>
+                            Жаркая погода
+                        </div>
+                        
+                        <div class="tip-item" style="--tip-index: 0">
+                            <div class="tip-icon blue">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0L12 2.69z"/>
+                                </svg>
+                            </div>
+                            <div class="tip-content">
+                                <div class="tip-text">Поливайте растения рано утром или после захода солнца</div>
+                                <div class="tip-priority">
+                                    <span class="priority-indicator priority-high"></span>
+                                    Высокий приоритет
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tip-item" style="--tip-index: 1">
+                            <div class="tip-icon brown">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#a2845e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M11 20A7 7 0 0 1 4 13c0-5 7-11 9-11s9 6 9 11a7 7 0 0 1-7 7h-4zm0 0v4"/>
+                                </svg>
+                            </div>
+                            <div class="tip-content">
+                                <div class="tip-text">Используйте мульчу для сохранения влаги в почве</div>
+                                <div class="tip-priority">
+                                    <span class="priority-indicator priority-medium"></span>
+                                    Средний приоритет
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Категория влажности -->
+                    <div class="tips-category">
+                        <div class="tips-category-title">
+                            <div class="tips-category-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0L12 2.69z"/>
+                                    <path d="M8 14a4 4 0 0 0 8 0"/>
+                                </svg>
+                            </div>
+                            Нормальная влажность
+                        </div>
+                        
+                        <div class="tip-item" style="--tip-index: 2">
+                            <div class="tip-icon green">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10z"/>
+                                    <path d="M7 13l3 3 7-7" stroke="white"/>
+                                </svg>
+                            </div>
+                            <div class="tip-content">
+                                <div class="tip-text">Оптимальные условия для большинства растений</div>
+                                <div class="tip-priority">
+                                    <span class="priority-indicator priority-low"></span>
+                                    Низкий приоритет
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tip-item" style="--tip-index: 3">
+                            <div class="tip-icon blue">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                    <line x1="16" y1="2" x2="16" y2="6"/>
+                                    <line x1="8" y1="2" x2="8" y2="6"/>
+                                    <line x1="3" y1="10" x2="21" y2="10"/>
+                                    <circle cx="16" cy="16" r="4"/>
+                                    <path d="M16 14v2l1 1"/>
+                                </svg>
+                            </div>
+                            <div class="tip-content">
+                                <div class="tip-text">Поддерживайте регулярный график полива</div>
+                                <div class="tip-priority">
+                                    <span class="priority-indicator priority-medium"></span>
+                                    Средний приоритет
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Категория сезона -->
+                    <div class="tips-category">
+                        <div class="tips-category-title">
+                            <div class="tips-category-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="5" fill="currentColor"/>
+                                    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                                </svg>
+                            </div>
+                            Летний сезон
+                        </div>
+                        
+                        <div class="tip-item" style="--tip-index: 4">
+                            <div class="tip-icon orange">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#ff9500" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M7 15a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM17 15a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+                                    <path d="M12 15a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM7 13h3M14 13h3"/>
+                                </svg>
+                            </div>
+                            <div class="tip-content">
+                                <div class="tip-text">Проводите мониторинг вредителей, активных в летний период</div>
+                                <div class="tip-priority">
+                                    <span class="priority-indicator priority-high"></span>
+                                    Высокий приоритет
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tip-item" style="--tip-index: 5">
+                            <div class="tip-icon green">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                </svg>
+                            </div>
+                            <div class="tip-content">
+                                <div class="tip-text">Своевременно собирайте созревший урожай</div>
+                                <div class="tip-priority">
+                                    <span class="priority-indicator priority-high"></span>
+                                    Высокий приоритет
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -195,11 +323,47 @@
                     <span class="forecast-title">Прогноз на неделю</span>
                 </div>
                 <div id="weeklyForecastContainer" class="weekly-forecast-grid">
-                    <!-- Будет заполнено динамически через JavaScript -->
+                    <div class="weekly-day" style="--day-index: 0">
+                        <div class="weekly-day-name">Понедельник</div>
+                        <div class="weekly-day-icon">☀️</div>
+                        <div class="weekly-day-temp">24°</div>
+                    </div>
+                    <div class="weekly-day" style="--day-index: 1">
+                        <div class="weekly-day-name">Вторник</div>
+                        <div class="weekly-day-icon">⛅</div>
+                        <div class="weekly-day-temp">26°</div>
+                    </div>
+                    <div class="weekly-day" style="--day-index: 2">
+                        <div class="weekly-day-name">Среда</div>
+                        <div class="weekly-day-icon">☁️</div>
+                        <div class="weekly-day-temp">22°</div>
+                    </div>
+                    <div class="weekly-day" style="--day-index: 3">
+                        <div class="weekly-day-name">Четверг</div>
+                        <div class="weekly-day-icon">🌧️</div>
+                        <div class="weekly-day-temp">20°</div>
+                    </div>
+                    <div class="weekly-day" style="--day-index: 4">
+                        <div class="weekly-day-name">Пятница</div>
+                        <div class="weekly-day-icon">🌧️</div>
+                        <div class="weekly-day-temp">19°</div>
+                    </div>
+                    <div class="weekly-day" style="--day-index: 5">
+                        <div class="weekly-day-name">Суббота</div>
+                        <div class="weekly-day-icon">⛅</div>
+                        <div class="weekly-day-temp">21°</div>
+                    </div>
+                    <div class="weekly-day" style="--day-index: 6">
+                        <div class="weekly-day-name">Воскресенье</div>
+                        <div class="weekly-day-icon">☀️</div>
+                        <div class="weekly-day-temp">23°</div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    
+    <!-- Модальное окно для детального просмотра дня -->
     <div id="dayModal" class="day-modal hidden">
         <div class="day-modal-content">
             <button id="closeModal" class="close-modal">
@@ -211,11 +375,11 @@
             
             <!-- Основная информация о погоде на день -->
             <div class="weather-main modal-weather-main">
-                <div class="day-name" id="modalDayName">-</div>
-                <div class="temperature" id="modalTemperature">-°</div>
-                <div class="weather-condition" id="modalWeatherDescription">-</div>
+                <div class="day-name" id="modalDayName">Вторник</div>
+                <div class="temperature" id="modalTemperature">26°</div>
+                <div class="weather-condition" id="modalWeatherDescription">Переменная облачность</div>
                 <div class="temp-range">
-                    Макс.: <span id="modalMaxTemp">-</span>° Мин.: <span id="modalMinTemp">-</span>°
+                    Макс.: <span id="modalMaxTemp">28</span>° Мин.: <span id="modalMinTemp">21</span>°
                 </div>
             </div>
 
@@ -233,7 +397,41 @@
                     <span class="forecast-title">Прогноз на день</span>
                 </div>
                 <div class="forecast-scroll" id="modalHourlyForecast">
-                    <!-- Генерируется динамически -->
+                    <div class="forecast-hour">
+                        <div class="forecast-time">08:00</div>
+                        <div class="forecast-icon">⛅</div>
+                        <div class="forecast-temp">22°</div>
+                    </div>
+                    <div class="forecast-hour">
+                        <div class="forecast-time">10:00</div>
+                        <div class="forecast-icon">⛅</div>
+                        <div class="forecast-temp">24°</div>
+                    </div>
+                    <div class="forecast-hour">
+                        <div class="forecast-time">12:00</div>
+                        <div class="forecast-icon">☀️</div>
+                        <div class="forecast-temp">26°</div>
+                    </div>
+                    <div class="forecast-hour">
+                        <div class="forecast-time">14:00</div>
+                        <div class="forecast-icon">☀️</div>
+                        <div class="forecast-temp">28°</div>
+                    </div>
+                    <div class="forecast-hour">
+                        <div class="forecast-time">16:00</div>
+                        <div class="forecast-icon">⛅</div>
+                        <div class="forecast-temp">27°</div>
+                    </div>
+                    <div class="forecast-hour">
+                        <div class="forecast-time">18:00</div>
+                        <div class="forecast-icon">⛅</div>
+                        <div class="forecast-temp">25°</div>
+                    </div>
+                    <div class="forecast-hour">
+                        <div class="forecast-time">20:00</div>
+                        <div class="forecast-icon">☁️</div>
+                        <div class="forecast-temp">23°</div>
+                    </div>
                 </div>
             </div>
 
@@ -251,7 +449,7 @@
                             </span>
                             <span class="detail-title">ВЕТЕР</span>
                         </div>
-                        <div class="detail-value" id="modalWindSpeed">- м/с</div>
+                        <div class="detail-value" id="modalWindSpeed">3.1 м/с</div>
                     </div>
                     <div class="detail-item">
                         <div class="detail-header">
@@ -265,7 +463,7 @@
                             </span>
                             <span class="detail-title">ВЛАЖНОСТЬ</span>
                         </div>
-                        <div class="detail-value" id="modalHumidity">-%</div>
+                        <div class="detail-value" id="modalHumidity">48%</div>
                     </div>
                     <div class="detail-item">
                         <div class="detail-header">
@@ -279,7 +477,7 @@
                             </span>
                             <span class="detail-title">ВИДИМОСТЬ</span>
                         </div>
-                        <div class="detail-value" id="modalVisibility">- км</div>
+                        <div class="detail-value" id="modalVisibility">9.8 км</div>
                     </div>
                     <div class="detail-item">
                         <div class="detail-header">
@@ -293,78 +491,121 @@
                             </span>
                             <span class="detail-title">ОЩУЩАЕТСЯ</span>
                         </div>
-                        <div class="detail-value" id="modalFeelsLike">-°</div>
+                        <div class="detail-value" id="modalFeelsLike">27°</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Советы для фермеров для выбранного дня -->
+            <!-- Советы для фермеров для выбранного дня (обновленная версия) -->
             <div class="weather-card farmer-tips" style="--index: 3">
                 <div class="tips-header">
                     <span class="tips-icon">
-                        <span class="minimalist-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 2L7 7.5M12 2L17 7.5M12 2V6M7 7.5C3 8.5 3 12 3 13C3 14 3.5 18 8 19M7 7.5L8 6.5M17 7.5C21 8.5 21 12 21 13C21 14 20.5 18 16 19M17 7.5L16 6.5M8 19C10 19.5 14 19.5 16 19M8 19L7.5 20.5L12 22L16.5 20.5L16 19"/>
-                            </svg>
-                        </span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2L7 7.5M12 2L17 7.5M12 2V6M7 7.5C3 8.5 3 12 3 13C3 14 3.5 18 8 19M7 7.5L8 6.5M17 7.5C21 8.5 21 12 21 13C21 14 20.5 18 16 19M17 7.5L16 6.5M8 19C10 19.5 14 19.5 16 19M8 19L7.5 20.5L12 22L16.5 20.5L16 19"/>
+                        </svg>
                     </span>
                     <span class="tips-title">Советы для фермеров</span>
                 </div>
+                
                 <div id="modalTipsContainer" class="tips-container">
-                    <!-- Генерируется динамически -->
+                    <!-- Категория температуры -->
+                    <div class="tips-category">
+                        <div class="tips-category-title">
+                            <div class="tips-category-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="5"/>
+                                    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                                </svg>
+                            </div>
+                            Жаркая погода
+                        </div>
+                        
+                        <div class="tip-item" style="--tip-index: 0">
+                            <div class="tip-icon blue">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#007aff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0L12 2.69z"/>
+                                </svg>
+                            </div>
+                            <div class="tip-content">
+                                <div class="tip-text">Поливайте растения рано утром или после захода солнца</div>
+                                <div class="tip-priority">
+                                    <span class="priority-indicator priority-high"></span>
+                                    Высокий приоритет
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="tip-item" style="--tip-index: 1">
+                            <div class="tip-icon orange">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#ff9500" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 3v1M12 21v1M4 12H3M21 12h-1M6.36 6.36l-.7-.7M18.36 6.36l.7-.7M6.36 17.64l-.7.7M18.36 17.64l.7.7M12 8a4 4 0 0 0 0 8 4 4 0 0 0 0-8z" />
+                                </svg>
+                            </div>
+                            <div class="tip-content">
+                                <div class="tip-text">Обеспечьте временное затенение для чувствительных растений</div>
+                                <div class="tip-priority">
+                                    <span class="priority-indicator priority-medium"></span>
+                                    Средний приоритет
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Категория влажности -->
+                    <div class="tips-category">
+                        <div class="tips-category-title">
+                            <div class="tips-category-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0L12 2.69z"/>
+                                    <path d="M8 14a4 4 0 0 0 8 0"/>
+                                </svg>
+                            </div>
+                            Нормальная влажность
+                        </div>
+                        
+                        <div class="tip-item" style="--tip-index: 2">
+                            <div class="tip-icon green">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                    <path d="M22 4L12 14.01l-3-3"/>
+                                </svg>
+                            </div>
+                            <div class="tip-content">
+                                <div class="tip-text">Хорошее время для обработки растений от вредителей</div>
+                                <div class="tip-priority">
+                                    <span class="priority-indicator priority-medium"></span>
+                                    Средний приоритет
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Категория сезона -->
+                    <div class="tips-category">
+                        <div class="tips-category-title">
+                            <div class="tips-category-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="5" fill="currentColor"/>
+                                    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                                </svg>
+                            </div>
+                            Летний сезон
+                        </div>
+                        
+                        <div class="tip-item" style="--tip-index: 3">
+                            <div class="tip-icon green">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#34c759" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/>
+                                    <path d="M8 16h.01M8 20h.01M12 18h.01M12 22h.01M16 16h.01M16 20h.01"/>
+                                </svg>
+                            </div>
+                            <div class="tip-content">
+                                <div class="tip-text">Своевременно собирайте созревший урожай</div>
+                                <div class="tip-priority">
+                                    <span class="priority-indicator priority-high"></span>
+                                    Высокий приоритет
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- JavaScript для замены эмодзи на минималистичные иконки -->
-    <script>
-        // Код для динамической замены иконок
-        function applyMinimalistIcons() {
-            // Находим все элементы с эмодзи в советах для фермеров
-            document.querySelectorAll('#tipsContainer .tip-item').forEach(tipItem => {
-                const icon = tipItem.querySelector('.tip-icon');
-                if (icon && !icon.querySelector('.minimalist-icon')) {
-                    icon.innerHTML = `
-                        <span class="minimalist-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 2L7 7.5M12 2L17 7.5M12 2V6M7 7.5C3 8.5 3 12 3 13C3 14 3.5 18 8 19M7 7.5L8 6.5M17 7.5C21 8.5 21 12 21 13C21 14 20.5 18 16 19M17 7.5L16 6.5M8 19C10 19.5 14 19.5 16 19M8 19L7.5 20.5L12 22L16.5 20.5L16 19"/>
-                            </svg>
-                        </span>
-                    `;
-                }
-            });
-            
-            // Также обрабатываем модальное окно
-            document.querySelectorAll('#modalTipsContainer .tip-item').forEach(tipItem => {
-                const icon = tipItem.querySelector('.tip-icon');
-                if (icon && !icon.querySelector('.minimalist-icon')) {
-                    icon.innerHTML = `
-                        <span class="minimalist-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 2L7 7.5M12 2L17 7.5M12 2V6M7 7.5C3 8.5 3 12 3 13C3 14 3.5 18 8 19M7 7.5L8 6.5M17 7.5C21 8.5 21 12 21 13C21 14 20.5 18 16 19M17 7.5L16 6.5M8 19C10 19.5 14 19.5 16 19M8 19L7.5 20.5L12 22L16.5 20.5L16 19"/>
-                            </svg>
-                        </span>
-                    `;
-                }
-            });
-        }
-
-        // Наблюдатель для отслеживания изменений DOM и автоматического обновления иконок
-        const observer = new MutationObserver(mutations => {
-            applyMinimalistIcons();
-        });
-
-        // Запускаем наблюдатель после загрузки DOM
-        document.addEventListener('DOMContentLoaded', () => {
-            observer.observe(document.body, {
-                childList: true,
-                subtree: true
-            });
-            applyMinimalistIcons();
-        });
-    </script>
-    
-    <script src="script.js"></script>
-</body>
-</html>
