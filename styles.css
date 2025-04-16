@@ -614,6 +614,7 @@ body {
     font-size: var(--ios-font-size-headline);
     font-weight: 600;
     text-align: right;
+    position: relative;
 }
 
 /* Индикатор загрузки в стиле iOS */
@@ -846,6 +847,7 @@ body {
 
 .modal-weather-main {
     margin-top: 10px;
+    position: relative;
 }
 
 .day-name {
@@ -1191,4 +1193,123 @@ body {
 .simple-active {
     background-color: var(--ios-fill-tertiary) !important;
     transform: scale(0.97) !important;
+}
+
+/* Стили для индикатора экстремальной температуры */
+.temperature-warning-indicator {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    color: var(--ios-red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulseWarning 2s infinite;
+    z-index: 2;
+}
+
+/* Позиционирование в еженедельном прогнозе */
+.weekly-day-temp {
+    position: relative;
+}
+
+.weekly-day-temp .temperature-warning-indicator {
+    top: -6px;
+    right: -10px;
+}
+
+/* Позиционирование в модальном окне */
+.modal-warning {
+    top: 16px;
+    right: 16px;
+    width: 22px;
+    height: 22px;
+}
+
+/* SVG внутри индикатора */
+.temperature-warning-indicator svg {
+    width: 100%;
+    height: 100%;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Адаптивное позиционирование для разных размеров экрана */
+@media (max-width: 375px) {
+    .weekly-day-temp .temperature-warning-indicator {
+        top: -4px;
+        right: -8px;
+        width: 14px;
+        height: 14px;
+    }
+    
+    .modal-warning {
+        top: 12px;
+        right: 12px;
+        width: 18px;
+        height: 18px;
+    }
+}
+
+@media (min-width: 768px) {
+    .weekly-day-temp .temperature-warning-indicator {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .modal-warning {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+/* Анимация пульсации для привлечения внимания */
+@keyframes pulseWarning {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.9;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Стили для подсказки при наведении */
+.temperature-warning-indicator:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 6px 10px;
+    background-color: var(--ios-elevated-bg);
+    color: var(--ios-text-primary);
+    border-radius: var(--ios-radius-sm);
+    font-size: var(--ios-font-size-footnote);
+    white-space: nowrap;
+    box-shadow: var(--ios-shadow-md);
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s, visibility 0.2s;
+}
+
+.temperature-warning-indicator:hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Адаптация для темной темы */
+@media (prefers-color-scheme: dark) {
+    .temperature-warning-indicator {
+        color: var(--ios-red); /* iOS использует другой оттенок красного в темной теме */
+    }
 }
