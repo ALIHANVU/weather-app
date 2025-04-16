@@ -144,7 +144,7 @@
     }
 }
 
-/* Базовые стили */
+/* Базовые стили - ИСПРАВЛЕНЫ */
 * {
     margin: 0;
     padding: 0;
@@ -167,11 +167,11 @@ body {
     font-weight: 400;
     letter-spacing: -0.01em;
     min-height: 100%;
-    padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) 
-             env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+    padding: 0;
     background-image: linear-gradient(180deg, rgba(197, 222, 255, 0.08) 0%, rgba(255, 255, 255, 0) 100%);
     background-attachment: fixed;
     overflow-x: hidden;
+    width: 100%;
 }
 
 /* iOS-анимации входа для всех карточек */
@@ -208,25 +208,29 @@ body {
     100% { background-position: 200% 0; }
 }
 
-/* Общий контейнер */
+/* Общий контейнер - ИСПРАВЛЕН */
 .ios-container {
     max-width: 540px;
     margin: 0 auto;
-    padding: var(--ios-radius-md);
-    animation: fadeIn 0.6s var(--ios-ease-decelerate);
+    padding: 16px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-/* iOS-стиль поискового блока */
+/* iOS-стиль поискового блока - ИСПРАВЛЕН */
 .search-section {
     margin-bottom: 15px;
     position: sticky;
     top: 0;
     z-index: 100;
-    padding-top: max(env(safe-area-inset-top), 10px);
+    padding-top: 10px;
     padding-bottom: 8px;
     backdrop-filter: blur(var(--ios-blur-md)) saturate(180%);
     -webkit-backdrop-filter: blur(var(--ios-blur-md)) saturate(180%);
-    animation: fadeIn 0.5s forwards;
+    background-color: var(--ios-bg);
+    width: 100%;
+    left: 0;
+    right: 0;
 }
 
 .search-container {
@@ -235,8 +239,9 @@ body {
     background-color: var(--ios-fill-tertiary);
     border-radius: var(--ios-radius-pill);
     height: 36px;
-    overflow: hidden;
-    transition: all var(--ios-duration-medium) var(--ios-ease-standard);
+    max-width: 540px;
+    margin: 0 auto;
+    padding: 0 8px;
 }
 
 .search-container:focus-within {
@@ -250,6 +255,7 @@ body {
     justify-content: center;
     color: var(--ios-text-secondary);
     padding-left: 10px;
+    flex-shrink: 0;
 }
 
 #citySearch {
@@ -261,6 +267,7 @@ body {
     font-size: var(--ios-font-size-body);
     color: var(--ios-text-primary);
     font-family: var(--ios-font);
+    min-width: 0; /* Важно для flex-элементов */
 }
 
 #citySearch::placeholder {
@@ -281,7 +288,8 @@ body {
     font-weight: 600;
     font-family: var(--ios-font);
     cursor: pointer;
-    transition: opacity var(--ios-duration-short) var(--ios-ease-decelerate);
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .search-button:active {
@@ -292,21 +300,20 @@ body {
     opacity: 0.8;
 }
 
-/* Основной блок с погодой */
+/* Основной блок с погодой - ИСПРАВЛЕН */
 .weather-main {
     padding: 20px;
     margin-bottom: 15px;
     background-color: var(--ios-card-bg);
     border-radius: var(--ios-radius-lg);
-    box-shadow: var(--ios-shadow-md);
     backdrop-filter: blur(var(--ios-blur-sm)) saturate(180%);
     -webkit-backdrop-filter: blur(var(--ios-blur-sm)) saturate(180%);
     text-align: center;
     border: 0.5px solid rgba(255, 255, 255, 0.3);
     position: relative;
     overflow: hidden;
-    animation: iOSCardEntry var(--ios-duration-medium) var(--ios-bounce) forwards;
-    will-change: transform, opacity;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .city-name {
@@ -314,6 +321,7 @@ body {
     font-weight: 600;
     margin-bottom: 4px;
     letter-spacing: -0.5px;
+    word-wrap: break-word;
 }
 
 .temperature {
@@ -337,28 +345,20 @@ body {
     font-weight: 400;
 }
 
-/* Карточки погоды с анимацией */
+/* Карточки погоды с анимацией - ИСПРАВЛЕНЫ */
 .weather-card {
     background-color: var(--ios-card-bg);
     border-radius: var(--ios-radius-md);
     margin-bottom: 15px;
     padding: 16px;
-    box-shadow: var(--ios-shadow-sm);
     backdrop-filter: blur(var(--ios-blur-sm)) saturate(180%);
     -webkit-backdrop-filter: blur(var(--ios-blur-sm)) saturate(180%);
     border: 0.5px solid rgba(255, 255, 255, 0.2);
-    will-change: transform, opacity;
-    animation: iOSCardEntry var(--ios-duration-medium) var(--ios-ease-decelerate) forwards;
-    animation-delay: calc(var(--index, 0) * 0.05s);
-    opacity: 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.weather-card:nth-child(1) { --index: 1; }
-.weather-card:nth-child(2) { --index: 2; }
-.weather-card:nth-child(3) { --index: 3; }
-.weather-card:nth-child(4) { --index: 4; }
-
-/* Стилизация почасового прогноза */
+/* Стилизация почасового прогноза - ИСПРАВЛЕН */
 .hourly-forecast {
     overflow: hidden;
 }
@@ -370,6 +370,7 @@ body {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    margin: 0 -4px; /* Компенсация внутренних отступов элементов */
 }
 
 .forecast-scroll::-webkit-scrollbar {
@@ -381,27 +382,16 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin: 0 8px;
+    margin: 0 4px;
     min-width: 58px;
     padding: 10px 8px;
     border-radius: var(--ios-radius-md);
     background-color: var(--ios-fill-quaternary);
     border: 0.5px solid rgba(255, 255, 255, 0.15);
-    animation: iOSItemsEntry var(--ios-duration-medium) var(--ios-ease-decelerate) forwards;
-    animation-delay: calc(var(--hour-index, 0) * 0.03s);
     opacity: 0;
     transition: transform var(--ios-duration-short) var(--ios-ease-decelerate),
                 background-color var(--ios-duration-short) var(--ios-ease-decelerate);
 }
-
-.forecast-hour:nth-child(1) { --hour-index: 1; }
-.forecast-hour:nth-child(2) { --hour-index: 2; }
-.forecast-hour:nth-child(3) { --hour-index: 3; }
-.forecast-hour:nth-child(4) { --hour-index: 4; }
-.forecast-hour:nth-child(5) { --hour-index: 5; }
-.forecast-hour:nth-child(6) { --hour-index: 6; }
-.forecast-hour:nth-child(7) { --hour-index: 7; }
-.forecast-hour:nth-child(8) { --hour-index: 8; }
 
 .forecast-hour:first-child {
     margin-left: 4px;
@@ -434,14 +424,21 @@ body {
     font-weight: 600;
 }
 
-/* Сетка деталей */
+/* Сетка деталей - ИСПРАВЛЕНА */
 .details-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
+    width: 100%;
 }
 
 @media (min-width: 480px) {
+    .details-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 540px) {
     .details-grid {
         grid-template-columns: repeat(4, 1fr);
     }
@@ -456,15 +453,8 @@ body {
     transition: transform var(--ios-duration-short) var(--ios-ease-decelerate),
                 background-color var(--ios-duration-short) var(--ios-ease-decelerate);
     border: 0.5px solid rgba(255, 255, 255, 0.15);
-    animation: iOSItemsEntry var(--ios-duration-medium) var(--ios-ease-decelerate) forwards;
-    animation-delay: calc(var(--item-index, 0) * 0.05s + 0.1s);
     opacity: 0;
 }
-
-.detail-item:nth-child(1) { --item-index: 1; }
-.detail-item:nth-child(2) { --item-index: 2; }
-.detail-item:nth-child(3) { --item-index: 3; }
-.detail-item:nth-child(4) { --item-index: 4; }
 
 /* Исправление: предотвращаем исчезновение при активном состоянии */
 .detail-item:active {
@@ -489,6 +479,9 @@ body {
     font-weight: 600;
     letter-spacing: 0.5px;
     text-transform: uppercase;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .detail-value {
@@ -496,7 +489,7 @@ body {
     font-weight: 500;
 }
 
-/* Заголовки блоков */
+/* Заголовки блоков - ИСПРАВЛЕНЫ */
 .tips-header, .forecast-header {
     display: flex;
     align-items: center;
@@ -506,6 +499,7 @@ body {
 .tips-icon, .forecast-icon {
     font-size: 18px;
     margin-right: 10px;
+    flex-shrink: 0;
 }
 
 .tips-title, .forecast-title {
@@ -514,12 +508,13 @@ body {
     letter-spacing: -0.25px;
 }
 
-/* Контейнер советов */
+/* Контейнер советов - ИСПРАВЛЕН */
 .tips-container {
     display: flex;
     flex-direction: column;
     gap: 12px;
     margin-top: 8px;
+    width: 100%;
 }
 
 /* Заголовок раздела советов */
@@ -547,7 +542,7 @@ body {
     color: var(--ios-text-primary);
 }
 
-/* Элемент совета (карточка) */
+/* Элемент совета (карточка) - ИСПРАВЛЕН */
 .tip-item {
     background-color: var(--ios-fill-quaternary);
     border-radius: var(--ios-radius-md);
@@ -556,11 +551,11 @@ body {
     align-items: flex-start;
     border: 0.5px solid rgba(255, 255, 255, 0.15);
     transition: all var(--ios-duration-short) var(--ios-ease-decelerate);
-    animation: iOSItemsEntry var(--ios-duration-medium) var(--ios-ease-decelerate) forwards;
-    animation-delay: calc(var(--tip-index, 0) * 0.05s + 0.15s);
     opacity: 0;
     position: relative;
     overflow: hidden;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* Эффект при нажатии на совет */
@@ -573,7 +568,6 @@ body {
 @media (hover: hover) {
     .tip-item:hover {
         transform: translateY(-2px);
-        box-shadow: var(--ios-shadow-sm);
         background-color: var(--ios-fill-tertiary);
     }
     
@@ -582,7 +576,7 @@ body {
     }
 }
 
-/* Иконка совета с iOS SF Symbols стилем */
+/* Иконка совета с iOS SF Symbols стилем - ИСПРАВЛЕНА */
 .tip-icon {
     display: flex;
     align-items: center;
@@ -632,11 +626,12 @@ body {
 .tip-icon.gray svg { color: var(--ios-gray1); }
 .tip-icon.brown svg { color: var(--ios-brown); }
 
-/* Контейнер содержимого совета */
+/* Контейнер содержимого совета - ИСПРАВЛЕН */
 .tip-content {
     flex: 1;
     display: flex;
     flex-direction: column;
+    min-width: 0; /* Предотвращает переполнение */
 }
 
 /* Текст совета */
@@ -646,6 +641,7 @@ body {
     color: var(--ios-text-primary);
     font-weight: 400;
     letter-spacing: -0.2px;
+    word-wrap: break-word;
 }
 
 /* Метка приоритета */
@@ -665,6 +661,7 @@ body {
     height: 8px;
     border-radius: 50%;
     margin-right: 6px;
+    flex-shrink: 0;
 }
 
 .priority-high {
@@ -679,9 +676,10 @@ body {
     background-color: var(--ios-green);
 }
 
-/* Группировка советов по категориям */
+/* Группировка советов по категориям - ИСПРАВЛЕНА */
 .tips-category {
     margin-bottom: 20px;
+    width: 100%;
 }
 
 .tips-category-title {
@@ -701,6 +699,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 /* Анимация загрузки советов */
@@ -727,10 +726,11 @@ body {
     margin-bottom: 10px;
 }
 
-/* Недельный прогноз */
+/* Недельный прогноз - ИСПРАВЛЕН */
 .weekly-forecast-grid {
     display: grid;
     gap: 8px;
+    width: 100%;
 }
 
 .weekly-day {
@@ -743,18 +743,9 @@ body {
     border: 0.5px solid rgba(255, 255, 255, 0.15);
     transition: transform var(--ios-duration-short) var(--ios-ease-decelerate),
                 background-color var(--ios-duration-short) var(--ios-ease-decelerate);
-    animation: iOSItemsEntry var(--ios-duration-medium) var(--ios-ease-decelerate) forwards;
-    animation-delay: calc(var(--day-index, 0) * 0.04s + 0.2s);
     opacity: 0;
+    width: 100%;
 }
-
-.weekly-day:nth-child(1) { --day-index: 1; }
-.weekly-day:nth-child(2) { --day-index: 2; }
-.weekly-day:nth-child(3) { --day-index: 3; }
-.weekly-day:nth-child(4) { --day-index: 4; }
-.weekly-day:nth-child(5) { --day-index: 5; }
-.weekly-day:nth-child(6) { --day-index: 6; }
-.weekly-day:nth-child(7) { --day-index: 7; }
 
 /* Исправление: предотвращаем исчезновение при активном состоянии */
 .weekly-day:active {
@@ -765,11 +756,17 @@ body {
 .weekly-day-name {
     font-size: var(--ios-font-size-callout);
     font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .weekly-day-icon {
     font-size: 20px;
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .weekly-day-temp {
@@ -842,7 +839,7 @@ body {
     max-width: 260px;
 }
 
-/* Уведомления об ошибках */
+/* Уведомления об ошибках - ИСПРАВЛЕНО */
 .error-notification {
     position: fixed;
     top: max(env(safe-area-inset-top, 20px), 40px);
@@ -892,12 +889,13 @@ body {
     display: none !important;
 }
 
-/* Анимации появления */
+/* Анимации появления - ИСПРАВЛЕНО */
 #weatherResult {
     opacity: 0;
     transform: translateY(10px);
     transition: opacity 0.4s var(--ios-ease-decelerate),
                 transform 0.4s var(--ios-bounce);
+    width: 100%;
 }
 
 #weatherResult:not(.hidden) {
@@ -905,7 +903,7 @@ body {
     transform: translateY(0);
 }
 
-/* МОДАЛЬНОЕ ОКНО В СТИЛЕ iOS */
+/* МОДАЛЬНОЕ ОКНО В СТИЛЕ iOS - ИСПРАВЛЕНО */
 .day-modal {
     position: fixed;
     top: 0;
@@ -921,7 +919,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: var(--ios-radius-md);
+    padding: 16px;
     box-sizing: border-box;
     pointer-events: none;
 }
@@ -956,7 +954,7 @@ body {
     width: 100%;
     max-height: calc(100vh - 40px);
     overflow-y: auto;
-    padding: var(--ios-radius-lg);
+    padding: 20px;
     box-shadow: var(--ios-shadow-lg);
     transform: translateY(30px);
     opacity: 0;
@@ -1108,18 +1106,18 @@ body {
     100% { transform: scale(1); opacity: 1; }
 }
 
-/* Адаптация для разных размеров экрана */
+/* Адаптация для разных размеров экрана - ИСПРАВЛЕНО */
 @media (max-width: 375px) {
     .weather-main {
         padding: 16px;
     }
     
     .temperature {
-        font-size: 68px;
+        font-size: 60px;
     }
     
     .city-name {
-        font-size: 24px;
+        font-size: 22px;
     }
     
     .weather-card {
@@ -1159,6 +1157,14 @@ body {
     
     .tip-text {
         font-size: var(--ios-font-size-footnote);
+    }
+    
+    .tips-category-title {
+        font-size: 14px;
+    }
+    
+    .search-button {
+        padding: 0 8px;
     }
 }
 
@@ -1224,7 +1230,7 @@ body {
     }
 }
 
-/* Эффект Ripple для кликов */
+/* Эффект Ripple для кликов - ИСПРАВЛЕН */
 .ripple {
     position: absolute;
     background-color: rgba(255, 255, 255, 0.4);
@@ -1233,6 +1239,7 @@ body {
     animation: rippleEffect 0.6s var(--ios-ease-standard);
     pointer-events: none;
     opacity: 0;
+    z-index: 0;
 }
 
 @keyframes rippleEffect {
@@ -1334,6 +1341,10 @@ body {
     .temperature-warning-indicator {
         color: var(--ios-red);
     }
+    
+    .search-section {
+        background-color: rgba(0, 0, 0, 0.6);
+    }
 }
 
 /* Специфичные стили для SF Symbols в советах фермеров */
@@ -1345,26 +1356,58 @@ body {
     stroke-linejoin: round;
 }
 
+/* Анимации видимости */
+.forecast-hour, .detail-item, .tip-item, .weekly-day {
+    animation: iOSItemsEntry var(--ios-duration-medium) var(--ios-ease-decelerate) forwards;
+}
+
+.forecast-hour:nth-child(1) { animation-delay: 0.03s; }
+.forecast-hour:nth-child(2) { animation-delay: 0.06s; }
+.forecast-hour:nth-child(3) { animation-delay: 0.09s; }
+.forecast-hour:nth-child(4) { animation-delay: 0.12s; }
+.forecast-hour:nth-child(5) { animation-delay: 0.15s; }
+.forecast-hour:nth-child(6) { animation-delay: 0.18s; }
+.forecast-hour:nth-child(7) { animation-delay: 0.21s; }
+.forecast-hour:nth-child(8) { animation-delay: 0.24s; }
+
+.detail-item:nth-child(1) { animation-delay: 0.05s; }
+.detail-item:nth-child(2) { animation-delay: 0.1s; }
+.detail-item:nth-child(3) { animation-delay: 0.15s; }
+.detail-item:nth-child(4) { animation-delay: 0.2s; }
+
+.weather-card {
+    animation: iOSCardEntry var(--ios-duration-medium) var(--ios-ease-decelerate) forwards;
+}
+.weather-card:nth-child(1) { animation-delay: 0.05s; }
+.weather-card:nth-child(2) { animation-delay: 0.1s; }
+.weather-card:nth-child(3) { animation-delay: 0.15s; }
+.weather-card:nth-child(4) { animation-delay: 0.2s; }
+
+.weekly-day:nth-child(1) { animation-delay: 0.04s; }
+.weekly-day:nth-child(2) { animation-delay: 0.08s; }
+.weekly-day:nth-child(3) { animation-delay: 0.12s; }
+.weekly-day:nth-child(4) { animation-delay: 0.16s; }
+.weekly-day:nth-child(5) { animation-delay: 0.20s; }
+.weekly-day:nth-child(6) { animation-delay: 0.24s; }
+.weekly-day:nth-child(7) { animation-delay: 0.28s; }
+
+.tip-item:nth-child(1) { animation-delay: 0.05s; }
+.tip-item:nth-child(2) { animation-delay: 0.1s; }
+
 /* Поддержка Safe Area iOS */
 @supports (-webkit-touch-callout: none) {
     body {
-        padding-top: max(env(safe-area-inset-top), 12px);
-        padding-bottom: max(env(safe-area-inset-bottom), 12px);
+        padding-top: 0;
+        padding-bottom: 0;
     }
     
     .ios-container {
-        padding-left: max(env(safe-area-inset-left), 16px);
-        padding-right: max(env(safe-area-inset-right), 16px);
+        padding-left: max(16px, env(safe-area-inset-left));
+        padding-right: max(16px, env(safe-area-inset-right));
+        padding-bottom: max(16px, env(safe-area-inset-bottom));
     }
     
     .search-section {
-        padding-top: max(env(safe-area-inset-top), 12px);
-    }
-    
-    .day-modal {
-        padding-top: env(safe-area-inset-top);
-        padding-bottom: env(safe-area-inset-bottom);
-        padding-left: env(safe-area-inset-left);
-        padding-right: env(safe-area-inset-right);
+        padding-top: max(10px, env(safe-area-inset-top));
     }
 }
