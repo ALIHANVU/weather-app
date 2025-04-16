@@ -807,8 +807,8 @@ async function fetchWeatherData(city) {
 }
 
 /**
- * Загружает советы для фермеров
- * @returns {Promise<Object>} Советы
+ * Загружает советы для фермеров из JSON-файла
+ * @returns {Promise<Object>} Советы в формате JSON
  */
 async function loadFarmerTips() {
     try {
@@ -834,95 +834,490 @@ async function loadFarmerTips() {
     } catch (error) {
         console.warn('Ошибка загрузки советов:', error.message);
         
-        // Резервные советы, если сервер недоступен
-        return {
-            "temperature": {
-                "hot": {
-                    "tips": ["Поливайте растения рано утром или вечером", "Используйте мульчу для удержания влаги"]
-                },
-                "moderate": {
-                    "tips": ["Идеальное время для обрезки растений", "Проверьте наличие вредителей на растениях"]
-                },
-                "cold": {
-                    "tips": ["Защитите растения от заморозков", "Ограничьте полив в холодную погоду"]
-                }
-            },
-            "humidity": {
-                "high": {
-                    "tips": ["Следите за появлением грибковых заболеваний", "Обеспечьте хорошую вентиляцию растений"]
-                },
-                "normal": {
-                    "tips": ["Поддерживайте регулярный полив", "Проверьте влажность почвы перед поливом"]
-                },
-                "low": {
-                    "tips": ["Увеличьте частоту полива", "Используйте системы капельного орошения"]
-                }
-            },
-            "seasons": {
-                "spring": {
-                    "tips": ["Подготовьте грядки к посадке", "Начните высаживать холодостойкие культуры"]
-                },
-                "summer": {
-                    "tips": ["Защитите растения от перегрева", "Собирайте урожай регулярно"]
-                },
-                "autumn": {
-                    "tips": ["Подготовьте сад к зиме", "Время для посадки озимых культур"]
-                },
-                "winter": {
-                    "tips": ["Защитите многолетние растения от мороза", "Планируйте посадки на следующий сезон"]
-                }
-            }
-        };
+        // Возвращаем базовую структуру советов, если не удалось загрузить данные
+        return getFallbackTips();
     }
 }
 
 /**
- * Генерирует советы для фермеров на основе погодных данных
+ * Возвращает набор резервных советов в случае ошибки загрузки
+ * @returns {Object} Базовые советы
+ */
+function getFallbackTips() {
+    return {
+        "temperature": {
+            "hot": {
+                "icon": "sun.max",
+                "title": "Жаркая погода",
+                "tips": [
+                    {
+                        "text": "Поливайте растения рано утром или после захода солнца",
+                        "icon": "drop.fill",
+                        "priority": "high",
+                        "color": "blue"
+                    },
+                    {
+                        "text": "Используйте мульчу для сохранения влаги в почве",
+                        "icon": "leaf.fill",
+                        "priority": "medium",
+                        "color": "brown"
+                    }
+                ]
+            },
+            "moderate": {
+                "icon": "sun.min",
+                "title": "Умеренная погода",
+                "tips": [
+                    {
+                        "text": "Идеальное время для большинства садовых работ",
+                        "icon": "checkmark.circle.fill",
+                        "priority": "medium",
+                        "color": "green"
+                    }
+                ]
+            },
+            "cold": {
+                "icon": "thermometer.snowflake",
+                "title": "Холодная погода",
+                "tips": [
+                    {
+                        "text": "Защитите чувствительные растения от заморозков",
+                        "icon": "shield.fill",
+                        "priority": "high",
+                        "color": "blue"
+                    }
+                ]
+            }
+        },
+        "humidity": {
+            "high": {
+                "icon": "humidity.fill",
+                "title": "Высокая влажность",
+                "tips": [
+                    {
+                        "text": "Повышенный риск грибковых заболеваний, проверяйте растения",
+                        "icon": "exclamationmark.shield.fill",
+                        "priority": "high",
+                        "color": "red"
+                    }
+                ]
+            },
+            "normal": {
+                "icon": "humidity",
+                "title": "Нормальная влажность",
+                "tips": [
+                    {
+                        "text": "Оптимальные условия для большинства растений",
+                        "icon": "checkmark.seal.fill",
+                        "priority": "low",
+                        "color": "green"
+                    }
+                ]
+            },
+            "low": {
+                "icon": "humidity.low",
+                "title": "Низкая влажность",
+                "tips": [
+                    {
+                        "text": "Увеличьте частоту полива растений",
+                        "icon": "drop.fill",
+                        "priority": "high",
+                        "color": "blue"
+                    }
+                ]
+            }
+        },
+        "seasons": {
+            "spring": {
+                "icon": "leaf.fill",
+                "title": "Весенний сезон",
+                "tips": [
+                    {
+                        "text": "Подготовьте почву к новому сезону посадок",
+                        "icon": "square.and.pencil",
+                        "priority": "high",
+                        "color": "brown"
+                    }
+                ]
+            },
+            "summer": {
+                "icon": "sun.max.fill",
+                "title": "Летний сезон",
+                "tips": [
+                    {
+                        "text": "Обеспечьте регулярный полив в утренние или вечерние часы",
+                        "icon": "drop.fill",
+                        "priority": "high",
+                        "color": "blue"
+                    }
+                ]
+            },
+            "autumn": {
+                "icon": "leaf.arrow.triangle.circlepath",
+                "title": "Осенний сезон",
+                "tips": [
+                    {
+                        "text": "Подготовьте многолетние растения к зимнему периоду",
+                        "icon": "snow",
+                        "priority": "high",
+                        "color": "blue"
+                    }
+                ]
+            },
+            "winter": {
+                "icon": "snowflake",
+                "title": "Зимний сезон",
+                "tips": [
+                    {
+                        "text": "Регулярно проверяйте укрытия зимующих растений",
+                        "icon": "eye.fill",
+                        "priority": "high",
+                        "color": "blue"
+                    }
+                ]
+            }
+        }
+    };
+}
+
+/**
+ * Генерирует SF Symbol SVG иконку по имени
+ * @param {string} iconName - Имя SF Symbol иконки
+ * @param {string} color - Цвет иконки (опционально)
+ * @returns {string} HTML разметка SVG иконки
+ */
+function getSFSymbolIcon(iconName, color = "currentColor") {
+    // Библиотека соответствий имен SF Symbols и SVG-иконок
+    const sfSymbols = {
+        "drop.fill": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0L12 2.69z"/></svg>`,
+        
+        "leaf.fill": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 4 13c0-5 7-11 9-11s9 6 9 11a7 7 0 0 1-7 7h-4zm0 0v4"/></svg>`,
+        
+        "sun.max": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>`,
+        
+        "thermometer": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>`,
+        
+        "cloud.snow.fill": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25" fill="currentColor"/><path d="M8 16h.01M8 20h.01M12 18h.01M12 22h.01M16 16h.01M16 20h.01"/></svg>`,
+        
+        "cloud.sun.fill": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v3M4 12H1M21 12h-3M18.364 5.636l-2.121 2.121M5.636 5.636l2.121 2.121" stroke="currentColor"/><circle cx="12" cy="7" r="3" fill="currentColor"/><path d="M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25" fill="currentColor"/></svg>`,
+        
+        "basket.fill": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h2l2.64 10.56A2 2 0 0 0 8.58 15h8.84a2 2 0 0 0 1.94-1.44L22 5H6" fill="currentColor"/><path d="M8 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM16 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="currentColor"/></svg>`,
+        
+        "xmark.bin.fill": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" fill="currentColor"/><path d="M10 11v6M14 11v6" stroke="white"/><path d="M8 11l8 6M16 11l-8 6" stroke="white"/></svg>`,
+        
+        "plus.circle.fill": `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M12 8v8M8 12h8" stroke="white"/></svg>`
+    };
+    
+    // Проверяем наличие иконки в библиотеке
+    if (sfSymbols[iconName]) {
+        return sfSymbols[iconName].replace('currentColor', color);
+    }
+    
+    // Возвращаем стандартную иконку, если запрошенная не найдена
+    return `<svg viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>`;
+}
+
+/**
+ * Генерирует советы для фермеров на основе погодных данных с учетом iOS стиля
  * @param {Object} weatherData - Данные о погоде
- * @returns {Promise<Array<string>>} Массив советов
+ * @returns {Promise<Array>} Массив советов с метаданными для отображения
  */
 async function generateFarmerTips(weatherData) {
     try {
         const tips = await loadFarmerTips();
         if (!tips) {
-            return getDefaultTips();
+            return [];
         }
-
+        
         const result = [];
         const temp = weatherData.main.temp;
         const humidity = weatherData.main.humidity;
-
-        // Температурные советы
-        if (temp >= 25) result.push(...tips.temperature.hot.tips);
-        else if (temp >= 15) result.push(...tips.temperature.moderate.tips);
-        else result.push(...tips.temperature.cold.tips);
-
-        // Советы по влажности
-        if (humidity >= 70) result.push(...tips.humidity.high.tips);
-        else if (humidity >= 40) result.push(...tips.humidity.normal.tips);
-        else result.push(...tips.humidity.low.tips);
-
-        // Сезонные советы
-        result.push(...tips.seasons[getCurrentSeason()].tips);
-
-        // Удаляем дубликаты и ограничиваем количество
-        return [...new Set(result)].slice(0, 5);
+        const season = getCurrentSeason();
+        
+        // Определяем категорию температуры
+        let tempCategory = null;
+        if (temp >= 25 && tips.temperature.hot) {
+            tempCategory = {
+                type: 'temperature',
+                category: 'hot',
+                data: tips.temperature.hot
+            };
+        } else if (temp >= 15 && temp <= 24 && tips.temperature.moderate) {
+            tempCategory = {
+                type: 'temperature',
+                category: 'moderate',
+                data: tips.temperature.moderate
+            };
+        } else if (temp <= 14 && tips.temperature.cold) {
+            tempCategory = {
+                type: 'temperature',
+                category: 'cold',
+                data: tips.temperature.cold
+            };
+        }
+        
+        // Определяем категорию влажности
+        let humidityCategory = null;
+        if (humidity >= 70 && tips.humidity.high) {
+            humidityCategory = {
+                type: 'humidity',
+                category: 'high',
+                data: tips.humidity.high
+            };
+        } else if (humidity >= 40 && humidity <= 69 && tips.humidity.normal) {
+            humidityCategory = {
+                type: 'humidity',
+                category: 'normal',
+                data: tips.humidity.normal
+            };
+        } else if (humidity <= 39 && tips.humidity.low) {
+            humidityCategory = {
+                type: 'humidity',
+                category: 'low',
+                data: tips.humidity.low
+            };
+        }
+        
+        // Определяем сезонную категорию
+        let seasonCategory = null;
+        if (tips.seasons && tips.seasons[season]) {
+            seasonCategory = {
+                type: 'season',
+                category: season,
+                data: tips.seasons[season]
+            };
+        }
+        
+        // Добавляем категории в результат, если они определены
+        if (tempCategory) result.push(tempCategory);
+        if (humidityCategory) result.push(humidityCategory);
+        if (seasonCategory) result.push(seasonCategory);
+        
+        return result;
     } catch (error) {
         console.warn('Ошибка генерации советов:', error.message);
-        return getDefaultTips();
+        return [];
     }
 }
 
 /**
- * Возвращает набор стандартных советов
- * @returns {Array<string>} Массив советов
+ * Обновляет отображение советов для фермеров в iOS стиле
+ * @param {Object} weatherData - Данные о погоде
  */
-function getDefaultTips() {
-    return [
-        "Поливайте растения в соответствии с погодными условиями", 
-        "Следите за состоянием почвы", 
-        "Защищайте растения от экстремальных погодных условий"
-    ];
+async function updateFarmerTips(weatherData) {
+    try {
+        if (!elements.tipsContainer) return;
+        
+        // Показываем состояние загрузки
+        elements.tipsContainer.innerHTML = `
+            <div class="tips-loading"></div>
+            <div class="tips-loading" style="width: 85%;"></div>
+        `;
+        
+        // Получаем категории советов
+        const tipCategories = await generateFarmerTips(weatherData);
+        
+        if (tipCategories.length === 0) {
+            elements.tipsContainer.innerHTML = `
+                <div class="tip-item">
+                    <div class="tip-icon blue">
+                        ${getSFSymbolIcon('drop.fill', 'var(--ios-blue)')}
+                    </div>
+                    <div class="tip-content">
+                        <div class="tip-text">Советы недоступны. Следите за прогнозом погоды для планирования сельскохозяйственных работ.</div>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+        
+        // Создаем HTML для каждой категории советов
+        let html = '';
+        
+        tipCategories.forEach((category, categoryIndex) => {
+            const { type, data } = category;
+            
+            // Добавляем заголовок категории
+            html += `
+                <div class="tips-category">
+                    <div class="tips-category-title">
+                        <div class="tips-category-icon">
+                            ${getSFSymbolIcon(data.icon || 'leaf.fill', 'var(--ios-text-secondary)')}
+                        </div>
+                        ${data.title || 'Советы по уходу за растениями'}
+                    </div>
+            `;
+            
+            // Добавляем советы категории (максимум 2 из каждой категории для компактности)
+            const categoryTips = data.tips || [];
+            const tipsToShow = categoryTips.slice(0, 2);
+            
+            tipsToShow.forEach((tip, tipIndex) => {
+                const globalIndex = categoryIndex * 2 + tipIndex;
+                
+                html += `
+                    <div class="tip-item" style="--tip-index: ${globalIndex}">
+                        <div class="tip-icon ${tip.color || 'blue'}">
+                            ${getSFSymbolIcon(tip.icon || 'leaf.fill', `var(--ios-${tip.color || 'blue'})`)}
+                        </div>
+                        <div class="tip-content">
+                            <div class="tip-text">${tip.text}</div>
+                            <div class="tip-priority">
+                                <span class="priority-indicator priority-${tip.priority || 'medium'}"></span>
+                                ${getPriorityText(tip.priority)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `</div>`;
+        });
+        
+        // Обновляем содержимое контейнера советов
+        elements.tipsContainer.innerHTML = html;
+        
+        // Добавляем обработчики событий для советов
+        document.querySelectorAll('.tip-item').forEach(item => {
+            item.addEventListener('click', createRipple);
+        });
+    } catch (error) {
+        console.warn('Ошибка обновления советов для фермеров:', error.message);
+        
+        // Показываем стандартные советы при ошибке
+        if (elements.tipsContainer) {
+            elements.tipsContainer.innerHTML = `
+                <div class="tip-item">
+                    <div class="tip-icon blue">
+                        ${getSFSymbolIcon('leaf.fill', 'var(--ios-blue)')}
+                    </div>
+                    <div class="tip-content">
+                        <div class="tip-text">Адаптируйте полив в соответствии с текущими погодными условиями</div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+}
+
+/**
+ * Возвращает текстовое описание приоритета
+ * @param {string} priority - Приоритет совета (high/medium/low)
+ * @returns {string} Текстовое описание
+ */
+function getPriorityText(priority) {
+    switch (priority) {
+        case 'high': return 'Высокий приоритет';
+        case 'low': return 'Низкий приоритет';
+        default: return 'Средний приоритет';
+    }
+}
+
+/**
+ * Обновляет советы в модальном окне с iOS-анимациями
+ * @param {Object} weatherData - Данные о погоде
+ */
+async function updateModalFarmerTips(weatherData) {
+    try {
+        if (!modalElements.tipsContainer) return;
+        
+        // Показываем состояние загрузки
+        modalElements.tipsContainer.style.transition = 'opacity 0.2s ease';
+        modalElements.tipsContainer.style.opacity = '0';
+        
+        // Ждем завершения анимации исчезновения
+        setTimeout(async () => {
+            modalElements.tipsContainer.innerHTML = `
+                <div class="tips-loading"></div>
+                <div class="tips-loading" style="width: 85%;"></div>
+            `;
+            modalElements.tipsContainer.style.opacity = '1';
+            
+            // Получаем категории советов
+            const tipCategories = await generateFarmerTips(weatherData);
+            
+            if (tipCategories.length === 0) {
+                modalElements.tipsContainer.innerHTML = `
+                    <div class="tip-item">
+                        <div class="tip-icon blue">
+                            ${getSFSymbolIcon('drop.fill', 'var(--ios-blue)')}
+                        </div>
+                        <div class="tip-content">
+                            <div class="tip-text">Советы недоступны. Следите за прогнозом погоды для планирования сельскохозяйственных работ.</div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Создаем HTML для каждой категории советов
+            let html = '';
+            
+            tipCategories.forEach((category, categoryIndex) => {
+                const { type, data } = category;
+                
+                // Добавляем заголовок категории
+                html += `
+                    <div class="tips-category">
+                        <div class="tips-category-title">
+                            <div class="tips-category-icon">
+                                ${getSFSymbolIcon(data.icon || 'leaf.fill', 'var(--ios-text-secondary)')}
+                            </div>
+                            ${data.title || 'Советы по уходу за растениями'}
+                        </div>
+                `;
+                
+                // Добавляем советы категории (максимум 2 из каждой категории для компактности)
+                const categoryTips = data.tips || [];
+                const tipsToShow = categoryTips.slice(0, 2);
+                
+                tipsToShow.forEach((tip, tipIndex) => {
+                    const globalIndex = categoryIndex * 2 + tipIndex;
+                    
+                    html += `
+                        <div class="tip-item" style="--tip-index: ${globalIndex}">
+                            <div class="tip-icon ${tip.color || 'blue'}">
+                                ${getSFSymbolIcon(tip.icon || 'leaf.fill', `var(--ios-${tip.color || 'blue'})`)}
+                            </div>
+                            <div class="tip-content">
+                                <div class="tip-text">${tip.text}</div>
+                                <div class="tip-priority">
+                                    <span class="priority-indicator priority-${tip.priority || 'medium'}"></span>
+                                    ${getPriorityText(tip.priority)}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `</div>`;
+            });
+            
+            // Обновляем содержимое контейнера советов
+            modalElements.tipsContainer.innerHTML = html;
+            
+            // Добавляем обработчики событий для советов
+            modalElements.tipsContainer.querySelectorAll('.tip-item').forEach(item => {
+                item.addEventListener('click', createRipple);
+            });
+        }, 200);
+    } catch (error) {
+        console.warn('Ошибка обновления советов в модальном окне:', error.message);
+        
+        // Показываем стандартные советы при ошибке
+        if (modalElements.tipsContainer) {
+            modalElements.tipsContainer.innerHTML = `
+                <div class="tip-item">
+                    <div class="tip-icon blue">
+                        ${getSFSymbolIcon('leaf.fill', 'var(--ios-blue)')}
+                    </div>
+                    <div class="tip-content">
+                        <div class="tip-text">Адаптируйте полив в соответствии с текущими погодными условиями</div>
+                    </div>
+                </div>
+            `;
+        }
+    }
 }
 
 /**
